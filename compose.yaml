@@ -1,10 +1,40 @@
 services:
-  mysql:
+  mysqldb:
+    container_name: 'mysqldb'
     image: 'mysql:latest'
     environment:
       - 'MYSQL_DATABASE=blog'
-      - 'MYSQL_PASSWORD=secret'
-      - 'MYSQL_ROOT_PASSWORD=verysecret'
-      - 'MYSQL_USER=myuser'
+      - 'MYSQL_ROOT_PASSWORD=Abc@1234'
+    expose:
+      - 13306
     ports:
-      - '3306'
+      - '13306:3306'
+    networks:
+      - data
+    volumes:
+      - './db:/var/lib/mysql'
+    tty: true
+    restart: on-failure
+
+  springapp:
+    build: .
+    container_name: 'springapp'
+    depends_on:
+      - 'mysqldb'
+    networks:
+      - data
+    expose:
+      - 8080
+    ports:
+      - '8080:8080'
+    volumes:
+      - './src:/app/src'
+    tty: true
+
+
+volumes:
+  mysql: ~
+
+networks:
+  data:
+    driver: bridge
