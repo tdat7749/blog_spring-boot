@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="BlogSpringBootApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <module name="Blog_Spring-Boot" />
+    <option name="PROGRAM_PARAMETERS" value="http://localhost:8081" />
+    <projectPathOnTarget name="projectPathOnTarget" value="/app" />
+    <target name="@@@LOCAL@@@" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.blog_springboot.BlogSpringBootApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
