@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "tag")
+@Table(name = "tags")
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +21,9 @@ public class Tag {
 
     @Column(length = 1000,nullable = false)
     private String thumbnail;
+
+    @Column(length = 120,nullable = false)
+    private String slug;
 
     @ColumnDefault("false")
     private boolean status;
@@ -41,13 +44,14 @@ public class Tag {
 
     }
 
-    public Tag(int id, String title, String thumbnail, boolean status, Date createdAt, Date updatedAt) {
+    public Tag(int id, String title, String thumbnail, boolean status, Date createdAt, Date updatedAt,String slug) {
         this.id = id;
         this.title = title;
         this.thumbnail = thumbnail;
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.slug = slug;
     }
 
     public int getId() {
@@ -78,6 +82,10 @@ public class Tag {
         return postTags;
     }
 
+    public String getSlug() {
+        return slug;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -104,5 +112,9 @@ public class Tag {
 
     public void setPostTags(List<PostTags> postTags) {
         this.postTags = postTags;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 }
