@@ -26,4 +26,10 @@ public class SeriesExceptionHandler {
     public ErrorResponse deleteSeriesExceptionHandler(DeleteSeriesException ex){
         return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
     }
+
+    @ExceptionHandler(SeriesSlugDuplicateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse SeriesSlugDuplicateExceptionHandler(SeriesSlugDuplicateException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
+    }
 }

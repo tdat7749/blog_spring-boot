@@ -6,9 +6,9 @@ services:
       - 'MYSQL_DATABASE=blog'
       - 'MYSQL_ROOT_PASSWORD=Abc@1234'
     expose:
-      - 13306
+      - 13307
     ports:
-      - '13306:3306'
+      - '13307:3306'
     networks:
       - data
     volumes:
@@ -26,9 +26,9 @@ services:
     networks:
       - data
     expose:
-      - 8081
+      - 8082
     ports:
-      - '8081:8080'
+      - '8082:8080'
     volumes:
       - './:/app:delegated'
     tty: true

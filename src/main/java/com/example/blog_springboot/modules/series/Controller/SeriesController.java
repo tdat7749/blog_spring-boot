@@ -6,6 +6,7 @@ import com.example.blog_springboot.modules.series.DTO.UpdateSeriesDTO;
 import com.example.blog_springboot.modules.series.Model.Series;
 import com.example.blog_springboot.modules.series.Service.SeriesService;
 import com.example.blog_springboot.modules.series.ViewModel.SeriesVm;
+import jakarta.validation.Valid;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -31,7 +32,7 @@ public class SeriesController {
 
     @PostMapping("")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<SeriesVm>> createSeries(@RequestBody CreateSeriesDTO dto){
+    public ResponseEntity<SuccessResponse<SeriesVm>> createSeries(@RequestBody @Valid CreateSeriesDTO dto){
         var result = seriesService.createSeries(dto);
 
         return new ResponseEntity<>(result,HttpStatus.CREATED);
@@ -39,7 +40,7 @@ public class SeriesController {
 
     @PutMapping("{seriesId}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<SeriesVm>> updateSeries(@RequestBody UpdateSeriesDTO dto,@PathVariable("seriesId") int id){
+    public ResponseEntity<SuccessResponse<SeriesVm>> updateSeries(@RequestBody @Valid UpdateSeriesDTO dto,@PathVariable("seriesId") int id){
         var result = seriesService.updateSeries(dto,id);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
