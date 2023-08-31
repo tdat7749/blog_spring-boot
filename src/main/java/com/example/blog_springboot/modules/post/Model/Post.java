@@ -28,6 +28,9 @@ public class Post {
     @Column(columnDefinition = "MEDIUMTEXT",nullable = false)
     private String content;
 
+    @Column(length = 255, nullable = false)
+    private String summary;
+
     @Column(name = "is_published",nullable = false)
     @ColumnDefault("false")
     private boolean isPublished;
@@ -61,13 +64,14 @@ public class Post {
     public Post() {
     }
 
-    public Post(int id, String title, String content, boolean isPublished, Date createdAt, Date updatedAt) {
+    public Post(int id, String title, String content, boolean isPublished, Date createdAt, Date updatedAt,String summary) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.isPublished = isPublished;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.summary = summary;
     }
 
     public int getId() {
@@ -114,6 +118,10 @@ public class Post {
 
     public User getUser() {
         return user;
+    }
+
+    public String getSummary() {
+        return summary;
     }
 
 
@@ -164,4 +172,9 @@ public class Post {
         this.user = user;
     }
 
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
 }
+
