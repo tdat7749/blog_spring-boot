@@ -2,6 +2,7 @@ package com.example.blog_springboot.modules.series.Controller;
 
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.series.DTO.CreateSeriesDTO;
+import com.example.blog_springboot.modules.series.DTO.UpdateSeriesDTO;
 import com.example.blog_springboot.modules.series.Model.Series;
 import com.example.blog_springboot.modules.series.Service.SeriesService;
 import com.example.blog_springboot.modules.series.ViewModel.SeriesVm;
@@ -30,8 +31,24 @@ public class SeriesController {
 
     @PostMapping("")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Series>> createSeries(@RequestBody CreateSeriesDTO dto){
+    public ResponseEntity<SuccessResponse<SeriesVm>> createSeries(@RequestBody CreateSeriesDTO dto){
         var result = seriesService.createSeries(dto);
+
+        return new ResponseEntity<>(result,HttpStatus.CREATED);
+    }
+
+    @PutMapping("{seriesId}")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<SeriesVm>> updateSeries(@RequestBody UpdateSeriesDTO dto,@PathVariable("seriesId") int id){
+        var result = seriesService.updateSeries(dto,id);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @DeleteMapping("{id}")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> deleteSeries(@PathVariable int id){
+        var result = seriesService.deleteSeries(id);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }

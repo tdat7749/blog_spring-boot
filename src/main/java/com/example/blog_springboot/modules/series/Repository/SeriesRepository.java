@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SeriesRepository extends JpaRepository<Series,Integer> {
+    Boolean deleteById(int Id);
 }

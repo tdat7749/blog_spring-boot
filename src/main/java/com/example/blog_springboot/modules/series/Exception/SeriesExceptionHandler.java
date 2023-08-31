@@ -14,4 +14,16 @@ public class SeriesExceptionHandler {
     public ErrorResponse createSeriesExceptionHandler(CreateSeriesException ex){
         return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
     }
+
+    @ExceptionHandler(UpdateSeriesException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse updateSeriesExceptionHandler(UpdateSeriesException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
+    }
+
+    @ExceptionHandler(DeleteSeriesException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse deleteSeriesExceptionHandler(DeleteSeriesException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
+    }
 }
