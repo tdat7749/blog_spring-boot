@@ -20,6 +20,9 @@ import java.util.function.Function;
 public class JwtServiceImpl implements JwtService{
 
     private final String serectKey = "toikhongbietsudungenvtrongjavaspringbootlamonhaychitoi";
+    private final long accessTokenTime = 1000 * 60 * 60; // 60'
+    private final long refreshTokenTime = 1000 * 60 * 60 * 24 * 7; // 7 days
+
 
 
     @Override
@@ -28,18 +31,25 @@ public class JwtServiceImpl implements JwtService{
     }
 
     @Override
-    public String generateToken(UserDetails user){
-        return generateToken(new HashMap<>(),user);
+    public String generateAccessToken(UserDetails user){
+        return buildToken(new HashMap<>(),user,accessTokenTime);
     }
 
     @Override
-    public String generateToken(Map<String, Object> extraClaims, UserDetails user) {
+    public String generateRefreshToken(UserDetails user) {
+        return buildToken(new HashMap<>(),user,refreshTokenTime);
+    }
+
+
+
+    @Override
+    public String buildToken(Map<String, Object> extraClaims, UserDetails user,long tokenTime) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60))
+                .setExpiration(new Date(System.currentTimeMillis() + tokenTime))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

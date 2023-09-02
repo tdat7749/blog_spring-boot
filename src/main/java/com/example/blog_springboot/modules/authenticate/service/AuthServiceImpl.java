@@ -48,10 +48,11 @@ public class AuthServiceImpl implements AuthService{
             throw new NotFoundException("Người dùng này không tồn tại");
         }
 
-        var jwt = jwtService.generateToken(user);
+        var accessToken = jwtService.generateAccessToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
         AuthenVm authenVm = new AuthenVm();
-        authenVm.setAccessToken(jwt);
-        authenVm.setRefeshToken(jwt);
+        authenVm.setAccessToken(accessToken);
+        authenVm.setRefeshToken(refreshToken);
 
         return new SuccessResponse<>("Thành công",authenVm);
     }
