@@ -13,7 +13,7 @@ import com.example.blog_springboot.modules.series.Exception.UpdateSeriesExceptio
 import com.example.blog_springboot.modules.series.Model.Series;
 import com.example.blog_springboot.modules.series.Repository.SeriesRepository;
 import com.example.blog_springboot.modules.series.ViewModel.SeriesVm;
-import com.example.blog_springboot.modules.user.Repository.UserRepository;
+import com.example.blog_springboot.modules.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

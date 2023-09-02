@@ -1,7 +1,5 @@
 package com.example.blog_springboot.modules.series.ViewModel;
 
-import com.example.blog_springboot.modules.user.Model.User;
-
 public class SeriesVm {
     private int id;
     private String title;
