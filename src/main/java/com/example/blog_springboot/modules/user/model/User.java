@@ -1,43 +1,49 @@
-package com.example.blog_springboot.modules.user.Model;
+package com.example.blog_springboot.modules.user.model;
 
 
 import com.example.blog_springboot.modules.comment.Model.Comment;
 import com.example.blog_springboot.modules.post.Model.Post;
 import com.example.blog_springboot.modules.series.Model.Series;
+import com.example.blog_springboot.modules.user.enums.Role;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name="users")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name="first_name",length = 40,nullable = false)
+    @Column(name="first_name",length = 60,nullable = false)
     private String firstName;
 
-    @Column(name = "last_name",length = 50,nullable = false)
+    @Column(name = "last_name",length = 70,nullable = false)
     private String lastName;
 
     @Column(unique = true,nullable = false)
     private String email;
 
     @ColumnDefault("false")
-    @Column(name = "is_verify")
+    @Column(name = "is_verify",nullable = false)
     private boolean isVerify;
 
     @Column(nullable = false,length = 100)
     private String password;
 
-    @ColumnDefault("false")
-    @Column(name = "is_banned")
-    private boolean isBanned;
+    @ColumnDefault("true")
+    @Column(name = "is_not_locked",nullable = false)
+    private boolean isNotLocked;
 
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String avatar;
 
     @Column(name = "user_name",nullable = false,length = 50,unique = true)
@@ -48,6 +54,10 @@ public class User {
 
     @Column(name="updated_at",nullable = false)
     private Date updatedAt;
+
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
 
     // Config ORM
 
@@ -80,26 +90,27 @@ public class User {
     public User(){
 
     }
-    public User(int id, String firstName, String lastName, String email, boolean isVerify, String password, boolean isBanned, String avatar, String userName, Date createdAt, Date updatedAt) {
+    public User(int id, String firstName, String lastName, String email, boolean isVerify, String password, boolean isNotLocked, String avatar, String userName, Date createdAt, Date updatedAt,Role role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.isVerify = isVerify;
         this.password = password;
-        this.isBanned = isBanned;
+        this.isNotLocked = isNotLocked;
         this.avatar = avatar;
         this.userName = userName;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.role = role;
     }
 
     public boolean isVerify() {
         return isVerify;
     }
 
-    public boolean isBanned() {
-        return isBanned;
+    public boolean isNotLocked() {
+        return isNotLocked;
     }
 
     public void setId(int id) {
@@ -126,8 +137,8 @@ public class User {
         this.password = password;
     }
 
-    public void setBanned(boolean banned) {
-        isBanned = banned;
+    public void setNotLocked(boolean isNotLocked) {
+        this.isNotLocked = isNotLocked;
     }
 
     public void setAvatar(String avatar) {
@@ -158,13 +169,9 @@ public class User {
         this.series = series;
     }
 
-//    public void setFollowing(List<User> following) {
-//        this.following = following;
-//    }
-//
-//    public void setFollowers(List<User> followers) {
-//        this.followers = followers;
-//    }
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
     public int getId() {
         return id;
@@ -182,17 +189,45 @@ public class User {
         return email;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return userName;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return isNotLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isVerify;
     }
 
     public String getAvatar() {
         return avatar;
     }
 
-    public String getUserName() {
-        return userName;
-    }
 
     public Date getCreatedAt() {
         return createdAt;
@@ -214,11 +249,7 @@ public class User {
         return series;
     }
 
-//    public List<User> getFollowing() {
-//        return following;
-//    }
-//
-//    public List<User> getFollowers() {
-//        return followers;
-//    }
+    public Role getRole() {
+        return role;
+    }
 }

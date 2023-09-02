@@ -1,7 +1,7 @@
 package com.example.blog_springboot.modules.series.Model;
 
 import com.example.blog_springboot.modules.post.Model.Post;
-import com.example.blog_springboot.modules.user.Model.User;
+import com.example.blog_springboot.modules.user.model.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 

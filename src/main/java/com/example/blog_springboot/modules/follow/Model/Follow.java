@@ -1,6 +1,6 @@
 package com.example.blog_springboot.modules.follow.Model;
 
-import com.example.blog_springboot.modules.user.Model.User;
+import com.example.blog_springboot.modules.user.model.User;
 import jakarta.persistence.*;
 
 import java.util.Date;
