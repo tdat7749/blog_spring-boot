@@ -1,8 +1,10 @@
 package com.example.blog_springboot.modules.comment.Model;
 
 import com.example.blog_springboot.modules.post.Model.Post;
-import com.example.blog_springboot.modules.user.Model.User;
+import com.example.blog_springboot.modules.user.model.User;
 import jakarta.persistence.*;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "comments")
@@ -16,6 +18,12 @@ public class Comment {
 
     @Column(name = "parent_id",nullable = true)
     private int parentId;
+
+    @Column(name = "created_at",nullable = false)
+    private Date createdAt;
+
+    @Column(name = "updated_at",nullable = false)
+    private Date updatedAt;
 
 
     // Config ORM

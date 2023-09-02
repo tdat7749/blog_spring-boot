@@ -1,10 +1,11 @@
 package com.example.blog_springboot.modules.series.Model;
 
 import com.example.blog_springboot.modules.post.Model.Post;
-import com.example.blog_springboot.modules.user.Model.User;
+import com.example.blog_springboot.modules.user.model.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -16,6 +17,18 @@ public class Series {
 
     @Column(length = 100,nullable = false)
     private String title;
+
+    @Column(columnDefinition = "MEDIUMTEXT",nullable = false)
+    private String content;
+
+    @Column(length = 120,nullable = false)
+    private String slug;
+
+    @Column(name = "created_at",nullable = false)
+    private Date createdAt;
+
+    @Column(name = "updated_at",nullable = false)
+    private Date updatedAt;
 
 
     // Config ORM
@@ -33,9 +46,14 @@ public class Series {
     public Series(){
 
     }
-    public Series(int id, String title) {
+
+    public Series(int id, String title, String content, String slug, Date createdAt, Date updatedAt) {
         this.id = id;
         this.title = title;
+        this.content = content;
+        this.slug = slug;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public int getId() {
@@ -54,6 +72,22 @@ public class Series {
         return user;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -68,5 +102,21 @@ public class Series {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
