@@ -1,16 +1,15 @@
-package com.example.blog_springboot.modules.series.Controller;
+package com.example.blog_springboot.modules.series.controller;
 
 import com.example.blog_springboot.commons.SuccessResponse;
-import com.example.blog_springboot.modules.series.DTO.CreateSeriesDTO;
-import com.example.blog_springboot.modules.series.DTO.UpdateSeriesDTO;
-import com.example.blog_springboot.modules.series.Model.Series;
-import com.example.blog_springboot.modules.series.Service.SeriesService;
-import com.example.blog_springboot.modules.series.ViewModel.SeriesVm;
+import com.example.blog_springboot.modules.series.dto.CreateSeriesDTO;
+import com.example.blog_springboot.modules.series.dto.UpdateSeriesDTO;
+import com.example.blog_springboot.modules.series.service.SeriesService;
+import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
+import com.example.blog_springboot.modules.user.model.User;
 import jakarta.validation.Valid;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
@@ -48,8 +47,8 @@ public class SeriesController {
 
     @DeleteMapping("{id}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> deleteSeries(@PathVariable int id){
-        var result = seriesService.deleteSeries(id);
+    public ResponseEntity<SuccessResponse<Boolean>> deleteSeries(@PathVariable int id, @AuthenticationPrincipal User userPrincipal){
+        var result = seriesService.deleteSeries(id,userPrincipal);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }

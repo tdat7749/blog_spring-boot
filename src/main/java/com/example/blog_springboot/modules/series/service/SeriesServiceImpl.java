@@ -1,19 +1,19 @@
-package com.example.blog_springboot.modules.series.Service;
+package com.example.blog_springboot.modules.series.service;
 
 
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.exceptions.NotFoundException;
 import com.example.blog_springboot.modules.post.ViewModel.PostListVm;
-import com.example.blog_springboot.modules.series.DTO.CreateSeriesDTO;
-import com.example.blog_springboot.modules.series.DTO.UpdateSeriesDTO;
-import com.example.blog_springboot.modules.series.Exception.CreateSeriesException;
-import com.example.blog_springboot.modules.series.Exception.DeleteSeriesException;
-import com.example.blog_springboot.modules.series.Exception.SeriesSlugDuplicateException;
-import com.example.blog_springboot.modules.series.Exception.UpdateSeriesException;
-import com.example.blog_springboot.modules.series.Model.Series;
-import com.example.blog_springboot.modules.series.Repository.SeriesRepository;
-import com.example.blog_springboot.modules.series.ViewModel.SeriesVm;
+import com.example.blog_springboot.modules.series.dto.CreateSeriesDTO;
+import com.example.blog_springboot.modules.series.dto.UpdateSeriesDTO;
+import com.example.blog_springboot.modules.series.exception.*;
+import com.example.blog_springboot.modules.series.model.Series;
+import com.example.blog_springboot.modules.series.repository.SeriesRepository;
+import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
+import com.example.blog_springboot.modules.user.enums.Role;
+import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.repository.UserRepository;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -25,7 +25,8 @@ public class SeriesServiceImpl implements SeriesService{
     private final SeriesRepository seriesRepository;
     private final UserRepository userRepository;
 
-    public SeriesServiceImpl(SeriesRepository seriesRepository,UserRepository userRepository){
+
+    public SeriesServiceImpl(SeriesRepository seriesRepository, UserRepository userRepository){
         this.seriesRepository = seriesRepository;
         this.userRepository = userRepository;
     }
@@ -83,15 +84,20 @@ public class SeriesServiceImpl implements SeriesService{
     }
 
     @Override
-    public SuccessResponse<Boolean> deleteSeries(int id) {
+    public SuccessResponse<Boolean> deleteSeries(int id,User userPrincipal) {
         var foundSeries = seriesRepository.findById(id).orElse(null);
         if(foundSeries == null){
             throw new NotFoundException("Không tìm thấy series với ID = " + id);
         }
-        var isDelete = seriesRepository.deleteById(foundSeries.getId());
-        if(!isDelete){
-            throw new DeleteSeriesException("Xóa series thất bại.");
+
+        if(!(userPrincipal.getRole() == Role.ADMIN)){
+            var isAuthor = seriesRepository.findByUserAndId(userPrincipal,id).orElse(null);
+            if(isAuthor == null){
+                throw new NotAuthorSeriesException("Bạn không phải là chủ của series này");
+            }
         }
+
+        seriesRepository.delete(foundSeries);
         return new SuccessResponse<>("Thành công !", true);
     }
 

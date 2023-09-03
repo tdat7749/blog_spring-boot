@@ -1,4 +1,4 @@
-package com.example.blog_springboot.modules.series.ViewModel;
+package com.example.blog_springboot.modules.series.viewmodel;
 
 public class SeriesVm {
     private int id;

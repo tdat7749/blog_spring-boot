@@ -1,4 +1,4 @@
-package com.example.blog_springboot.modules.series.Model;
+package com.example.blog_springboot.modules.series.model;
 
 import com.example.blog_springboot.modules.post.Model.Post;
 import com.example.blog_springboot.modules.user.model.User;

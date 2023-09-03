@@ -1,4 +1,4 @@
-package com.example.blog_springboot.modules.series.Exception;
+package com.example.blog_springboot.modules.series.exception;
 
 import com.example.blog_springboot.commons.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,13 @@ public class SeriesExceptionHandler {
 
     @ExceptionHandler(SeriesSlugDuplicateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse SeriesSlugDuplicateExceptionHandler(SeriesSlugDuplicateException ex){
+    public ErrorResponse seriesSlugDuplicateExceptionHandler(SeriesSlugDuplicateException ex){
         return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
+    }
+
+    @ExceptionHandler(NotAuthorSeriesException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse notAuthorSeriesExceptionHandler(NotAuthorSeriesException ex){
+        return new ErrorResponse(HttpStatus.FORBIDDEN,403,ex.getMessage());
     }
 }
