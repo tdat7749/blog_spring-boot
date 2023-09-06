@@ -38,11 +38,14 @@ public class SecurityConfiguration {
                         //auth
                         .requestMatchers("/api/auth/**").permitAll()
 
+                        //upload file
+                        .requestMatchers("/api/filestorage/**").hasAnyRole("USER","ADMIN")
+
                         //series
                         .requestMatchers(HttpMethod.GET,"/api/series/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/series/").hasAnyRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT,"/api/series/{seriesId}").hasAnyRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE,"/api/series/{id}").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/api/series/").hasAnyRole("USER","ADMIN")
+                        .requestMatchers(HttpMethod.PUT,"/api/series/{seriesId}").hasAnyRole("USER","ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/api/series/{id}").hasAnyRole("USER","ADMIN")
 
                         .anyRequest().authenticated())
                         .sessionManagement(session -> session
