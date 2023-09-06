@@ -1,5 +1,7 @@
 package com.example.blog_springboot.configs;
 
+import com.cloudinary.Cloudinary;
+import com.example.blog_springboot.commons.Contants;
 import com.example.blog_springboot.exceptions.NotFoundException;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.repository.UserRepository;
@@ -14,6 +16,9 @@ import org.springframework.security.config.annotation.authentication.configurers
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class ApplicationConfiguration {
@@ -45,5 +50,15 @@ public class ApplicationConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public Cloudinary cloudinary(){
+        Map<String,String> config = new HashMap<>();
+        config.put("cloud_name", Contants.CLOUD_NAME);
+        config.put("api_key",Contants.API_KEY);
+        config.put("api_secret",Contants.API_SECRET);
+
+        return new Cloudinary(config);
     }
 }
