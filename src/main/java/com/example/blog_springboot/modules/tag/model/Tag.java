@@ -1,4 +1,4 @@
-package com.example.blog_springboot.modules.tag.Model;
+package com.example.blog_springboot.modules.tag.model;
 
 
 import com.example.blog_springboot.modules.posttags.Model.PostTags;
