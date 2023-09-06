@@ -8,6 +8,7 @@ import com.example.blog_springboot.modules.authenticate.viewmodel.AuthenVm;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,5 +33,13 @@ public class AuthenController {
         var result = authService.register(dto);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/logout")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> logout(){
+        SecurityContextHolder.clearContext();
+
+        return new ResponseEntity<>(new SuccessResponse<Boolean>("Thành công",true),HttpStatus.OK);
     }
 }

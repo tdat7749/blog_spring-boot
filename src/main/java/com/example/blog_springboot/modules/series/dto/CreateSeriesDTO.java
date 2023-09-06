@@ -1,4 +1,4 @@
-package com.example.blog_springboot.modules.series.DTO;
+package com.example.blog_springboot.modules.series.dto;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

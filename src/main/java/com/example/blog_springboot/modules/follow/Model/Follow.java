@@ -1,6 +1,7 @@
 package com.example.blog_springboot.modules.follow.Model;
 
 import com.example.blog_springboot.modules.user.model.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -21,10 +22,12 @@ public class Follow {
 
     @ManyToOne
     @JoinColumn(name = "follower_id")
+    @JsonBackReference
     private User followers;
 
     @ManyToOne
     @JoinColumn(name = "following_id")
+    @JsonBackReference
     private User following;
 
     public Follow(int id, Date createdAt, Date updatedAt) {
