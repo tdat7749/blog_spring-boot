@@ -1,6 +1,8 @@
 package com.example.blog_springboot.modules.series.service;
 
 
+import com.example.blog_springboot.commons.PagingRequestDTO;
+import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.exceptions.NotFoundException;
 import com.example.blog_springboot.modules.post.ViewModel.PostListVm;
@@ -9,15 +11,22 @@ import com.example.blog_springboot.modules.series.dto.UpdateSeriesDTO;
 import com.example.blog_springboot.modules.series.exception.*;
 import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.series.repository.SeriesRepository;
+import com.example.blog_springboot.modules.series.viewmodel.SeriesListPostVm;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.user.enums.Role;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
+import com.example.blog_springboot.commons.Contants;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SeriesServiceImpl implements SeriesService{
@@ -102,10 +111,17 @@ public class SeriesServiceImpl implements SeriesService{
     }
 
     @Override
-    public SuccessResponse<SeriesVm> updateSeries(UpdateSeriesDTO dto,int seriesId) {
+    public SuccessResponse<SeriesVm> updateSeries(UpdateSeriesDTO dto,int seriesId,User userPrincipal) {
         var foundSeries = seriesRepository.findById(seriesId).orElse(null);
         if(foundSeries == null){
             throw new NotFoundException("Không tìm thấy series với ID = " + seriesId);
+        }
+
+        if(!(userPrincipal.getRole() == Role.ADMIN)){
+            var isAuthor = seriesRepository.findByUserAndId(userPrincipal,seriesId).orElse(null);
+            if(isAuthor == null){
+                throw new NotAuthorSeriesException("Bạn không phải là chủ của series này");
+            }
         }
 
         var foundSeriesBySlug = seriesRepository.findBySlug(dto.getSlug()).orElse(null);
@@ -135,7 +151,34 @@ public class SeriesServiceImpl implements SeriesService{
     }
 
     @Override
-    public SuccessResponse<List<PostListVm>> getListPostBySeries(int id) {
-        return null;
+    public SuccessResponse<Series> getListPostBySeries(String slug) {
+        var series = seriesRepository.getListPostBySeries(slug).orElse(null);
+        if(series == null){
+            throw new NotFoundException("Không tìm thấy series này");
+        }
+        return new SuccessResponse<>("Thành công",series);
+    }
+
+    @Override
+    public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(PagingRequestDTO dto) {
+        Pageable paging = PageRequest.of(dto.getPageIndex(), Contants.PAGE_SIZE, Sort.by(dto.getSortBy()));
+
+        Page<Series> pagingResult = seriesRepository.findAll(paging);
+
+        List<SeriesVm> listSeriesVm = pagingResult.getContent().stream().map(series ->{
+           SeriesVm seriesVm = new SeriesVm();
+           seriesVm.setId(series.getId());
+           seriesVm.setSlug(series.getSlug());
+           seriesVm.setTitle(series.getTitle());
+           seriesVm.setContent(series.getContent());
+           seriesVm.setCreatedAt(series.getCreatedAt().toString());
+           seriesVm.setUpdatedAt(series.getUpdatedAt().toString());
+           return seriesVm;
+        }).toList();
+
+        var result = new PagingResponse<>(pagingResult.getTotalPages(), (int) pagingResult.getTotalElements(),listSeriesVm);
+
+        return new SuccessResponse<>("Thành công",result);
+
     }
 }

@@ -2,6 +2,7 @@ package com.example.blog_springboot.modules.series.model;
 
 import com.example.blog_springboot.modules.post.Model.Post;
 import com.example.blog_springboot.modules.user.model.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -39,6 +40,7 @@ public class Series {
 
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)
+    @JsonBackReference
     private User user;
 
     //

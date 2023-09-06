@@ -5,6 +5,7 @@ import com.example.blog_springboot.modules.comment.Model.Comment;
 import com.example.blog_springboot.modules.posttags.Model.PostTags;
 import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.user.model.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -53,10 +54,12 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(nullable = true,name = "series_id")
+    @JsonBackReference
     private Series series;
 
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)
+    @JsonBackReference
     private User user;
 
     //

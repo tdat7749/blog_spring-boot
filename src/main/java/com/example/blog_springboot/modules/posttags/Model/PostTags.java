@@ -2,6 +2,7 @@ package com.example.blog_springboot.modules.posttags.Model;
 
 import com.example.blog_springboot.modules.post.Model.Post;
 import com.example.blog_springboot.modules.tag.Model.Tag;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,10 +15,12 @@ public class PostTags {
     // Config ORM
     @ManyToOne
     @JoinColumn(name = "post_id",nullable = false)
+    @JsonBackReference
     private Post post;
 
     @ManyToOne
     @JoinColumn(name = "tag_id",nullable = false)
+    @JsonBackReference
     private Tag tag;
 
     public PostTags(){
