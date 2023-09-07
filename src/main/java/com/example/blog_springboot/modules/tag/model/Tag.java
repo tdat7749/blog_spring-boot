@@ -1,7 +1,8 @@
 package com.example.blog_springboot.modules.tag.model;
 
 
-import com.example.blog_springboot.modules.posttags.Model.PostTags;
+import com.example.blog_springboot.modules.post.Model.Post;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -36,9 +37,9 @@ public class Tag {
 
     //Config ORM
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "tag")
-    @JsonManagedReference
-    private List<PostTags> postTags;
+    @ManyToMany(mappedBy = "tags")
+    @JsonBackReference
+    private List<Post> posts;
 
     public Tag(){
 
@@ -52,6 +53,14 @@ public class Tag {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.slug = slug;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
     }
 
     public int getId() {
@@ -78,9 +87,6 @@ public class Tag {
         return updatedAt;
     }
 
-    public List<PostTags> getPostTags() {
-        return postTags;
-    }
 
     public String getSlug() {
         return slug;
@@ -110,9 +116,6 @@ public class Tag {
         this.updatedAt = updatedAt;
     }
 
-    public void setPostTags(List<PostTags> postTags) {
-        this.postTags = postTags;
-    }
 
     public void setSlug(String slug) {
         this.slug = slug;
