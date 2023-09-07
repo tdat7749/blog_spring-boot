@@ -2,8 +2,8 @@ package com.example.blog_springboot.modules.post.Model;
 
 
 import com.example.blog_springboot.modules.comment.Model.Comment;
-import com.example.blog_springboot.modules.posttags.Model.PostTags;
 import com.example.blog_springboot.modules.series.model.Series;
+import com.example.blog_springboot.modules.tag.model.Tag;
 import com.example.blog_springboot.modules.user.model.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -48,9 +48,14 @@ public class Post {
     @JsonManagedReference
     private List<Comment> comments;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "post")
+    @ManyToMany
+    @JoinTable(
+            name = "posttags",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
     @JsonManagedReference
-    private List<PostTags> postTags;
+    private List<Tag> tags;
 
     @ManyToOne
     @JoinColumn(nullable = true,name = "series_id")
@@ -75,6 +80,14 @@ public class Post {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.summary = summary;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
     }
 
     public int getId() {
@@ -111,9 +124,6 @@ public class Post {
         return comments;
     }
 
-    public List<PostTags> getPostTags() {
-        return postTags;
-    }
 
     public Series getSeries() {
         return series;
@@ -163,9 +173,6 @@ public class Post {
         this.comments = comments;
     }
 
-    public void setPostTags(List<PostTags> postTags) {
-        this.postTags = postTags;
-    }
 
     public void setSeries(Series series) {
         this.series = series;
