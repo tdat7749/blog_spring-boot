@@ -8,7 +8,9 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "comments")
+@Table(name = "comments",indexes = {
+        @Index(name = "idx_parent_id",columnList = "parent_id")
+})
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
