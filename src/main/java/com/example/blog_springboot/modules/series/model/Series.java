@@ -10,7 +10,9 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "series")
+@Table(name = "series",indexes = {
+        @Index(name = "idx_slug",columnList = "slug")
+})
 public class Series {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +24,7 @@ public class Series {
     @Column(columnDefinition = "MEDIUMTEXT",nullable = false)
     private String content;
 
-    @Column(length = 120,nullable = false)
+    @Column(length = 120,nullable = false,unique = true)
     private String slug;
 
     @Column(name = "created_at",nullable = false)

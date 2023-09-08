@@ -11,7 +11,9 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "tags")
+@Table(name = "tags",indexes = {
+        @Index(name = "idx_slug",columnList = "slug")
+})
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +25,7 @@ public class Tag {
     @Column(length = 1000,nullable = false)
     private String thumbnail;
 
-    @Column(length = 120,nullable = false)
+    @Column(length = 120,nullable = false,unique = true)
     private String slug;
 
     @ColumnDefault("false")
