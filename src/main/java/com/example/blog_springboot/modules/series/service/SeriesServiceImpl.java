@@ -5,13 +5,11 @@ import com.example.blog_springboot.commons.PagingRequestDTO;
 import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.exceptions.NotFoundException;
-import com.example.blog_springboot.modules.post.ViewModel.PostListVm;
 import com.example.blog_springboot.modules.series.dto.CreateSeriesDTO;
 import com.example.blog_springboot.modules.series.dto.UpdateSeriesDTO;
 import com.example.blog_springboot.modules.series.exception.*;
 import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.series.repository.SeriesRepository;
-import com.example.blog_springboot.modules.series.viewmodel.SeriesListPostVm;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.user.enums.Role;
 import com.example.blog_springboot.modules.user.model.User;
@@ -20,13 +18,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
-import com.example.blog_springboot.commons.Contants;
+import com.example.blog_springboot.commons.Constants;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class SeriesServiceImpl implements SeriesService{
@@ -161,7 +157,7 @@ public class SeriesServiceImpl implements SeriesService{
 
     @Override
     public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(PagingRequestDTO dto) {
-        Pageable paging = PageRequest.of(dto.getPageIndex(), Contants.PAGE_SIZE, Sort.by(dto.getSortBy()));
+        Pageable paging = PageRequest.of(dto.getPageIndex(), Constants.PAGE_SIZE, Sort.by(dto.getSortBy()));
 
         Page<Series> pagingResult = seriesRepository.findAll(paging);
 

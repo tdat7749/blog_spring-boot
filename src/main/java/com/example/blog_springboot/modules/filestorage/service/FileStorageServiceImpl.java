@@ -2,7 +2,7 @@ package com.example.blog_springboot.modules.filestorage.service;
 
 
 import com.cloudinary.Cloudinary;
-import com.example.blog_springboot.commons.Contants;
+import com.example.blog_springboot.commons.Constants;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.filestorage.exception.FileIsEmptyException;
 import com.example.blog_springboot.modules.filestorage.exception.FileTooLargeException;
@@ -31,14 +31,14 @@ public class FileStorageServiceImpl implements FileStorageService{
             throw new FileIsEmptyException("File trống !");
         }
 
-        if(multipartFile.getSize() > Contants.MAX_FILE){ // > 3mb
+        if(multipartFile.getSize() > Constants.MAX_FILE){ // > 3mb
             throw new FileTooLargeException("Dung lượng file vượt quá 3mb");
         }
 
         Tika tika = new Tika();
 
         String detectedMineType = tika.detect(multipartFile.getInputStream());
-        if(!Arrays.asList(Contants.MIME_TYPES).contains(detectedMineType)){
+        if(!Arrays.asList(Constants.MIME_TYPES).contains(detectedMineType)){
             throw new NotAllowMimeTypeException("Chỉ chấp nhận .png, .webp, .jpg, .jpeg");
         }
 
