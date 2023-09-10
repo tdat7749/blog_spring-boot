@@ -1,6 +1,6 @@
 package com.example.blog_springboot.commons;
 
-public class Contants {
+public class Constants {
 
     //Cloudinary config
     public static final String CLOUD_NAME = "dafpvnxnf";
@@ -15,4 +15,5 @@ public class Contants {
     public static final long MAX_FILE = 1024 * 1024 * 3;
 
     public static final String[] MIME_TYPES = {"image/png","image/jpeg","image/webp"};
+
 }

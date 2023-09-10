@@ -1,6 +1,6 @@
 package com.example.blog_springboot.modules.series.controller;
 
-import com.example.blog_springboot.commons.Contants;
+import com.example.blog_springboot.commons.Constants;
 import com.example.blog_springboot.commons.PagingRequestDTO;
 import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
@@ -11,8 +11,6 @@ import com.example.blog_springboot.modules.series.service.SeriesService;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.user.model.User;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,7 +47,7 @@ public class SeriesController {
     @ResponseBody
     public ResponseEntity<SuccessResponse<PagingResponse<List<SeriesVm>>>> getAllSeries(
             @RequestParam(name = "pageIndex",required = true,defaultValue = "0") Integer pageIndex,
-            @RequestParam(name = "sortBy",required = false,defaultValue = Contants.SORT_BY_CREATED_AT) String sortBy
+            @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
     ){
         PagingRequestDTO dto = new PagingRequestDTO();
         dto.setPageIndex(pageIndex);
