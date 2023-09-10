@@ -1,19 +1,21 @@
 package com.example.blog_springboot.configs;
 
+import com.cloudinary.Cloudinary;
+import com.example.blog_springboot.commons.Constants;
 import com.example.blog_springboot.exceptions.NotFoundException;
-import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.repository.UserRepository;
-import com.example.blog_springboot.modules.user.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class ApplicationConfiguration {
@@ -45,5 +47,15 @@ public class ApplicationConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public Cloudinary cloudinary(){
+        Map<String,String> config = new HashMap<>();
+        config.put("cloud_name", Constants.CLOUD_NAME);
+        config.put("api_key", Constants.API_KEY);
+        config.put("api_secret", Constants.API_SECRET);
+
+        return new Cloudinary(config);
     }
 }

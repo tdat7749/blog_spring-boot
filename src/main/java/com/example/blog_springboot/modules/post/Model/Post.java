@@ -2,9 +2,10 @@ package com.example.blog_springboot.modules.post.Model;
 
 
 import com.example.blog_springboot.modules.comment.Model.Comment;
-import com.example.blog_springboot.modules.posttags.Model.PostTags;
-import com.example.blog_springboot.modules.series.Model.Series;
+import com.example.blog_springboot.modules.series.model.Series;
+import com.example.blog_springboot.modules.tag.model.Tag;
 import com.example.blog_springboot.modules.user.model.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -13,7 +14,9 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "posts")
+@Table(name = "posts",indexes = {
+        @Index(name = "idx_slug",columnList = "slug")
+})
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +25,7 @@ public class Post {
     @Column(length = 100,nullable = false)
     private String title;
 
-    @Column(length = 130,nullable = false)
+    @Column(length = 130,nullable = false,unique = true)
     private String slug;
 
     @Column(columnDefinition = "MEDIUMTEXT",nullable = false)
@@ -41,22 +44,32 @@ public class Post {
     @Column(name = "updated_at",nullable = false)
     private Date updatedAt;
 
+    @Column(length = 1000, nullable = false)
+    private String thumbnail;
+
 
     // Config ORM
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "post")
     @JsonManagedReference
     private List<Comment> comments;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "post")
+    @ManyToMany
+    @JoinTable(
+            name = "posttags",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
     @JsonManagedReference
-    private List<PostTags> postTags;
+    private List<Tag> tags;
 
     @ManyToOne
     @JoinColumn(nullable = true,name = "series_id")
+    @JsonBackReference
     private Series series;
 
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)
+    @JsonBackReference
     private User user;
 
     //
@@ -64,7 +77,7 @@ public class Post {
     public Post() {
     }
 
-    public Post(int id, String title, String content, boolean isPublished, Date createdAt, Date updatedAt,String summary) {
+    public Post(int id, String title, String content, boolean isPublished, Date createdAt, Date updatedAt,String summary,String thumbnail) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -72,6 +85,23 @@ public class Post {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.summary = summary;
+        this.thumbnail = thumbnail;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
     }
 
     public int getId() {
@@ -108,9 +138,6 @@ public class Post {
         return comments;
     }
 
-    public List<PostTags> getPostTags() {
-        return postTags;
-    }
 
     public Series getSeries() {
         return series;
@@ -160,9 +187,6 @@ public class Post {
         this.comments = comments;
     }
 
-    public void setPostTags(List<PostTags> postTags) {
-        this.postTags = postTags;
-    }
 
     public void setSeries(Series series) {
         this.series = series;

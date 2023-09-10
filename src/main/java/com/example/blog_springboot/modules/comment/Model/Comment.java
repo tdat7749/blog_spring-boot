@@ -2,12 +2,15 @@ package com.example.blog_springboot.modules.comment.Model;
 
 import com.example.blog_springboot.modules.post.Model.Post;
 import com.example.blog_springboot.modules.user.model.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
 
 @Entity
-@Table(name = "comments")
+@Table(name = "comments",indexes = {
+        @Index(name = "idx_parent_id",columnList = "parent_id")
+})
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,10 +32,12 @@ public class Comment {
     // Config ORM
     @ManyToOne
     @JoinColumn(name = "post_id",nullable = false)
+    @JsonBackReference
     private Post post;
 
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)
+    @JsonBackReference
     private User user;
 
 

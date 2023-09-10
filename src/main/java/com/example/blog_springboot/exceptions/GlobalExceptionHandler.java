@@ -30,4 +30,10 @@ public class GlobalExceptionHandler {
     public ErrorResponse accessDeniedExceptionHandler(AccessDeniedException ex){
         return new ErrorResponse(HttpStatus.FORBIDDEN,403,"Không có quyền truy cập");
     }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse exceptionHandler(Exception ex){
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,500,"Internal Server");
+    }
 }

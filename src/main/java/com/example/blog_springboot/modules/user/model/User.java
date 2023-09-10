@@ -3,7 +3,7 @@ package com.example.blog_springboot.modules.user.model;
 
 import com.example.blog_springboot.modules.comment.Model.Comment;
 import com.example.blog_springboot.modules.post.Model.Post;
-import com.example.blog_springboot.modules.series.Model.Series;
+import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.user.enums.Role;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -18,7 +18,10 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name="users")
+@Table(name="users",indexes = {
+        @Index(name = "idx_username",columnList = "user_name"),
+        @Index(name = "idx_email",columnList = "email")
+})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,6 +63,9 @@ public class User implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
+    @Column(nullable = true)
+    private String code;
+
     // Config ORM
 
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "user")
@@ -91,7 +97,7 @@ public class User implements UserDetails {
     public User(){
 
     }
-    public User(int id, String firstName, String lastName, String email, boolean isVerify, String password, boolean isNotLocked, String avatar, String userName, Date createdAt, Date updatedAt,Role role) {
+    public User(int id, String firstName, String lastName, String email, boolean isVerify, String password, boolean isNotLocked, String avatar, String userName, Date createdAt, Date updatedAt,Role role,String code) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -104,6 +110,31 @@ public class User implements UserDetails {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.role = role;
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public List<User> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(List<User> following) {
+        this.following = following;
+    }
+
+    public List<User> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(List<User> followers) {
+        this.followers = followers;
     }
 
     public boolean isVerify() {

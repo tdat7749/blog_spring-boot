@@ -1,8 +1,6 @@
 package com.example.blog_springboot.configs;
 
 import com.example.blog_springboot.modules.jwt.service.JwtService;
-import com.example.blog_springboot.modules.jwt.types.JwtDecode;
-import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,7 +11,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
