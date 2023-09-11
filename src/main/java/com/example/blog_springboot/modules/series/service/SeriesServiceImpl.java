@@ -4,7 +4,7 @@ package com.example.blog_springboot.modules.series.service;
 import com.example.blog_springboot.commons.PagingRequestDTO;
 import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
-import com.example.blog_springboot.exceptions.NotFoundException;
+import com.example.blog_springboot.modules.series.constant.SeriesConstants;
 import com.example.blog_springboot.modules.series.dto.CreateSeriesDTO;
 import com.example.blog_springboot.modules.series.dto.UpdateSeriesDTO;
 import com.example.blog_springboot.modules.series.exception.*;
@@ -40,15 +40,9 @@ public class SeriesServiceImpl implements SeriesService{
     public SuccessResponse<SeriesVm> getSeriesById(int id){
         var series = seriesRepository.findById(id).orElse(null);
         if(series == null){
-            throw new NotFoundException("Không tìm thấy series với ID = " + id);
+            throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
         }
-        var seriesVm = new SeriesVm();
-        seriesVm.setId(series.getId());
-        seriesVm.setTitle(series.getTitle());
-        seriesVm.setSlug(series.getSlug());
-        seriesVm.setContent(series.getContent());
-        seriesVm.setCreatedAt(series.getCreatedAt().toString());
-        seriesVm.setUpdatedAt(series.getUpdatedAt().toString());
+        var seriesVm = getSeriesVm(series);
 
         return new SuccessResponse<>("Thành công !",seriesVm);
     }
@@ -57,12 +51,12 @@ public class SeriesServiceImpl implements SeriesService{
     public SuccessResponse<SeriesVm> createSeries(CreateSeriesDTO dto) {
         var foundUser = userRepository.findById(dto.getUserId()).orElse(null);
         if(foundUser == null){
-            throw new NotFoundException("Không tìm thấy user với ID = " + dto.getUserId());
+            throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
         }
 
         var foundSeriesBySlug = seriesRepository.findBySlug(dto.getSlug()).orElse(null);
         if(foundSeriesBySlug != null){
-            throw new SeriesSlugDuplicateException("Tiêu đề này đã bị trùng");
+            throw new SeriesSlugDuplicateException(SeriesConstants.SERIES_SLUG_DUPLICATE);
         }
 
         var newSeries = new Series();
@@ -75,54 +69,48 @@ public class SeriesServiceImpl implements SeriesService{
 
         var saveSeries = seriesRepository.save(newSeries);
         if(saveSeries == null){
-            throw new CreateSeriesException("Tạo series thất bại");
+            throw new CreateSeriesException(SeriesConstants.CREATE_SERIES_FAILED);
         }
 
-        var result = new SeriesVm();
-        result.setTitle(saveSeries.getTitle());
-        result.setId(saveSeries.getId());
-        result.setSlug(saveSeries.getSlug());
-        result.setContent(saveSeries.getContent());
-        result.setCreatedAt(saveSeries.getCreatedAt().toString());
-        result.setUpdatedAt(saveSeries.getUpdatedAt().toString());
-        return new SuccessResponse<>("Thành công !",result);
+        var result = getSeriesVm(saveSeries);
+        return new SuccessResponse<>(SeriesConstants.CREATE_SERIES_SUCCESS,result);
     }
 
     @Override
     public SuccessResponse<Boolean> deleteSeries(int id,User userPrincipal) {
         var foundSeries = seriesRepository.findById(id).orElse(null);
         if(foundSeries == null){
-            throw new NotFoundException("Không tìm thấy series với ID = " + id);
+            throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
         }
 
         if(!(userPrincipal.getRole() == Role.ADMIN)){
             var isAuthor = seriesRepository.findByUserAndId(userPrincipal,id).orElse(null);
             if(isAuthor == null){
-                throw new NotAuthorSeriesException("Bạn không phải là chủ của series này");
+                throw new NotAuthorSeriesException(SeriesConstants.NOT_AUTHOR_SERIES);
             }
         }
 
         seriesRepository.delete(foundSeries);
-        return new SuccessResponse<>("Thành công !", true);
+        return new SuccessResponse<>(SeriesConstants.DELETE_SERIES_SUCCESS, true);
     }
 
     @Override
     public SuccessResponse<SeriesVm> updateSeries(UpdateSeriesDTO dto,int seriesId,User userPrincipal) {
         var foundSeries = seriesRepository.findById(seriesId).orElse(null);
         if(foundSeries == null){
-            throw new NotFoundException("Không tìm thấy series với ID = " + seriesId);
+            throw new SeriesNotFoundException(SeriesConstants.NOT_AUTHOR_SERIES);
         }
 
         if(!(userPrincipal.getRole() == Role.ADMIN)){
             var isAuthor = seriesRepository.findByUserAndId(userPrincipal,seriesId).orElse(null);
             if(isAuthor == null){
-                throw new NotAuthorSeriesException("Bạn không phải là chủ của series này");
+                throw new NotAuthorSeriesException(SeriesConstants.NOT_AUTHOR_SERIES);
             }
         }
 
         var foundSeriesBySlug = seriesRepository.findBySlug(dto.getSlug()).orElse(null);
         if(foundSeriesBySlug != null && foundSeries != foundSeriesBySlug){
-                throw new SeriesSlugDuplicateException("Tiêu đề này đã bị trùng");
+                throw new SeriesSlugDuplicateException(SeriesConstants.SERIES_SLUG_DUPLICATE);
         }
 
         foundSeries.setTitle(dto.getTitle());
@@ -132,28 +120,23 @@ public class SeriesServiceImpl implements SeriesService{
 
         var isUpdate = seriesRepository.save(foundSeries);
         if(isUpdate == null){
-            throw new UpdateSeriesException("Cập nhật series thất bại");
+            throw new UpdateSeriesException(SeriesConstants.UPDATE_SERIES_FAILED);
         }
 
-        var result = new SeriesVm();
-        result.setId(isUpdate.getId());
-        result.setTitle(isUpdate.getTitle());
-        result.setSlug(isUpdate.getSlug());
-        result.setContent(isUpdate.getContent());
-        result.setCreatedAt(isUpdate.getCreatedAt().toString());
-        result.setUpdatedAt(isUpdate.getUpdatedAt().toString());
+        var result = getSeriesVm(isUpdate);
 
-        return new SuccessResponse<>("Thành công !",result);
+        return new SuccessResponse<>(SeriesConstants.UPDATE_SERIES_SUCCESS,result);
     }
 
     @Override
-    public SuccessResponse<Series> getListPostBySeries(String slug) {
-        var series = seriesRepository.getListPostBySeries(slug).orElse(null);
+    public SuccessResponse<Series> getSeriesDetail(String slug) {
+        var series = seriesRepository.getSeriesDetail(slug).orElse(null);
         if(series == null){
-            throw new NotFoundException("Không tìm thấy series này");
+            throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
         }
         return new SuccessResponse<>("Thành công",series);
     }
+
 
     @Override
     public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(PagingRequestDTO dto) {
@@ -162,19 +145,24 @@ public class SeriesServiceImpl implements SeriesService{
         Page<Series> pagingResult = seriesRepository.findAll(paging);
 
         List<SeriesVm> listSeriesVm = pagingResult.getContent().stream().map(series ->{
-           SeriesVm seriesVm = new SeriesVm();
-           seriesVm.setId(series.getId());
-           seriesVm.setSlug(series.getSlug());
-           seriesVm.setTitle(series.getTitle());
-           seriesVm.setContent(series.getContent());
-           seriesVm.setCreatedAt(series.getCreatedAt().toString());
-           seriesVm.setUpdatedAt(series.getUpdatedAt().toString());
-           return seriesVm;
+            return getSeriesVm(series);
         }).toList();
 
         var result = new PagingResponse<>(pagingResult.getTotalPages(), (int) pagingResult.getTotalElements(),listSeriesVm);
 
         return new SuccessResponse<>("Thành công",result);
 
+    }
+
+    private SeriesVm getSeriesVm(Series series){
+        var seriesVm = new SeriesVm();
+        seriesVm.setId(series.getId());
+        seriesVm.setTitle(series.getTitle());
+        seriesVm.setSlug(series.getSlug());
+        seriesVm.setContent(series.getContent());
+        seriesVm.setCreatedAt(series.getCreatedAt().toString());
+        seriesVm.setUpdatedAt(series.getUpdatedAt().toString());
+
+        return seriesVm;
     }
 }
