@@ -37,8 +37,8 @@ public class SeriesController {
 
     @GetMapping("/slug/{slug}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Series>> getListPostBySeries(@PathVariable String slug){
-        var result = seriesService.getListPostBySeries(slug);
+    public ResponseEntity<SuccessResponse<Series>> getSeriesDetail(@PathVariable String slug){
+        var result = seriesService.getSeriesDetail(slug);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
