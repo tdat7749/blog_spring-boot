@@ -16,4 +16,6 @@ public class Constants {
 
     public static final String[] MIME_TYPES = {"image/png","image/jpeg","image/webp"};
 
+    public static final String FROM_EMAIL = "noreply@bloghayhay.info";
+
 }
