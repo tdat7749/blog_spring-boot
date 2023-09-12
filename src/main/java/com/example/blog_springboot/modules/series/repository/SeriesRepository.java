@@ -21,7 +21,7 @@ public interface SeriesRepository extends JpaRepository<Series,Integer> {
 
     @Query("SELECT DISTINCT s FROM Series s LEFT JOIN s.posts p  WHERE s.slug = :slug AND p.isPublished = true")
 
-    Optional<Series> getListPostBySeries(@Param("slug") String slug);
+    Optional<Series> getSeriesDetail(@Param("slug") String slug);
 
 
 }
