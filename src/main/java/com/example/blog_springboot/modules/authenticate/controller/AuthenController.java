@@ -3,6 +3,7 @@ package com.example.blog_springboot.modules.authenticate.controller;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.authenticate.dto.LoginDTO;
 import com.example.blog_springboot.modules.authenticate.dto.RegisterDTO;
+import com.example.blog_springboot.modules.authenticate.dto.VerifyDTO;
 import com.example.blog_springboot.modules.authenticate.service.AuthService;
 import com.example.blog_springboot.modules.authenticate.viewmodel.AuthenVm;
 import jakarta.validation.Valid;
@@ -41,5 +42,21 @@ public class AuthenController {
         SecurityContextHolder.clearContext();
 
         return new ResponseEntity<>(new SuccessResponse<Boolean>("Thành công",true),HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/verify")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> verifyAccount(@RequestBody @Valid VerifyDTO dto){
+        var result = authService.verifyAccount(dto);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/resend")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> resendEmail(@RequestBody String email){
+        var result = authService.resendEmail(email);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
     }
 }

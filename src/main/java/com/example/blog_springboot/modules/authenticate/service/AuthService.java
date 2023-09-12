@@ -15,6 +15,8 @@ public interface AuthService {
 
     public SuccessResponse<Boolean> verifyAccount(VerifyDTO dto);
 
+    public SuccessResponse<Boolean> resendEmail(String email);
+
     public SuccessResponse<Boolean> lockAccount(int id);
 
     public SuccessResponse<Boolean> unLockAccount(int id);

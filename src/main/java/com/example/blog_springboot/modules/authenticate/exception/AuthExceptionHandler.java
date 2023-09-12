@@ -60,4 +60,10 @@ public class AuthExceptionHandler {
     public ErrorResponse verifyEmailExceptionHandler(VerifyEmailException ex){
         return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
     }
+
+    @ExceptionHandler(SetCodeUserException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse setCodeUserExceptionHandler(SetCodeUserException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
+    }
 }

@@ -25,4 +25,6 @@ public class AuthConstants {
     public static final String UN_LOCKED_ACCOUNT_FAILED = "Mở khóa tài khoản thất bại";
 
     public static final String UN_LOCKED_ACCOUNT_SUCCESS = "Mở khóa tài khoản thành công";
+
+    public static final String SET_CODE_FAILED = "Khởi tạo code xác thực thất bại";
 }

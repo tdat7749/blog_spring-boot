@@ -1,5 +1,6 @@
 package com.example.blog_springboot.modules.authenticate.service;
 
+import com.example.blog_springboot.commons.Constants;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.exceptions.NotFoundException;
 import com.example.blog_springboot.modules.authenticate.constant.AuthConstants;
@@ -9,6 +10,7 @@ import com.example.blog_springboot.modules.authenticate.dto.VerifyDTO;
 import com.example.blog_springboot.modules.authenticate.exception.*;
 import com.example.blog_springboot.modules.authenticate.viewmodel.AuthenVm;
 import com.example.blog_springboot.modules.jwt.service.JwtService;
+import com.example.blog_springboot.modules.mail.service.MailService;
 import com.example.blog_springboot.modules.user.enums.Role;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.repository.UserRepository;
@@ -29,12 +31,16 @@ public class AuthServiceImpl implements AuthService{
 
     final private PasswordEncoder passwordEncoder;
 
+    final private MailService mailService;
 
-    public AuthServiceImpl(AuthenticationManager authenticationManager,JwtService jwtService,UserRepository userRepository,PasswordEncoder passwordEncoder){
+
+
+    public AuthServiceImpl(AuthenticationManager authenticationManager,JwtService jwtService,UserRepository userRepository,PasswordEncoder passwordEncoder,MailService mailService){
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mailService = mailService;
     }
 
     @Override
@@ -88,6 +94,8 @@ public class AuthServiceImpl implements AuthService{
             throw new RegisterException(AuthConstants.REGISTER_FAILED);
         }
 
+        mailService.sendMail(saveUser.getEmail(), Constants.SUBJECT_EMAIL_VERIFY,Constants.PUBLIC_HOST + "?email=" + saveUser.getEmail() + "&code=" + saveUser.getCode());
+
         return new SuccessResponse<>(AuthConstants.REGISTER_SUCCESS,true);
     }
 
@@ -108,6 +116,31 @@ public class AuthServiceImpl implements AuthService{
             throw new VerifyEmailException(AuthConstants.VERIFY_FAILED);
         }
         return new SuccessResponse<>(AuthConstants.VERIFY_SUCCESS,true);
+
+    }
+
+    @Override
+    public SuccessResponse<Boolean> resendEmail(String email) {
+        var foundUser = userRepository.findByEmail(email).orElse(null);
+        if(foundUser == null){
+            throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
+        }
+
+        if(foundUser.isVerify()){
+            return new SuccessResponse<>(AuthConstants.ACCOUNT_VERIFIED,true);
+        }
+
+        foundUser.setCode(Utilities.generateCode());
+
+        var setCodeUser = userRepository.save(foundUser);
+
+        if(setCodeUser == null){
+            throw new SetCodeUserException(AuthConstants.SET_CODE_FAILED);
+        }
+
+        mailService.sendMail(setCodeUser.getEmail(), Constants.SUBJECT_EMAIL_VERIFY,Constants.PUBLIC_HOST + "?email=" + setCodeUser.getEmail() + "&code=" + setCodeUser.getCode());
+
+        return new SuccessResponse<>(AuthConstants.REGISTER_SUCCESS,true);
 
     }
 
