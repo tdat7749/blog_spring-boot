@@ -57,6 +57,10 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/api/users/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH,"/api/users/**").hasAnyRole("ADMIN","USER")
 
+                        //follow
+                        .requestMatchers(HttpMethod.POST,"/api/follows/{id}").hasAnyRole("USER","ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/api/follows/{id}").hasAnyRole("USER","ADMIN")
+
                         .anyRequest().authenticated())
                         .sessionManagement(session -> session
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
