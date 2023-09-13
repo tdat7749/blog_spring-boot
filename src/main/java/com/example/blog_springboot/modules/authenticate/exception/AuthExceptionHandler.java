@@ -48,4 +48,22 @@ public class AuthExceptionHandler {
     public ErrorResponse disabledExceptionHandler(DisabledException ex){
         return new ErrorResponse(HttpStatus.BAD_REQUEST,400,"Tài khoản chưa được xác thực");
     }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse userNotFoundExceptionHandler(UserNotFoundException ex){
+        return new ErrorResponse(HttpStatus.NOT_FOUND,404,ex.getMessage());
+    }
+
+    @ExceptionHandler(VerifyEmailException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse verifyEmailExceptionHandler(VerifyEmailException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
+    }
+
+    @ExceptionHandler(SetCodeUserException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse setCodeUserExceptionHandler(SetCodeUserException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
+    }
 }

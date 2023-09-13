@@ -16,4 +16,10 @@ public class Constants {
 
     public static final String[] MIME_TYPES = {"image/png","image/jpeg","image/webp"};
 
+    public static final String FROM_EMAIL = "noreply@bloghayhay.info";
+
+    public static final String SUBJECT_EMAIL_VERIFY = "XÁC MINH TÀI KHOẢN CỦA BẠN";
+
+    public static final String PUBLIC_HOST = "http://localhost:3000";
+
 }
