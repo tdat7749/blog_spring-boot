@@ -1,7 +1,6 @@
 package com.example.blog_springboot.modules.series.service;
 
 
-import com.example.blog_springboot.commons.PagingRequestDTO;
 import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.series.constant.SeriesConstants;
