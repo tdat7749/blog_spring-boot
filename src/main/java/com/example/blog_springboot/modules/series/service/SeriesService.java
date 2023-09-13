@@ -26,5 +26,5 @@ public interface SeriesService {
 
     public SuccessResponse<Series> getSeriesDetail(String slug); // for view
     
-    public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(PagingRequestDTO dto);
+    public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(String sortBy,int pageIndex);
 }

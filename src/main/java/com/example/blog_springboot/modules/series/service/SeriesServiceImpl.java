@@ -139,8 +139,8 @@ public class SeriesServiceImpl implements SeriesService{
 
 
     @Override
-    public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(PagingRequestDTO dto) {
-        Pageable paging = PageRequest.of(dto.getPageIndex(), Constants.PAGE_SIZE, Sort.by(dto.getSortBy()));
+    public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(String sortBy,int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(sortBy));
 
         Page<Series> pagingResult = seriesRepository.findAll(paging);
 
