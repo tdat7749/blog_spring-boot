@@ -1,7 +1,6 @@
 package com.example.blog_springboot.modules.series.controller;
 
 import com.example.blog_springboot.commons.Constants;
-import com.example.blog_springboot.commons.PagingRequestDTO;
 import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.series.dto.CreateSeriesDTO;
@@ -49,10 +48,7 @@ public class SeriesController {
             @RequestParam(name = "pageIndex",required = true,defaultValue = "0") Integer pageIndex,
             @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
     ){
-        PagingRequestDTO dto = new PagingRequestDTO();
-        dto.setPageIndex(pageIndex);
-        dto.setSortBy(sortBy);
-        var result = seriesService.getAllSeries(dto);
+        var result = seriesService.getAllSeries(sortBy,pageIndex);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
