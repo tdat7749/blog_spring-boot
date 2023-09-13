@@ -87,9 +87,11 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "follower_id"),
             inverseJoinColumns = @JoinColumn(name = "following_id")
     )
+    @JsonManagedReference
     private List<User> following;
 
     @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "following")
+    @JsonManagedReference
     private List<User> followers;
 
     //

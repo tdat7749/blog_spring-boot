@@ -53,6 +53,10 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.PUT,"/api/tags/{id}").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/api/tags/{id}").hasAnyRole("ADMIN")
 
+                        //user
+                        .requestMatchers(HttpMethod.GET,"/api/users/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH,"/api/users/**").hasAnyRole("ADMIN","USER")
+
                         .anyRequest().authenticated())
                         .sessionManagement(session -> session
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
