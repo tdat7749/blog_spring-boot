@@ -1,7 +1,6 @@
 package com.example.blog_springboot.modules.user.service;
 
 import com.example.blog_springboot.commons.Constants;
-import com.example.blog_springboot.commons.PagingRequestDTO;
 import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.exceptions.NotFoundException;
@@ -85,11 +84,29 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<UserVm>>> getListFollowing(PagingRequestDTO dto){
-        Pageable paging = PageRequest.of(dto.getPageIndex(), Constants.PAGE_SIZE, Sort.by(dto.getSortBy()));
+    public SuccessResponse<PagingResponse<List<UserVm>>> getListFollowing(String sortBy,int pageIndex,int userId){
+        Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(sortBy));
 
-        Page<User> pagingResult;
-        return null;
+        Page<User> pagingResult = userRepository.getAllUserFollowing(userId,paging);
+
+        List<UserVm> listUserVm = pagingResult.getContent().stream().map(this::getUserVm).toList();
+
+        var pagingResponse = new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listUserVm);
+
+        return new SuccessResponse<>("Thành công",pagingResponse);
+    }
+
+    @Override
+    public SuccessResponse<PagingResponse<List<UserVm>>> getListFollowers(String sortBy,int pageIndex,int userId){
+        Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(sortBy));
+
+        Page<User> pagingResult = userRepository.getAllUserFollower(userId,paging);
+
+        List<UserVm> listUserVm = pagingResult.getContent().stream().map(this::getUserVm).toList();
+
+        var pagingResponse = new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listUserVm);
+
+        return new SuccessResponse<>("Thành công",pagingResponse);
     }
 
     private UserVm getUserVm(User user){
@@ -101,6 +118,7 @@ public class UserServiceImpl implements UserService{
         userVm.setNotLocked(user.isAccountNonLocked());
         userVm.setRole(user.getRole().toString());
         userVm.setUserName(user.getUsername());
+        userVm.setId(user.getId());
 
         return userVm;
     }

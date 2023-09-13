@@ -1,6 +1,7 @@
 package com.example.blog_springboot.modules.user.viewmodel;
 
 public class UserVm {
+    private int id;
     private String userName;
     private String email;
     private String firstName;
@@ -8,6 +9,14 @@ public class UserVm {
     private String avatar;
     private Boolean isNotLocked;
     private String Role;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getUserName() {
         return userName;
