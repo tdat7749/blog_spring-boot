@@ -1,4 +1,4 @@
-package com.example.blog_springboot.modules.follow.Model;
+package com.example.blog_springboot.modules.follow.model;
 
 import com.example.blog_springboot.modules.user.model.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;

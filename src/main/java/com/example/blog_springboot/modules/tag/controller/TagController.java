@@ -3,6 +3,7 @@ package com.example.blog_springboot.modules.tag.controller;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.tag.dto.CreateTagDTO;
 import com.example.blog_springboot.modules.tag.dto.UpdateTagDTO;
+import com.example.blog_springboot.modules.tag.model.Tag;
 import com.example.blog_springboot.modules.tag.serivce.TagService;
 import com.example.blog_springboot.modules.tag.viewmodel.TagVm;
 import jakarta.validation.Valid;
@@ -38,7 +39,7 @@ public class TagController {
 
     @PostMapping("/")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<TagVm>> createTag(@RequestBody @Valid CreateTagDTO dto){
+    public ResponseEntity<SuccessResponse<Tag>> createTag(@RequestBody @Valid CreateTagDTO dto){
         var result = tagService.createTag(dto);
 
         return new ResponseEntity<>(result,HttpStatus.CREATED);
