@@ -47,7 +47,7 @@ public class TagServiceImpl implements TagService{
     }
 
     @Override
-    public SuccessResponse<TagVm> createTag(CreateTagDTO dto) {
+    public SuccessResponse<Tag> createTag(CreateTagDTO dto) {
         var foundTag = tagRepository.findBySlug(dto.getSlug()).orElse(null);
         if(foundTag != null){
             throw new TagSlugDuplicateException(TagConstants.TAG_SLUG_DUPLICATE);
@@ -65,9 +65,7 @@ public class TagServiceImpl implements TagService{
         if(createTag == null){
             throw new CreateTagException(TagConstants.CREATE_TAG_FAILED);
         }
-
-        var tagVm = getTagVm(createTag);
-        return new SuccessResponse<>(TagConstants.CREATE_TAG_SUCCESS,tagVm);
+        return new SuccessResponse<>(TagConstants.CREATE_TAG_SUCCESS,createTag);
     }
 
     @Override
