@@ -1,4 +1,4 @@
-package com.example.blog_springboot.modules.post.Model;
+package com.example.blog_springboot.modules.post.model;
 
 
 import com.example.blog_springboot.modules.comment.Model.Comment;

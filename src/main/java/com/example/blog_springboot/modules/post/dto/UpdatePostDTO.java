@@ -1,0 +1,101 @@
+package com.example.blog_springboot.modules.post.dto;
+
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.Length;
+
+public class UpdatePostDTO {
+    @NotBlank(message = "Không được bỏ trống trường 'title'")
+    @NotNull(message = "Không được thiếu trường 'title'")
+    @Length(max = 100,message = "Độ dài trường 'title' tối đa là 100 ký tự")
+    private String title;
+
+    @NotBlank(message = "Không được bỏ trống trường 'content'")
+    @NotNull(message = "Không được thiếu trường 'content'")
+    private String content;
+
+    @NotBlank(message = "Không được bỏ trống trường 'slug'")
+    @NotNull(message = "Không được thiếu trường 'slug'")
+    @Length(max = 120,message = "Độ dài trường 'slug' tối đa là 120 ký tự")
+    private String slug;
+
+    @NotBlank(message = "Không được bỏ trống trường 'summary'")
+    @NotNull(message = "Không được thiếu trường 'summary'")
+    private String summary;
+
+    @NotBlank(message = "Không được bỏ trống trường 'isPublished'")
+    @NotNull(message = "Không được thiếu trường 'isPublished'")
+    private boolean isPublished;
+
+    private String thumbnail;
+
+    @Digits(integer = 10,fraction = 0,message = "Trường 'seriesID' phải là số nguyên") // Kiểm tra là số nguyên và ít hơn 10 chữ số
+    private int seriesId;
+
+    private int id;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public boolean isPublished() {
+        return isPublished;
+    }
+
+    public void setPublished(boolean published) {
+        isPublished = published;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public int getSeriesId() {
+        return seriesId;
+    }
+
+    public void setSeriesId(int seriesId) {
+        this.seriesId = seriesId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+}

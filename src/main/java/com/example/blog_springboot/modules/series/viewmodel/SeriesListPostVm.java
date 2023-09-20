@@ -1,6 +1,6 @@
 package com.example.blog_springboot.modules.series.viewmodel;
 
-import com.example.blog_springboot.modules.post.ViewModel.PostListVm;
+import com.example.blog_springboot.modules.post.viewmodel.PostListVm;
 
 import java.util.List;
 

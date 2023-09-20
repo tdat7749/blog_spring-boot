@@ -2,7 +2,7 @@ package com.example.blog_springboot.modules.user.model;
 
 
 import com.example.blog_springboot.modules.comment.Model.Comment;
-import com.example.blog_springboot.modules.post.Model.Post;
+import com.example.blog_springboot.modules.post.model.Post;
 import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.user.enums.Role;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
