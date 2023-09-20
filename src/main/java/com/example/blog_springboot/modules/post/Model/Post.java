@@ -2,6 +2,7 @@ package com.example.blog_springboot.modules.post.Model;
 
 
 import com.example.blog_springboot.modules.comment.Model.Comment;
+import com.example.blog_springboot.modules.likepost.model.LikePost;
 import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.tag.model.Tag;
 import com.example.blog_springboot.modules.user.model.User;
@@ -71,6 +72,11 @@ public class Post {
     @JoinColumn(name = "user_id",nullable = false)
     @JsonBackReference
     private User user;
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "post")
+    @JsonBackReference
+    private List<LikePost> likePosts;
+
 
     //
 
