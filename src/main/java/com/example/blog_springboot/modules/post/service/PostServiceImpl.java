@@ -189,6 +189,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostAuthor(String username, String sortBy, int pageIndex) {
+        return null;
+    }
+
+    @Override
     public SuccessResponse<Boolean> updateStatus(int id,User userPrincipal,boolean status) {
         if(!(userPrincipal.getRole() == Role.ADMIN)){
             var isAuthor = postRepository.findByUserAndId(userPrincipal,id).orElse(null);

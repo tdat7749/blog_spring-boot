@@ -87,5 +87,5 @@ public class PostController {
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
-    
+
 }
