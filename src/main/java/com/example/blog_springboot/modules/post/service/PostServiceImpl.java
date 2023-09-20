@@ -15,11 +15,13 @@ import com.example.blog_springboot.modules.series.constant.SeriesConstants;
 import com.example.blog_springboot.modules.series.exception.SeriesNotFoundException;
 import com.example.blog_springboot.modules.series.repository.SeriesRepository;
 import com.example.blog_springboot.modules.tag.constant.TagConstants;
+import com.example.blog_springboot.modules.tag.dto.CreateTagDTO;
 import com.example.blog_springboot.modules.tag.exception.TagNotFoundException;
 import com.example.blog_springboot.modules.tag.model.Tag;
 import com.example.blog_springboot.modules.tag.repository.TagRepository;
 import com.example.blog_springboot.modules.tag.serivce.TagService;
 import com.example.blog_springboot.modules.tag.viewmodel.TagVm;
+import com.example.blog_springboot.modules.user.enums.Role;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.viewmodel.UserVm;
 import org.springframework.data.domain.Page;
@@ -27,6 +29,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,21 +62,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public SuccessResponse<PostListVm> createPost(CreatePostDTO dto, User userPrincipal) {
+        if(dto.getListTags().size() > 3){
+            throw new MaxTagException(PostConstants.MAX_TAG);
+        }
+
         var foundPostBySlug = postRepository.findBySlug(dto.getSlug()).orElse(null);
         if(foundPostBySlug != null){
             throw new PostSlugDuplicateException(PostConstants.POST_SLUG_DUPLICATE);
         }
 
-        List<Tag> listTag = new ArrayList<>();
-
-        dto.getListTags().stream().map(item ->{
-            var foundTag = tagRepository.findBySlug(item.getSlug()).orElse(null);
-//            if(foundTag == null){
-//                foundTag = tagRepository.save(item)
-//            }
-            return listTag.add(foundTag);
-        });
+        List<Tag> listTag = createListTag(dto.getListTags());
 
         var newPost = new Post();
         newPost.setTitle(dto.getTitle());
@@ -105,39 +105,71 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public SuccessResponse<PostListVm> updatePost(UpdatePostDTO dto, User userPrincipal) {
-        var foundPostByUserAndId = postRepository.findByUserAndId(userPrincipal,dto.getId()).orElse(null);
-        if(foundPostByUserAndId == null){
-            throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
+        if(!(userPrincipal.getRole() == Role.ADMIN)){
+            var isAuthor = postRepository.findByUserAndId(userPrincipal,dto.getId()).orElse(null);
+            if(isAuthor == null){
+                throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
+            }
+        }
+
+        if(dto.getListTags().size() > 3){
+            throw new MaxTagException(PostConstants.MAX_TAG);
+        }
+
+        var foundPost = postRepository.findById(dto.getId()).orElse(null);
+        if(foundPost == null){
+            throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
         }
 
         var foundPostBySlug = postRepository.findBySlug(dto.getSlug()).orElse(null);
-        if(foundPostBySlug != null && foundPostBySlug != foundPostByUserAndId){
+        if(foundPostBySlug != null && foundPostBySlug != foundPost){
             throw new PostSlugDuplicateException(PostConstants.POST_SLUG_DUPLICATE);
         }
 
-        foundPostByUserAndId.setTitle(dto.getTitle());
-        foundPostByUserAndId.setContent(dto.getContent());
-        foundPostByUserAndId.setSlug(dto.getSlug());
-        foundPostByUserAndId.setSummary(dto.getSummary());
-        foundPostByUserAndId.setUpdatedAt(new Date());
+        foundPost.setTitle(dto.getTitle());
+        foundPost.setContent(dto.getContent());
+        foundPost.setSlug(dto.getSlug());
+        foundPost.setSummary(dto.getSummary());
+        foundPost.setUpdatedAt(new Date());
+        foundPost.setPublished(dto.isPublished());
 
         if(dto.getThumbnail() != null){
-            foundPostByUserAndId.setThumbnail(dto.getThumbnail());
+            foundPost.setThumbnail(dto.getThumbnail());
         }
 
+        // new tag update
+        List<Tag> addTags = createListTag(dto.getListTags());
 
+        foundPost.removeAllTag(foundPost.getTags());
+        foundPost.addAllTag(addTags);
 
+        var savePost = postRepository.save(foundPost);
+        if(savePost == null){
+            throw new UpdatePostException(PostConstants.UPDATE_POST_FAILED);
+        }
+
+        var postListVm = getPostListVm(savePost);
+
+        return new SuccessResponse<>(PostConstants.UPDATE_POST_SUCCESS,postListVm);
     }
 
     @Override
     public SuccessResponse<Boolean> deletePost(int id, User userPrincipal) {
-        var foundPostByUserAndId = postRepository.findByUserAndId(userPrincipal,id).orElse(null);
-        if(foundPostByUserAndId == null){
+        if(!(userPrincipal.getRole() == Role.ADMIN)){
+            var isAuthor = postRepository.findByUserAndId(userPrincipal,id).orElse(null);
+            if(isAuthor == null){
+                throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
+            }
+        }
+
+        var foundPost = postRepository.findById(id).orElse(null);
+        if(foundPost == null){
             throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
         }
 
-        postRepository.delete(foundPostByUserAndId);
+        postRepository.delete(foundPost);
 
         return new SuccessResponse<>(PostConstants.DELETE_POST_SUCCESS,true);
 
@@ -158,18 +190,30 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public SuccessResponse<Boolean> updateStatus(int id,User userPrincipal,boolean status) {
-        var foundPostByUserAndId = postRepository.findByUserAndId(userPrincipal,id).orElse(null);
-        if(foundPostByUserAndId == null){
+        if(!(userPrincipal.getRole() == Role.ADMIN)){
+            var isAuthor = postRepository.findByUserAndId(userPrincipal,id).orElse(null);
+            if(isAuthor == null){
+                throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
+            }
+        }
+
+        var foundPost = postRepository.findById(id).orElse(null);
+        if(foundPost == null){
             throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
         }
 
-        foundPostByUserAndId.setPublished(status);
-        var savePost = postRepository.save(foundPostByUserAndId);
+        foundPost.setPublished(status);
+        var savePost = postRepository.save(foundPost);
         if(savePost == null){
             throw new UpdatePostException(PostConstants.CHANGE_POST_STATUS_FAILED);
         }
 
         return new SuccessResponse<>(PostConstants.CHANGE_POST_STATUS_SUCCESS,true);
+    }
+
+    @Override
+    public SuccessResponse<Boolean> addPostToSeries(int postId, int seriesId, User userPrincipal) {
+        return null;
     }
 
     @Override
@@ -182,6 +226,19 @@ public class PostServiceImpl implements PostService {
 
         return new SuccessResponse<>("Thành công",new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),postListVm));
 
+    }
+
+    private List<Tag> createListTag(List<CreateTagDTO> dto){
+        List<Tag> listTag = new ArrayList<>();
+
+        dto.stream().map(item ->{
+            var foundTag = tagRepository.findBySlug(item.getSlug()).orElse(null);
+            if(foundTag == null){
+                foundTag = tagService.createTag(item).getData();
+            }
+            return listTag.add(foundTag);
+        });
+        return listTag;
     }
 
     private PostListVm getPostListVm(Post post){

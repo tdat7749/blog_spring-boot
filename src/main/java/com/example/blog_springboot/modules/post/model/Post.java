@@ -88,6 +88,20 @@ public class Post {
         this.thumbnail = thumbnail;
     }
 
+    public void addAllTag(List<Tag> listTag){
+        tags.addAll(listTag);
+        for (Tag tag : listTag){
+            tag.getPosts().add(this);
+        }
+    }
+
+    public void removeAllTag(List<Tag> listTag){
+        tags.removeAll(listTag);
+        for (Tag tag : listTag){
+            tag.getPosts().remove(this);
+        }
+    }
+
     public String getThumbnail() {
         return thumbnail;
     }

@@ -13,15 +13,18 @@ import java.util.List;
 
 @Service
 public interface PostService {
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPost(String sortBy, int pageIndex);
+
     public SuccessResponse<PostListVm> createPost(CreatePostDTO dto, User userPrincipal);
     public SuccessResponse<PostListVm> updatePost(UpdatePostDTO dto, User userPrincipal);
 
     public SuccessResponse<Boolean> deletePost(int id,User userPrincipal);
-    public SuccessResponse<PostVm> getPostBySlug(String slug);
     public SuccessResponse<Boolean> updateStatus(int id,User userPrincipal, boolean status);
 
+    public SuccessResponse<Boolean> addPostToSeries(int postId,int seriesId,User userPrincipal);
+
+    // for client
     public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostByTag(String tagSlug,String sortBy,int pageIndex);
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPost(String sortBy, int pageIndex);
 
-
+    public SuccessResponse<PostVm> getPostBySlug(String slug);
 }

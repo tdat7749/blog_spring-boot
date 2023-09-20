@@ -1,9 +1,12 @@
 package com.example.blog_springboot.modules.post.dto;
 
+import com.example.blog_springboot.modules.tag.dto.CreateTagDTO;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
+
+import java.util.List;
 
 public class UpdatePostDTO {
     @NotBlank(message = "Không được bỏ trống trường 'title'")
@@ -34,6 +37,10 @@ public class UpdatePostDTO {
     private int seriesId;
 
     private int id;
+
+    @NotBlank(message = "Không được bỏ trống trường 'listTags'")
+    @NotNull(message = "Không được thiếu trường 'listTags'")
+    private List<CreateTagDTO> listTags;
 
     public String getTitle() {
         return title;
@@ -97,5 +104,13 @@ public class UpdatePostDTO {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public List<CreateTagDTO> getListTags() {
+        return listTags;
+    }
+
+    public void setListTags(List<CreateTagDTO> listTags) {
+        this.listTags = listTags;
     }
 }
