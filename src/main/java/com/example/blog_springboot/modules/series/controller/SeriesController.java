@@ -55,8 +55,8 @@ public class SeriesController {
 
     @PostMapping("")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<SeriesVm>> createSeries(@RequestBody @Valid CreateSeriesDTO dto){
-        var result = seriesService.createSeries(dto);
+    public ResponseEntity<SuccessResponse<SeriesVm>> createSeries(@RequestBody @Valid CreateSeriesDTO dto,@AuthenticationPrincipal User userPrincipal){
+        var result = seriesService.createSeries(dto,userPrincipal);
 
         return new ResponseEntity<>(result,HttpStatus.CREATED);
     }
