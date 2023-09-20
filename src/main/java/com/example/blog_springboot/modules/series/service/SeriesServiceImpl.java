@@ -47,12 +47,7 @@ public class SeriesServiceImpl implements SeriesService{
     }
 
     @Override
-    public SuccessResponse<SeriesVm> createSeries(CreateSeriesDTO dto) {
-        var foundUser = userRepository.findById(dto.getUserId()).orElse(null);
-        if(foundUser == null){
-            throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
-        }
-
+    public SuccessResponse<SeriesVm> createSeries(CreateSeriesDTO dto,User userPrincipal) {
         var foundSeriesBySlug = seriesRepository.findBySlug(dto.getSlug()).orElse(null);
         if(foundSeriesBySlug != null){
             throw new SeriesSlugDuplicateException(SeriesConstants.SERIES_SLUG_DUPLICATE);
@@ -64,7 +59,7 @@ public class SeriesServiceImpl implements SeriesService{
         newSeries.setContent(dto.getContent());
         newSeries.setCreatedAt(new Date());
         newSeries.setUpdatedAt(new Date());
-        newSeries.setUser(foundUser);
+        newSeries.setUser(userPrincipal);
 
         var saveSeries = seriesRepository.save(newSeries);
         if(saveSeries == null){
@@ -77,11 +72,6 @@ public class SeriesServiceImpl implements SeriesService{
 
     @Override
     public SuccessResponse<Boolean> deleteSeries(int id,User userPrincipal) {
-        var foundSeries = seriesRepository.findById(id).orElse(null);
-        if(foundSeries == null){
-            throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
-        }
-
         if(!(userPrincipal.getRole() == Role.ADMIN)){
             var isAuthor = seriesRepository.findByUserAndId(userPrincipal,id).orElse(null);
             if(isAuthor == null){
@@ -89,22 +79,28 @@ public class SeriesServiceImpl implements SeriesService{
             }
         }
 
+        var foundSeries = seriesRepository.findById(id).orElse(null);
+        if(foundSeries == null){
+            throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
+        }
+
+
         seriesRepository.delete(foundSeries);
         return new SuccessResponse<>(SeriesConstants.DELETE_SERIES_SUCCESS, true);
     }
 
     @Override
     public SuccessResponse<SeriesVm> updateSeries(UpdateSeriesDTO dto,int seriesId,User userPrincipal) {
-        var foundSeries = seriesRepository.findById(seriesId).orElse(null);
-        if(foundSeries == null){
-            throw new SeriesNotFoundException(SeriesConstants.NOT_AUTHOR_SERIES);
-        }
-
         if(!(userPrincipal.getRole() == Role.ADMIN)){
             var isAuthor = seriesRepository.findByUserAndId(userPrincipal,seriesId).orElse(null);
             if(isAuthor == null){
                 throw new NotAuthorSeriesException(SeriesConstants.NOT_AUTHOR_SERIES);
             }
+        }
+
+        var foundSeries = seriesRepository.findById(seriesId).orElse(null);
+        if(foundSeries == null){
+            throw new SeriesNotFoundException(SeriesConstants.NOT_AUTHOR_SERIES);
         }
 
         var foundSeriesBySlug = seriesRepository.findBySlug(dto.getSlug()).orElse(null);
@@ -143,9 +139,7 @@ public class SeriesServiceImpl implements SeriesService{
 
         Page<Series> pagingResult = seriesRepository.findAll(paging);
 
-        List<SeriesVm> listSeriesVm = pagingResult.getContent().stream().map(series ->{
-            return getSeriesVm(series);
-        }).toList();
+        List<SeriesVm> listSeriesVm = pagingResult.getContent().stream().map(this::getSeriesVm).toList();
 
         var result = new PagingResponse<>(pagingResult.getTotalPages(), (int) pagingResult.getTotalElements(),listSeriesVm);
 

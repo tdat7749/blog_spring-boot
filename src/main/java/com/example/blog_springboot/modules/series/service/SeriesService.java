@@ -15,7 +15,7 @@ import java.util.List;
 public interface SeriesService {
     public SuccessResponse<SeriesVm> getSeriesById(int id); // for edit
 
-    public SuccessResponse<SeriesVm> createSeries(CreateSeriesDTO dto);
+    public SuccessResponse<SeriesVm> createSeries(CreateSeriesDTO dto,User userPrincipal);
     public SuccessResponse<Boolean> deleteSeries(int id,User userPrincipal);
     public SuccessResponse<SeriesVm> updateSeries(UpdateSeriesDTO dto,int seriesId,User userPrincipal);
 

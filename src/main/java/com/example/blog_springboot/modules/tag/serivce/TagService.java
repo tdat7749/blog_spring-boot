@@ -3,6 +3,7 @@ package com.example.blog_springboot.modules.tag.serivce;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.tag.dto.CreateTagDTO;
 import com.example.blog_springboot.modules.tag.dto.UpdateTagDTO;
+import com.example.blog_springboot.modules.tag.model.Tag;
 import com.example.blog_springboot.modules.tag.viewmodel.TagVm;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ public interface TagService {
 
     SuccessResponse<List<TagVm>> getAllTag();
 
-    SuccessResponse<TagVm> createTag(CreateTagDTO dto);
+    SuccessResponse<Tag> createTag(CreateTagDTO dto);
 
     SuccessResponse<TagVm> updateTag(UpdateTagDTO dto,int tagId);
 
