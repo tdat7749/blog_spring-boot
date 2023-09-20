@@ -28,7 +28,7 @@ public class Tag {
     @Column(length = 120,nullable = false,unique = true)
     private String slug;
 
-    @ColumnDefault("false")
+    @ColumnDefault("true")
     private boolean status;
 
     @Column(name = "created_at",nullable = false)
