@@ -27,7 +27,6 @@ public class UpdatePostDTO {
     @NotNull(message = "Không được thiếu trường 'summary'")
     private String summary;
 
-    @NotBlank(message = "Không được bỏ trống trường 'isPublished'")
     @NotNull(message = "Không được thiếu trường 'isPublished'")
     private boolean isPublished;
 
@@ -36,9 +35,7 @@ public class UpdatePostDTO {
     @Digits(integer = 10,fraction = 0,message = "Trường 'seriesID' phải là số nguyên") // Kiểm tra là số nguyên và ít hơn 10 chữ số
     private int seriesId;
 
-    private int id;
 
-    @NotBlank(message = "Không được bỏ trống trường 'listTags'")
     @NotNull(message = "Không được thiếu trường 'listTags'")
     private List<CreateTagDTO> listTags;
 
@@ -98,13 +95,6 @@ public class UpdatePostDTO {
         this.seriesId = seriesId;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public List<CreateTagDTO> getListTags() {
         return listTags;

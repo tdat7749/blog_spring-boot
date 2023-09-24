@@ -6,12 +6,14 @@ import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.post.constant.PostConstants;
 import com.example.blog_springboot.modules.post.dto.CreatePostDTO;
 import com.example.blog_springboot.modules.post.dto.UpdatePostDTO;
+import com.example.blog_springboot.modules.post.dto.UpdatePostStatusDTO;
 import com.example.blog_springboot.modules.post.exception.*;
 import com.example.blog_springboot.modules.post.model.Post;
 import com.example.blog_springboot.modules.post.repository.PostRepository;
 import com.example.blog_springboot.modules.post.viewmodel.PostListVm;
 import com.example.blog_springboot.modules.post.viewmodel.PostVm;
 import com.example.blog_springboot.modules.series.constant.SeriesConstants;
+import com.example.blog_springboot.modules.series.exception.NotAuthorSeriesException;
 import com.example.blog_springboot.modules.series.exception.SeriesNotFoundException;
 import com.example.blog_springboot.modules.series.repository.SeriesRepository;
 import com.example.blog_springboot.modules.tag.constant.TagConstants;
@@ -106,10 +108,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public SuccessResponse<PostListVm> updatePost(UpdatePostDTO dto, User userPrincipal) {
+    public SuccessResponse<PostListVm> updatePost(UpdatePostDTO dto,int id, User userPrincipal) {
         if(!(userPrincipal.getRole() == Role.ADMIN)){
-            var isAuthor = postRepository.findByUserAndId(userPrincipal,dto.getId()).orElse(null);
-            if(isAuthor == null){
+            var isAuthor = postRepository.existsByUserAndId(userPrincipal,id);
+            if(!isAuthor){
                 throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
             }
         }
@@ -118,7 +120,7 @@ public class PostServiceImpl implements PostService {
             throw new MaxTagException(PostConstants.MAX_TAG);
         }
 
-        var foundPost = postRepository.findById(dto.getId()).orElse(null);
+        var foundPost = postRepository.findById(id).orElse(null);
         if(foundPost == null){
             throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
         }
@@ -158,8 +160,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public SuccessResponse<Boolean> deletePost(int id, User userPrincipal) {
         if(!(userPrincipal.getRole() == Role.ADMIN)){
-            var isAuthor = postRepository.findByUserAndId(userPrincipal,id).orElse(null);
-            if(isAuthor == null){
+            var isAuthor = postRepository.existsByUserAndId(userPrincipal,id);
+            if(!isAuthor){
                 throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
             }
         }
@@ -177,7 +179,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public SuccessResponse<PostVm> getPostBySlug(String slug) {
-        var foundPost = postRepository.findBySlugAndPublished(slug,true).orElse(null);
+        var foundPost = postRepository.getPostBySlug(slug).orElse(null);
         if(foundPost == null){
             throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
         }
@@ -190,14 +192,20 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostAuthor(String username, String sortBy, int pageIndex) {
-        return null;
+        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(sortBy));
+
+        Page<Post> pagingResult = postRepository.getAllPostByUsername(username,paging);
+
+        List<PostListVm> listPostVm = pagingResult.stream().map(this::getPostListVm).toList();
+
+        return new SuccessResponse<>("Thành công",new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listPostVm));
     }
 
     @Override
-    public SuccessResponse<Boolean> updateStatus(int id,User userPrincipal,boolean status) {
+    public SuccessResponse<Boolean> updateStatus(int id, User userPrincipal, UpdatePostStatusDTO dto) {
         if(!(userPrincipal.getRole() == Role.ADMIN)){
-            var isAuthor = postRepository.findByUserAndId(userPrincipal,id).orElse(null);
-            if(isAuthor == null){
+            var isAuthor = postRepository.existsByUserAndId(userPrincipal,id);
+            if(!isAuthor){
                 throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
             }
         }
@@ -207,7 +215,7 @@ public class PostServiceImpl implements PostService {
             throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
         }
 
-        foundPost.setPublished(status);
+        foundPost.setPublished(dto.isStatus());
         var savePost = postRepository.save(foundPost);
         if(savePost == null){
             throw new UpdatePostException(PostConstants.CHANGE_POST_STATUS_FAILED);
@@ -218,7 +226,38 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public SuccessResponse<Boolean> addPostToSeries(int postId, int seriesId, User userPrincipal) {
-        return null;
+        if(!(userPrincipal.getRole() == Role.ADMIN)){
+            var isPostAuthor = postRepository.existsByUserAndId(userPrincipal,postId);
+            if(!isPostAuthor){
+                throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
+            }
+
+            var isSeriesAuthor = seriesRepository.findByUserAndId(userPrincipal,seriesId).orElse(null);
+            if(isSeriesAuthor == null){
+                throw new NotAuthorSeriesException(SeriesConstants.NOT_AUTHOR_SERIES);
+            }
+        }
+
+        var foundPost = postRepository.findById(postId).orElse(null);
+        if(foundPost == null){
+            throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
+        }
+
+        var foundSeries = seriesRepository.findById(seriesId).orElse(null);
+        if(foundSeries == null){
+            throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
+        }
+
+        foundPost.setSeries(foundSeries);
+
+        var savePost = postRepository.save(foundPost);
+
+        if(savePost == null){
+            throw new UpdatePostException(PostConstants.ADD_POST_SERIES_FAILED);
+        }
+
+        return new SuccessResponse<>(PostConstants.ADD_POST_SERIES_SUCCESS,true);
+
     }
 
     @Override
@@ -236,12 +275,12 @@ public class PostServiceImpl implements PostService {
     private List<Tag> createListTag(List<CreateTagDTO> dto){
         List<Tag> listTag = new ArrayList<>();
 
-        dto.stream().map(item ->{
+        dto.forEach(item ->{
             var foundTag = tagRepository.findBySlug(item.getSlug()).orElse(null);
             if(foundTag == null){
                 foundTag = tagService.createTag(item).getData();
             }
-            return listTag.add(foundTag);
+            listTag.add(foundTag);
         });
         return listTag;
     }

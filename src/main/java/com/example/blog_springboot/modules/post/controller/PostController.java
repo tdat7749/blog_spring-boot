@@ -5,6 +5,7 @@ import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.post.dto.CreatePostDTO;
 import com.example.blog_springboot.modules.post.dto.UpdatePostDTO;
+import com.example.blog_springboot.modules.post.dto.UpdatePostStatusDTO;
 import com.example.blog_springboot.modules.post.service.PostService;
 import com.example.blog_springboot.modules.post.viewmodel.PostListVm;
 import com.example.blog_springboot.modules.post.viewmodel.PostVm;
@@ -33,10 +34,10 @@ public class PostController {
         return new ResponseEntity<>(result,HttpStatus.CREATED);
     }
 
-    @PutMapping("/")
+    @PutMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<PostListVm>> updatePost(@RequestBody @Valid UpdatePostDTO dto, @AuthenticationPrincipal User userPrincipal){
-        var result = postService.updatePost(dto,userPrincipal);
+    public ResponseEntity<SuccessResponse<PostListVm>> updatePost(@PathVariable("id") int id,@RequestBody @Valid UpdatePostDTO dto, @AuthenticationPrincipal User userPrincipal){
+        var result = postService.updatePost(dto,id,userPrincipal);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
@@ -51,8 +52,8 @@ public class PostController {
 
     @PatchMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> updateStatus(@PathVariable("id") int id,@RequestBody Boolean status, @AuthenticationPrincipal User userPrincipal){
-        var result = postService.updateStatus(id,userPrincipal,status);
+    public ResponseEntity<SuccessResponse<Boolean>> updateStatus(@PathVariable("id") int id, @RequestBody UpdatePostStatusDTO dto, @AuthenticationPrincipal User userPrincipal){
+        var result = postService.updateStatus(id,userPrincipal,dto);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }

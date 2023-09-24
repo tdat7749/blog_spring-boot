@@ -4,6 +4,7 @@ import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.post.dto.CreatePostDTO;
 import com.example.blog_springboot.modules.post.dto.UpdatePostDTO;
+import com.example.blog_springboot.modules.post.dto.UpdatePostStatusDTO;
 import com.example.blog_springboot.modules.post.viewmodel.PostListVm;
 import com.example.blog_springboot.modules.post.viewmodel.PostVm;
 import com.example.blog_springboot.modules.user.model.User;
@@ -15,10 +16,10 @@ import java.util.List;
 public interface PostService {
 
     public SuccessResponse<PostListVm> createPost(CreatePostDTO dto, User userPrincipal);
-    public SuccessResponse<PostListVm> updatePost(UpdatePostDTO dto, User userPrincipal);
+    public SuccessResponse<PostListVm> updatePost(UpdatePostDTO dto,int id, User userPrincipal);
 
     public SuccessResponse<Boolean> deletePost(int id,User userPrincipal);
-    public SuccessResponse<Boolean> updateStatus(int id,User userPrincipal, boolean status);
+    public SuccessResponse<Boolean> updateStatus(int id, User userPrincipal, UpdatePostStatusDTO dto);
 
     public SuccessResponse<Boolean> addPostToSeries(int postId,int seriesId,User userPrincipal);
 

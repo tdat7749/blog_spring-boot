@@ -32,9 +32,8 @@ public class CreatePostDTO {
     private String thumbnail;
 
     @Digits(integer = 10,fraction = 0,message = "Trường 'seriesID' phải là số nguyên") // Kiểm tra là số nguyên và ít hơn 10 chữ số
-    private int seriesId;
+    private Integer seriesId;
 
-    @NotBlank(message = "Không được bỏ trống trường 'listTags'")
     @NotNull(message = "Không được thiếu trường 'listTags'")
     private List<CreateTagDTO> listTags;
 

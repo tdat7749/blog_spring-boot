@@ -15,4 +15,8 @@ public class PostConstants {
     public static final String CHANGE_POST_STATUS_SUCCESS = "Cập nhật trạng thái bài viết thành công";
 
     public static final String MAX_TAG = "Bài viết chỉ cho tối đa 3 tag";
+
+    public static final String ADD_POST_SERIES_SUCCESS = "Thêm bài viết vào series thành công";
+
+    public static final String ADD_POST_SERIES_FAILED = "Thêm bài viết vào series thất bại";
 }

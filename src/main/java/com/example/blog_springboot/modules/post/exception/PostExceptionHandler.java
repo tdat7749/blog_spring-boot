@@ -43,4 +43,10 @@ public class PostExceptionHandler {
     public ErrorResponse postNotFoundExceptionHandler(PostNotFoundException ex){
         return new ErrorResponse(HttpStatus.NOT_FOUND, 404, ex.getMessage());
     }
+
+    @ExceptionHandler(MaxTagException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse maxTagExceptionHandler(MaxTagException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, 404, ex.getMessage());
+    }
 }
