@@ -4,6 +4,7 @@ package com.example.blog_springboot.modules.user.model;
 import com.example.blog_springboot.modules.comment.Model.Comment;
 import com.example.blog_springboot.modules.likepost.model.LikePost;
 import com.example.blog_springboot.modules.notification.model.Notification;
+import com.example.blog_springboot.modules.notification.model.UserNotification;
 import com.example.blog_springboot.modules.post.Model.Post;
 import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.user.enums.Role;
@@ -101,14 +102,9 @@ public class User implements UserDetails {
     @JsonManagedReference
     private List<User> followers;
 
-    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "user_notification",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "notification_id")
-    )
-    @JsonManagedReference
-    private List<Notification> notifications;
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "user")
+    @JsonBackReference
+    private List<UserNotification> userNotifications;
 
 
     //
@@ -307,11 +303,19 @@ public class User implements UserDetails {
         return role;
     }
 
-    public List<Notification> getNotifications() {
-        return notifications;
+    public List<LikePost> getLikePosts() {
+        return likePosts;
     }
 
-    public void setNotifications(List<Notification> notifications) {
-        this.notifications = notifications;
+    public void setLikePosts(List<LikePost> likePosts) {
+        this.likePosts = likePosts;
+    }
+
+    public List<UserNotification> getUserNotifications() {
+        return userNotifications;
+    }
+
+    public void setUserNotifications(List<UserNotification> userNotifications) {
+        this.userNotifications = userNotifications;
     }
 }
