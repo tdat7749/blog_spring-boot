@@ -2,6 +2,7 @@ package com.example.blog_springboot.modules.notification.model;
 
 import com.example.blog_springboot.modules.user.model.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -14,19 +15,18 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "is_read",nullable = false)
-    private boolean isRead;
+    @Column(nullable = false,length = 1000)
+    private String link;
 
     @Column(nullable = false,length = 1000)
     private String message;
 
-    @ManyToMany(mappedBy = "notifications")
+    @OneToMany(mappedBy = "notification")
     @JsonBackReference
-    private List<User> users;
+    private List<UserNotification> userNotifications;
 
-    public Notification(int id, boolean isRead, String message) {
+    public Notification(int id, String message) {
         this.id = id;
-        this.isRead = isRead;
         this.message = message;
     }
 
@@ -42,14 +42,6 @@ public class Notification {
         this.id = id;
     }
 
-    public boolean isRead() {
-        return isRead;
-    }
-
-    public void setRead(boolean read) {
-        isRead = read;
-    }
-
     public String getMessage() {
         return message;
     }
@@ -58,11 +50,19 @@ public class Notification {
         this.message = message;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public List<UserNotification> getUserNotifications() {
+        return userNotifications;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUserNotifications(List<UserNotification> userNotifications) {
+        this.userNotifications = userNotifications;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 }
