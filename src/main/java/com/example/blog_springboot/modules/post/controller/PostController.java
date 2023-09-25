@@ -3,6 +3,7 @@ package com.example.blog_springboot.modules.post.controller;
 import com.example.blog_springboot.commons.Constants;
 import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
+import com.example.blog_springboot.modules.likepost.service.LikePostService;
 import com.example.blog_springboot.modules.post.dto.CreatePostDTO;
 import com.example.blog_springboot.modules.post.dto.UpdatePostDTO;
 import com.example.blog_springboot.modules.post.dto.UpdatePostStatusDTO;
@@ -10,6 +11,7 @@ import com.example.blog_springboot.modules.post.service.PostService;
 import com.example.blog_springboot.modules.post.viewmodel.PostListVm;
 import com.example.blog_springboot.modules.post.viewmodel.PostVm;
 import com.example.blog_springboot.modules.user.model.User;
+import com.example.blog_springboot.modules.user.viewmodel.UserVm;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +24,11 @@ import java.util.List;
 @RequestMapping("/api/posts")
 public class PostController {
     private final PostService postService;
-    public PostController(PostService postService){
+    private final LikePostService likePostService;
+
+    public PostController(PostService postService,LikePostService likePostService){
         this.postService = postService;
+        this.likePostService = likePostService;
     }
 
     @PostMapping("/")
@@ -58,7 +63,7 @@ public class PostController {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
-    @GetMapping("/{slug}/tag")
+    @GetMapping("/{slug}/tags")
     @ResponseBody
     public ResponseEntity<SuccessResponse<PagingResponse<List<PostListVm>>>> getAllPostByTag(
             @PathVariable("slug") String tagSlug,
@@ -109,4 +114,37 @@ public class PostController {
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
+
+    @PostMapping("/{postId}/likes")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> likePost(@PathVariable("postId") int postId,@AuthenticationPrincipal User userPrincipal){
+        var result = likePostService.likePost(postId,userPrincipal);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{postId}/likes")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> unLikePost(@PathVariable("postId") int postId,@AuthenticationPrincipal User userPrincipal){
+        var result = likePostService.unLikePost(postId,userPrincipal);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @GetMapping("/{postId}/liked")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> checkUserLikedPost(@PathVariable("postId") int postId,@AuthenticationPrincipal User userPrincipal){
+        var result = likePostService.checkUserLikedPost(postId,userPrincipal);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @GetMapping("/{postId}/likes")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<List<UserVm>>> getListUserLikedPost(@PathVariable("postId") int postId){
+        var result = likePostService.getListUserLikedPost(postId);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
 }
