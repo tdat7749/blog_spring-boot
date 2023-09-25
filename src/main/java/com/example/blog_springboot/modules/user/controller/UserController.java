@@ -5,6 +5,8 @@ import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.user.dto.ChangeInformationDTO;
 import com.example.blog_springboot.modules.user.dto.ChangePasswordDTO;
+import com.example.blog_springboot.modules.user.dto.ChangePermissionDTO;
+import com.example.blog_springboot.modules.user.dto.ForgotPasswordDTO;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.service.UserService;
 import com.example.blog_springboot.modules.user.viewmodel.UserVm;
@@ -70,6 +72,44 @@ public class UserController {
             @RequestParam(value = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
     ){
         var result = userService.getListFollowers(sortBy,pageIndex,userId);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/{email}/forgot-mail")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> sendCodeForgotPassword(
+            @PathVariable("email") String email
+           ){
+        var result = userService.sendCodeForgotPassword(email);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PatchMapping("/permission")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> changePermission(
+            @RequestBody ChangePermissionDTO dto
+    ){
+        var result = userService.changePermission(dto);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PatchMapping("/forgot")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> forgotPassword(
+            @RequestBody ForgotPasswordDTO dto
+            ){
+        var result = userService.forgotPassword(dto);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/me")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<UserVm>> getMe(@AuthenticationPrincipal User userPrincipal){
+        var result = userService.getMe(userPrincipal);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
