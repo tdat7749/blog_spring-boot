@@ -2,12 +2,9 @@ package com.example.blog_springboot.modules.user.model;
 
 
 import com.example.blog_springboot.modules.comment.Model.Comment;
-import com.example.blog_springboot.modules.likepost.model.LikePost;
-import com.example.blog_springboot.modules.notification.model.Notification;
-import com.example.blog_springboot.modules.post.Model.Post;
+import com.example.blog_springboot.modules.post.model.Post;
 import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.user.enums.Role;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -83,10 +80,6 @@ public class User implements UserDetails {
     @JsonManagedReference
     private List<Series> series;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "user")
-    @JsonBackReference
-    private List<LikePost> likePosts;
-
 
     @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinTable(
@@ -100,16 +93,6 @@ public class User implements UserDetails {
     @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "following")
     @JsonManagedReference
     private List<User> followers;
-
-    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "user_notification",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "notification_id")
-    )
-    @JsonManagedReference
-    private List<Notification> notifications;
-
 
     //
 
@@ -305,13 +288,5 @@ public class User implements UserDetails {
 
     public Role getRole() {
         return role;
-    }
-
-    public List<Notification> getNotifications() {
-        return notifications;
-    }
-
-    public void setNotifications(List<Notification> notifications) {
-        this.notifications = notifications;
     }
 }

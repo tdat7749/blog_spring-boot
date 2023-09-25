@@ -38,4 +38,34 @@ public class UserExceptionHandler {
     public ErrorResponse changeUserInformationExceptionHandler(ChangeUserInformationException ex){
         return new ErrorResponse(HttpStatus.BAD_REQUEST,400, ex.getMessage());
     }
+
+    @ExceptionHandler(InvalidRoleException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse invalidRoleExceptionHandler(InvalidRoleException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,400, ex.getMessage());
+    }
+
+    @ExceptionHandler(ChangePermissionException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse changePermissionExceptionHandler(ChangePermissionException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,400, ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidCodeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse invalidCodeExceptionHandler(InvalidCodeException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,400, ex.getMessage());
+    }
+
+    @ExceptionHandler(ForgotPasswordException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse forgotPasswordExceptionHandler(ForgotPasswordException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,400, ex.getMessage());
+    }
+
+    @ExceptionHandler(SendMailForgotPasswordException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse sendMailForgotPasswordExceptionHandler(SendMailForgotPasswordException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,400, ex.getMessage());
+    }
 }

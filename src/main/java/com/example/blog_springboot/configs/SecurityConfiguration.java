@@ -55,11 +55,19 @@ public class SecurityConfiguration {
 
                         //user
                         .requestMatchers(HttpMethod.GET,"/api/users/**").permitAll()
-                        .requestMatchers(HttpMethod.PATCH,"/api/users/**").hasAnyRole("ADMIN","USER")
+                        .requestMatchers(HttpMethod.GET,"/api/users/me").hasAnyRole("USER","ADMIN")
+                        .requestMatchers(HttpMethod.PATCH,"/api/users/**").hasAnyRole("USER","ADMIN")
 
                         //follow
                         .requestMatchers(HttpMethod.POST,"/api/follows/{id}").hasAnyRole("USER","ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/api/follows/{id}").hasAnyRole("USER","ADMIN")
+
+                        //post
+                        .requestMatchers(HttpMethod.GET,"/api/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/posts/**").hasAnyRole("USER","ADMIN")
+                        .requestMatchers(HttpMethod.PATCH,"/api/posts/**").hasAnyRole("USER","ADMIN")
+                        .requestMatchers(HttpMethod.PUT,"/api/posts/**").hasAnyRole("USER","ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/api/posts/**").hasAnyRole("USER","ADMIN")
 
                         .anyRequest().authenticated())
                         .sessionManagement(session -> session

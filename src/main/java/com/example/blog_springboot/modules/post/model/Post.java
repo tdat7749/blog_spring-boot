@@ -1,4 +1,4 @@
-package com.example.blog_springboot.modules.post.Model;
+package com.example.blog_springboot.modules.post.model;
 
 
 import com.example.blog_springboot.modules.comment.Model.Comment;
@@ -92,6 +92,20 @@ public class Post {
         this.updatedAt = updatedAt;
         this.summary = summary;
         this.thumbnail = thumbnail;
+    }
+
+    public void addAllTag(List<Tag> listTag){
+        tags.addAll(listTag);
+        for (Tag tag : listTag){
+            tag.getPosts().add(this);
+        }
+    }
+
+    public void removeAllTag(List<Tag> listTag){
+        tags.removeAll(listTag);
+        for (Tag tag : listTag){
+            tag.getPosts().remove(this);
+        }
     }
 
     public String getThumbnail() {

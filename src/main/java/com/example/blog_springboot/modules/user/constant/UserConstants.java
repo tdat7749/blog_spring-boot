@@ -14,4 +14,20 @@ public class UserConstants {
     public static final String CHANGE_INFORMATION_FAILED = "Thay đổi thông tin thất bại";
 
     public static final String CHANGE_INFORMATION_SUCCESS = "Thay đổi thông tin thành công";
+
+    public static final String INVALID_ROLE = "Role không hợp lệ";
+
+    public static final String CHANGE_PERMISSION_FAILED = "Thay đổi role thất bại";
+
+    public static final String CHANGE_PERMISSION_SUCCESS = "Thay đổi role thành công";
+
+    public static final String INVALID_CODE = "Mã đã hết hạn hoặc không hợp lệ";
+
+    public static final String FORGOT_PASSWORD_FAILED = "Lấy lại mật khẩu thất bại";
+
+    public static final String FORGOT_PASSWORD_SUCCESS = "Lấy lại mật khẩu thành công";
+
+    public static final String SEND_MAIL_FORGOT_PASSWORD_FAILED = "Gửi mã xác minh thất bại";
+
+    public static final String SEND_MAIL_FORGOT_PASSWORD_SUCCESS = "Đã gửi mã xác minh thành công, vui lòng kiểm tra email của bạn";
 }
