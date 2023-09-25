@@ -73,8 +73,8 @@ public class SeriesServiceImpl implements SeriesService{
     @Override
     public SuccessResponse<Boolean> deleteSeries(int id,User userPrincipal) {
         if(!(userPrincipal.getRole() == Role.ADMIN)){
-            var isAuthor = seriesRepository.findByUserAndId(userPrincipal,id).orElse(null);
-            if(isAuthor == null){
+            var isAuthor = seriesRepository.existsByUserAndId(userPrincipal,id);
+            if(!isAuthor){
                 throw new NotAuthorSeriesException(SeriesConstants.NOT_AUTHOR_SERIES);
             }
         }
@@ -92,8 +92,8 @@ public class SeriesServiceImpl implements SeriesService{
     @Override
     public SuccessResponse<SeriesVm> updateSeries(UpdateSeriesDTO dto,int seriesId,User userPrincipal) {
         if(!(userPrincipal.getRole() == Role.ADMIN)){
-            var isAuthor = seriesRepository.findByUserAndId(userPrincipal,seriesId).orElse(null);
-            if(isAuthor == null){
+            var isAuthor = seriesRepository.existsByUserAndId(userPrincipal,seriesId);
+            if(!isAuthor){
                 throw new NotAuthorSeriesException(SeriesConstants.NOT_AUTHOR_SERIES);
             }
         }
