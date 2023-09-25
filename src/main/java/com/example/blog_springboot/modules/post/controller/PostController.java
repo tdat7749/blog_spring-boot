@@ -89,4 +89,24 @@ public class PostController {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+    @PostMapping("/{postId}/series/{seriesId}")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> getPostBySlug(@PathVariable("postId") int postId,@PathVariable("seriesId") int seriesId,@AuthenticationPrincipal User userPrincipal){
+        var result = postService.addPostToSeries(postId,seriesId,userPrincipal);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @GetMapping("/{userName}")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<PagingResponse<List<PostListVm>>>> getAllPostAuthor(
+            @PathVariable("userName") String userName,
+            @RequestParam(name = "pageIndex",required = true,defaultValue = "0") Integer pageIndex,
+            @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
+    )
+    {
+        var result = postService.getAllPostAuthor(userName,sortBy,pageIndex);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
 }

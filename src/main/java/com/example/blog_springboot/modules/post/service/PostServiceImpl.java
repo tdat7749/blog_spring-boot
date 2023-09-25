@@ -232,8 +232,8 @@ public class PostServiceImpl implements PostService {
                 throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
             }
 
-            var isSeriesAuthor = seriesRepository.findByUserAndId(userPrincipal,seriesId).orElse(null);
-            if(isSeriesAuthor == null){
+            var isSeriesAuthor = seriesRepository.existsByUserAndId(userPrincipal,seriesId);
+            if(!isSeriesAuthor){
                 throw new NotAuthorSeriesException(SeriesConstants.NOT_AUTHOR_SERIES);
             }
         }
