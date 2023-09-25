@@ -4,6 +4,8 @@ import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.user.dto.ChangeInformationDTO;
 import com.example.blog_springboot.modules.user.dto.ChangePasswordDTO;
+import com.example.blog_springboot.modules.user.dto.ChangePermissionDTO;
+import com.example.blog_springboot.modules.user.dto.ForgotPasswordDTO;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.viewmodel.UserVm;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,14 @@ public interface UserService {
     public SuccessResponse<Boolean> changeAvatar(String avatar,User userPrincipal);
 
     public SuccessResponse<UserVm> changeInformation(ChangeInformationDTO dto,User userPrincipal);
+
+    public SuccessResponse<UserVm> getMe(User user);
+
+    public SuccessResponse<Boolean> changePermission(ChangePermissionDTO dto);
+
+    public SuccessResponse<Boolean> forgotPassword(ForgotPasswordDTO dto);
+
+    public SuccessResponse<Boolean> sendCodeForgotPassword(String email);
 
     public SuccessResponse<PagingResponse<List<UserVm>>> getListFollowing(String sortBy,int pageIndex,int userId);
 
