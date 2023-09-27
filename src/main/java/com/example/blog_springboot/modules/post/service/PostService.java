@@ -8,6 +8,7 @@ import com.example.blog_springboot.modules.post.dto.UpdatePostStatusDTO;
 import com.example.blog_springboot.modules.post.viewmodel.PostListVm;
 import com.example.blog_springboot.modules.post.viewmodel.PostVm;
 import com.example.blog_springboot.modules.user.model.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 @Service
 public interface PostService {
 
-    public SuccessResponse<PostListVm> createPost(CreatePostDTO dto, User userPrincipal);
+    public SuccessResponse<PostListVm> createPost(CreatePostDTO dto, User userPrincipal) throws JsonProcessingException;
     public SuccessResponse<PostListVm> updatePost(UpdatePostDTO dto,int id, User userPrincipal);
 
     public SuccessResponse<Boolean> deletePost(int id,User userPrincipal);

@@ -35,6 +35,10 @@ public class SecurityConfiguration {
         .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
 
+                        //socket
+                        .requestMatchers(HttpMethod.GET,"/ws/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/user/**").permitAll()
+
                         //auth
                         .requestMatchers("/api/auth/**").permitAll()
 
@@ -57,6 +61,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/api/users/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/users/me").hasAnyRole("USER","ADMIN")
                         .requestMatchers(HttpMethod.PATCH,"/api/users/**").hasAnyRole("USER","ADMIN")
+                        .requestMatchers(HttpMethod.PATCH,"/api/users/permission").hasAnyRole("ADMIN")
 
                         //follow
                         .requestMatchers(HttpMethod.POST,"/api/follows/{id}").hasAnyRole("USER","ADMIN")

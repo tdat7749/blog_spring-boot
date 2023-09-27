@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -20,6 +21,12 @@ public class Notification {
 
     @Column(nullable = false,length = 1000)
     private String message;
+
+    @Column(nullable = false,name = "created_at")
+    private Date createdAt;
+
+    @Column(nullable = false,name = "updated_at")
+    private Date updatedAt;
 
     @OneToMany(mappedBy = "notification")
     @JsonBackReference
@@ -64,5 +71,21 @@ public class Notification {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updateAt) {
+        this.updatedAt = updateAt;
     }
 }
