@@ -19,4 +19,16 @@ public class NotificationExceptionHandler {
     public ErrorResponse createUserNotificationExceptionHandler(CreateUserNotificationException ex){
         return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
     }
+
+    @ExceptionHandler(NotificationNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse notificationNotFoundExceptionHandler(NotificationNotFoundException ex){
+        return new ErrorResponse(HttpStatus.NOT_FOUND,404,ex.getMessage());
+    }
+
+    @ExceptionHandler(ReadNotificationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse readNotificationExceptionHandler(ReadNotificationException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
+    }
 }

@@ -6,6 +6,8 @@ public class NotificationVm {
     private String message;
     private boolean isRead;
 
+    private String createdAt;
+
     public int getId() {
         return id;
     }
@@ -36,5 +38,13 @@ public class NotificationVm {
 
     public void setRead(boolean read) {
         isRead = read;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }
