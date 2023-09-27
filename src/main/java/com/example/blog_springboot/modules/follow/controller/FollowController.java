@@ -3,6 +3,7 @@ package com.example.blog_springboot.modules.follow.controller;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.follow.service.FollowService;
 import com.example.blog_springboot.modules.user.model.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class FollowController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<SuccessResponse<Boolean>> follow(@PathVariable("id") @NotNull int id, @AuthenticationPrincipal User userPrincipal){
+    public ResponseEntity<SuccessResponse<Boolean>> follow(@PathVariable("id") @NotNull int id, @AuthenticationPrincipal User userPrincipal) throws JsonProcessingException {
         var result = followService.follow(id,userPrincipal);
 
         return new ResponseEntity<>(result, HttpStatus.OK);

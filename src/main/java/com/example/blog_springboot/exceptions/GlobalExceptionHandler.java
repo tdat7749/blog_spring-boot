@@ -2,6 +2,7 @@ package com.example.blog_springboot.exceptions;
 
 
 import com.example.blog_springboot.commons.ErrorResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -43,5 +44,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse authenticationExceptionHandler(AuthenticationException ex){
         return new ErrorResponse(HttpStatus.BAD_REQUEST,400,"Sai tài khoản hoặc mật khẩu");
+    }
+
+    @ExceptionHandler(JsonProcessingException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse jsonProcessingExceptionHandler(JsonProcessingException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,500,"Lỗi xảy ra, vui lòng thử lại sau");
     }
 }
