@@ -58,6 +58,8 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.DELETE,"/api/tags/{id}").hasAnyRole("ADMIN")
 
                         //user
+                        .requestMatchers(HttpMethod.GET,"/api/users/top10-noti").hasAnyRole("USER","ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/users/notifications").hasAnyRole("USER","ADMIN")
                         .requestMatchers(HttpMethod.GET,"/api/users/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/users/me").hasAnyRole("USER","ADMIN")
                         .requestMatchers(HttpMethod.PATCH,"/api/users/**").hasAnyRole("USER","ADMIN")

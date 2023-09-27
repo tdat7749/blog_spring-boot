@@ -3,6 +3,8 @@ package com.example.blog_springboot.modules.user.controller;
 import com.example.blog_springboot.commons.Constants;
 import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
+import com.example.blog_springboot.modules.notification.service.UserNotificationService;
+import com.example.blog_springboot.modules.notification.viewmodel.NotificationVm;
 import com.example.blog_springboot.modules.user.dto.ChangeInformationDTO;
 import com.example.blog_springboot.modules.user.dto.ChangePasswordDTO;
 import com.example.blog_springboot.modules.user.dto.ChangePermissionDTO;
@@ -23,9 +25,11 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
+    private final UserNotificationService userNotificationService;
 
-    public UserController(UserService userService){
+    public UserController(UserService userService, UserNotificationService userNotificationService){
         this.userService = userService;
+        this.userNotificationService = userNotificationService;
     }
 
     @PatchMapping("/password")
@@ -110,6 +114,46 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<SuccessResponse<UserVm>> getMe(@AuthenticationPrincipal User userPrincipal){
         var result = userService.getMe(userPrincipal);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/top10-noti")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<List<NotificationVm>>> getTop10NotificationCurrentUser(@AuthenticationPrincipal User userPrincipal){
+        var result = userNotificationService.getTop10NotificationCurrentUser(userPrincipal);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/notifications")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<PagingResponse<List<NotificationVm>>>> getTop10NotificationCurrentUser(
+            @RequestParam(value = "pageIndex", defaultValue = "0",required = true) int pageIndex,
+            @AuthenticationPrincipal User userPrincipal
+    ){
+        var result = userNotificationService.getNotificationCurrentUser(pageIndex,userPrincipal);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{notiId}/notifications")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> readNotification(
+            @PathVariable("notiId") int notificationId,
+            @AuthenticationPrincipal User userPrincipal
+    ){
+        var result = userNotificationService.readNotification(notificationId,userPrincipal);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PatchMapping("/notifications")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> readAllNotification(
+            @AuthenticationPrincipal User userPrincipal
+    ){
+        var result = userNotificationService.readAllNotification(userPrincipal);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
