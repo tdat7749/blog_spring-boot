@@ -12,6 +12,7 @@ import com.example.blog_springboot.modules.post.viewmodel.PostListVm;
 import com.example.blog_springboot.modules.post.viewmodel.PostVm;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.viewmodel.UserVm;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class PostController {
 
     @PostMapping("/")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<PostListVm>> createPost(@RequestBody @Valid CreatePostDTO dto, @AuthenticationPrincipal User userPrincipal){
+    public ResponseEntity<SuccessResponse<PostListVm>> createPost(@RequestBody @Valid CreatePostDTO dto, @AuthenticationPrincipal User userPrincipal) throws JsonProcessingException {
         var result = postService.createPost(dto,userPrincipal);
 
         return new ResponseEntity<>(result,HttpStatus.CREATED);

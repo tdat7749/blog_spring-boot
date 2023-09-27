@@ -3,6 +3,10 @@ package com.example.blog_springboot.modules.post.service;
 import com.example.blog_springboot.commons.Constants;
 import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
+import com.example.blog_springboot.modules.notification.dto.CreateNotificationDTO;
+import com.example.blog_springboot.modules.notification.service.NotificationService;
+import com.example.blog_springboot.modules.notification.service.UserNotificationService;
+import com.example.blog_springboot.modules.notification.viewmodel.NotificationVm;
 import com.example.blog_springboot.modules.post.constant.PostConstants;
 import com.example.blog_springboot.modules.post.dto.CreatePostDTO;
 import com.example.blog_springboot.modules.post.dto.UpdatePostDTO;
@@ -26,6 +30,8 @@ import com.example.blog_springboot.modules.tag.viewmodel.TagVm;
 import com.example.blog_springboot.modules.user.enums.Role;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.viewmodel.UserVm;
+import com.example.blog_springboot.modules.websocket.service.WebSocketService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,12 +50,28 @@ public class PostServiceImpl implements PostService {
     private final SeriesRepository seriesRepository;
     private final TagRepository tagRepository;
     private final TagService tagService;
+    private final NotificationService notificationService;
 
-    public PostServiceImpl(PostRepository postRepository,SeriesRepository seriesRepository,TagRepository tagRepository,TagService tagService){
+    private final UserNotificationService userNotificationService;
+
+    private final WebSocketService webSocketService;
+
+    public PostServiceImpl(
+            PostRepository postRepository,
+            SeriesRepository seriesRepository,
+            TagRepository tagRepository,
+            TagService tagService,
+            NotificationService notificationService,
+            UserNotificationService userNotificationService,
+            WebSocketService webSocketService
+    ){
         this.postRepository = postRepository;
         this.seriesRepository = seriesRepository;
         this.tagRepository = tagRepository;
         this.tagService = tagService;
+        this.notificationService = notificationService;
+        this.userNotificationService = userNotificationService;
+        this.webSocketService = webSocketService;
     }
 
     @Override
@@ -65,7 +87,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public SuccessResponse<PostListVm> createPost(CreatePostDTO dto, User userPrincipal) {
+    public SuccessResponse<PostListVm> createPost(CreatePostDTO dto, User userPrincipal) throws JsonProcessingException {
         if(dto.getListTags().size() > 3){
             throw new MaxTagException(PostConstants.MAX_TAG);
         }
@@ -101,6 +123,27 @@ public class PostServiceImpl implements PostService {
         if(savePost == null){
             throw new CreatePostException(PostConstants.CREATE_POST_FAILED);
         }
+
+        // sau khi khởi tạo post thành công thì tạo ra 1 thông báo
+        CreateNotificationDTO notification = new CreateNotificationDTO();
+        notification.setLink("");
+        notification.setMessage("");
+
+        var newNotification = notificationService.createNotification(notification);
+
+        // sau đó nối thông báo với user
+        List<User> users = userPrincipal.getFollowers();
+
+        userNotificationService.createUserNotification(users,newNotification);
+
+        // Tạo ra 1 notification view model và gửi tới client
+        NotificationVm notificationVm = new NotificationVm();
+        notificationVm.setId(newNotification.getId());
+        notificationVm.setLink(newNotification.getLink());
+        notificationVm.setMessage(newNotification.getMessage());
+        notificationVm.setRead(false);
+
+        webSocketService.sendNotificationToClient(users,notificationVm);
 
         var newPostListVm = getPostListVm(savePost);
         return new SuccessResponse<>(PostConstants.CREATE_POST_SUCCESS,newPostListVm);
