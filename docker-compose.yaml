@@ -47,9 +47,8 @@ services:
     ports:
       - '4200:4200'
     volumes:
-      - './frontend/src:/app/src'
-      - './frontend/node_modules:/app/node_modules'
-      - './frontend/:/app'
+      - './frontend/:/app:delegated'
+      - '/app/node_modules'
     tty: true
 
 volumes:
