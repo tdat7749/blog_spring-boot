@@ -18,6 +18,10 @@ public class PostListVm {
     private String thumbnail;
     private String summary;
 
+    private long totalComment;
+    private long totalLike;
+    private long totalView;
+
     public String getTitle() {
         return title;
     }
@@ -88,5 +92,29 @@ public class PostListVm {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public long getTotalComment() {
+        return totalComment;
+    }
+
+    public void setTotalComment(long totalComment) {
+        this.totalComment = totalComment;
+    }
+
+    public long getTotalLike() {
+        return totalLike;
+    }
+
+    public void setTotalLike(long totalLike) {
+        this.totalLike = totalLike;
+    }
+
+    public long getTotalView() {
+        return totalView;
+    }
+
+    public void setTotalView(long totalView) {
+        this.totalView = totalView;
     }
 }

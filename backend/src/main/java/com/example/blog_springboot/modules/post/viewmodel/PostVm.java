@@ -19,6 +19,10 @@ public class PostVm {
     private List<TagVm> tags;
     private UserVm author;
 
+    private long totalComment;
+    private long totalLike;
+    private long totalView;
+
     public int getId() {
         return id;
     }
@@ -105,5 +109,29 @@ public class PostVm {
 
     public void setAuthor(UserVm author) {
         this.author = author;
+    }
+
+    public long getTotalComment() {
+        return totalComment;
+    }
+
+    public void setTotalComment(long totalComment) {
+        this.totalComment = totalComment;
+    }
+
+    public long getTotalLike() {
+        return totalLike;
+    }
+
+    public void setTotalLike(long totalLike) {
+        this.totalLike = totalLike;
+    }
+
+    public long getTotalView() {
+        return totalView;
+    }
+
+    public void setTotalView(long totalView) {
+        this.totalView = totalView;
     }
 }

@@ -110,6 +110,7 @@ public class PostServiceImpl implements PostService {
         newPost.setCreatedAt(new Date());
         newPost.setUpdatedAt(new Date());
         newPost.setTags(listTag);
+        newPost.setTotalView(0);
 
         if(dto.getSeriesId() != null){
             var foundSeries = seriesRepository.findById(dto.getSeriesId()).orElse(null);
@@ -245,6 +246,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostNotPublished(String sortBy, int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(sortBy));
+
+        Page<Post> pagingResult = postRepository.getAllPostNotPublished(paging);
+
+        List<PostListVm> listPostVm = pagingResult.stream().map(this::getPostListVm).toList();
+
+        return new SuccessResponse<>("Thành công",new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listPostVm));
+    }
+
+    @Override
     public SuccessResponse<Boolean> updateStatus(int id, User userPrincipal, UpdatePostStatusDTO dto) {
         if(!(userPrincipal.getRole() == Role.ADMIN)){
             var isAuthor = postRepository.existsByUserAndId(userPrincipal,id);
@@ -339,6 +351,7 @@ public class PostServiceImpl implements PostService {
         postListVm.setThumbnail(post.getThumbnail());
         postListVm.setCreatedAt(post.getCreatedAt().toString());
         postListVm.setUpdatedAt(post.getUpdatedAt().toString());
+        postListVm.setTotalView(post.getTotalView());
 
         // set userVm
         userVm.setUserName(post.getUser().getUsername());
@@ -376,6 +389,7 @@ public class PostServiceImpl implements PostService {
         postVm.setCreatedAt(post.getCreatedAt().toString());
         postVm.setUpdatedAt(post.getUpdatedAt().toString());
         postVm.setContent(post.getContent());
+        postVm.setTotalView(post.getTotalView());
 
         // set userVm
         userVm.setUserName(post.getUser().getUsername());

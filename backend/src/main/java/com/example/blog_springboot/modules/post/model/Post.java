@@ -48,6 +48,10 @@ public class Post {
     @Column(length = 1000, nullable = false)
     private String thumbnail;
 
+    @Column(nullable = false,name = "total_view")
+    @ColumnDefault(value = "0")
+    private long totalView;
+
 
     // Config ORM
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "post")
@@ -83,7 +87,7 @@ public class Post {
     public Post() {
     }
 
-    public Post(int id, String title, String content, boolean isPublished, Date createdAt, Date updatedAt,String summary,String thumbnail) {
+    public Post(int id, String title, String content, boolean isPublished, Date createdAt, Date updatedAt,String summary,String thumbnail,long totalView) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -92,6 +96,7 @@ public class Post {
         this.updatedAt = updatedAt;
         this.summary = summary;
         this.thumbnail = thumbnail;
+        this.totalView = totalView;
     }
 
     public void addAllTag(List<Tag> listTag){
@@ -219,6 +224,14 @@ public class Post {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public long getTotalView() {
+        return totalView;
+    }
+
+    public void setTotalView(long totalView) {
+        this.totalView = totalView;
     }
 }
 

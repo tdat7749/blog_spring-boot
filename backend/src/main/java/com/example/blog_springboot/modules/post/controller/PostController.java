@@ -87,6 +87,17 @@ public class PostController {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+    @GetMapping("/not-published")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<PagingResponse<List<PostListVm>>>> getAllPostNotPublished(
+            @RequestParam(name = "pageIndex",required = true,defaultValue = "0") Integer pageIndex,
+            @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy)
+    {
+        var result = postService.getAllPostNotPublished(sortBy,pageIndex);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
     @GetMapping("/slug/{slug}")
     @ResponseBody
     public ResponseEntity<SuccessResponse<PostVm>> getPostBySlug(@PathVariable("slug") String slug){
