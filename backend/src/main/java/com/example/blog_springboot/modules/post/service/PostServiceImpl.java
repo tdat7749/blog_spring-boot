@@ -354,11 +354,13 @@ public class PostServiceImpl implements PostService {
         postListVm.setTotalView(post.getTotalView());
 
         // set userVm
-        userVm.setUserName(post.getUser().getUsername());
-        userVm.setLastName(post.getUser().getLastName());
-        userVm.setFirstName(post.getUser().getFirstName());
-        userVm.setUserName(post.getUser().getUsername());
-        userVm.setId(post.getUser().getId());
+        var user = post.getUser();
+
+        userVm.setUserName(user.getUsername());
+        userVm.setLastName(user.getLastName());
+        userVm.setFirstName(user.getFirstName());
+        userVm.setUserName(user.getUsername());
+        userVm.setId(user.getId());
 
         // set tagVm
         List<TagVm> listTagVm = post.getTags().stream().map(tag -> {
@@ -392,11 +394,14 @@ public class PostServiceImpl implements PostService {
         postVm.setTotalView(post.getTotalView());
 
         // set userVm
-        userVm.setUserName(post.getUser().getUsername());
-        userVm.setLastName(post.getUser().getLastName());
-        userVm.setFirstName(post.getUser().getFirstName());
-        userVm.setUserName(post.getUser().getUsername());
-        userVm.setId(post.getUser().getId());
+
+        var user = post.getUser();
+
+        userVm.setUserName(user.getUsername());
+        userVm.setLastName(user.getLastName());
+        userVm.setFirstName(user.getFirstName());
+        userVm.setUserName(user.getUsername());
+        userVm.setId(user.getId());
 
         // set tagVm
         List<TagVm> listTagVm = post.getTags().stream().map(tag -> {

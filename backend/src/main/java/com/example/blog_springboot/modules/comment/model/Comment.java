@@ -1,4 +1,4 @@
-package com.example.blog_springboot.modules.comment.Model;
+package com.example.blog_springboot.modules.comment.model;
 
 import com.example.blog_springboot.modules.post.model.Post;
 import com.example.blog_springboot.modules.user.model.User;
@@ -20,7 +20,7 @@ public class Comment {
     private String content;
 
     @Column(name = "parent_id",nullable = true)
-    private int parentId;
+    private Integer parentId;
 
     @Column(name = "created_at",nullable = false)
     private Date createdAt;
@@ -49,7 +49,7 @@ public class Comment {
         return content;
     }
 
-    public int getParentId() {
+    public Integer getParentId() {
         return parentId;
     }
 
@@ -69,7 +69,7 @@ public class Comment {
         this.content = content;
     }
 
-    public void setParentId(int parentId) {
+    public void setParentId(Integer parentId) {
         this.parentId = parentId;
     }
 
@@ -84,7 +84,24 @@ public class Comment {
     public Comment() {
 
     }
-    public Comment(int id, String content, int parentId) {
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Comment(int id, String content, Integer parentId) {
         this.id = id;
         this.content = content;
         this.parentId = parentId;

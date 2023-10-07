@@ -1,7 +1,7 @@
 package com.example.blog_springboot.modules.post.model;
 
 
-import com.example.blog_springboot.modules.comment.Model.Comment;
+import com.example.blog_springboot.modules.comment.model.Comment;
 import com.example.blog_springboot.modules.likepost.model.LikePost;
 import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.tag.model.Tag;

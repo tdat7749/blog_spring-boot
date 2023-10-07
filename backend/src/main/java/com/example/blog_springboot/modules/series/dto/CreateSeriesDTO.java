@@ -20,27 +20,20 @@ public class CreateSeriesDTO {
     @Length(max = 120,message = "Độ dài trường 'slug' tối đa là 120 ký tự")
     private String slug;
 
-    @NotNull(message = "Không được thiếu trường 'userID'")
-    @Digits(integer = 10,fraction = 0,message = "Trường 'userID' phải là số nguyên") // Kiểm tra là số nguyên và ít hơn 10 chữ số
-    private int userId;
 
     public CreateSeriesDTO(){
     }
 
-    public CreateSeriesDTO(String title, String content, String slug, int userId) {
+    public CreateSeriesDTO(String title, String content, String slug) {
         this.title = title;
         this.content = content;
         this.slug = slug;
-        this.userId = userId;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public int getUserId() {
-        return userId;
-    }
 
     public String getContent() {
         return content;
@@ -54,9 +47,6 @@ public class CreateSeriesDTO {
         this.title = title;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
 
     public void setContent(String content) {
         this.content = content;
