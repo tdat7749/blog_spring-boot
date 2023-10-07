@@ -31,4 +31,7 @@ public interface PostService {
     public SuccessResponse<PostVm> getPostBySlug(String slug);
 
     public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostAuthor(String username,String sortBy,int pageIndex);
+
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostNotPublished(String sortBy,int pageIndex);
+
 }

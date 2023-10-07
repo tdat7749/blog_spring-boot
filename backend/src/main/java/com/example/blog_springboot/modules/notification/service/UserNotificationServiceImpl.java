@@ -12,6 +12,7 @@ import com.example.blog_springboot.modules.notification.model.UserNotification;
 import com.example.blog_springboot.modules.notification.repository.UserNotificationRepository;
 import com.example.blog_springboot.modules.notification.viewmodel.NotificationVm;
 import com.example.blog_springboot.modules.user.model.User;
+import com.example.blog_springboot.utils.Utilities;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,6 +31,7 @@ public class UserNotificationServiceImpl implements UserNotificationService{
         this.userNotificationRepository = userNotificationRepository;
     }
     @Override
+    @Transactional
     public boolean createUserNotification(List<User> listUser, Notification notification) {
         List<UserNotification> listUserNotification = new ArrayList<>();
         for(User user : listUser){
@@ -51,7 +53,7 @@ public class UserNotificationServiceImpl implements UserNotificationService{
     public SuccessResponse<List<NotificationVm>> getTop10NotificationCurrentUser(User user) {
         var listNotification = userNotificationRepository.getTop10NotificationCurrentUser(user, PageRequest.of(0,10));
 
-        List<NotificationVm> listNoti = listNotification.stream().map(this::getNotificationVm).toList();
+        List<NotificationVm> listNoti = listNotification.stream().map(Utilities::getNotificationVm).toList();
 
         return new SuccessResponse<>("Thành công",listNoti);
     }
@@ -62,7 +64,7 @@ public class UserNotificationServiceImpl implements UserNotificationService{
 
         var pagingResult = userNotificationRepository.getNotificationCurrentUser(user,paging);
 
-        List<NotificationVm> listNoti = pagingResult.stream().map(this::getNotificationVm).toList();
+        List<NotificationVm> listNoti = pagingResult.stream().map(Utilities::getNotificationVm).toList();
 
 
 
@@ -94,14 +96,5 @@ public class UserNotificationServiceImpl implements UserNotificationService{
         return new SuccessResponse<>(NotificationConstants.READ_NOTIFICATION_SUCCESS,true);
     }
 
-    private NotificationVm getNotificationVm(UserNotification un){
-        NotificationVm vm = new NotificationVm();
-        vm.setRead(un.isRead());
-        vm.setMessage(un.getNotification().getMessage());
-        vm.setLink(un.getNotification().getLink());
-        vm.setId(un.getId());
-        vm.setCreatedAt(un.getNotification().getCreatedAt().toString());
 
-        return vm;
-    }
 }

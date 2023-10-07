@@ -11,9 +11,8 @@ import com.example.blog_springboot.modules.user.dto.ChangePermissionDTO;
 import com.example.blog_springboot.modules.user.dto.ForgotPasswordDTO;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.service.UserService;
-import com.example.blog_springboot.modules.user.viewmodel.UserVm;
+import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -42,7 +41,7 @@ public class UserController {
 
     @PatchMapping("/information")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<UserVm>> changeInformation(@RequestBody @Valid ChangeInformationDTO dto, @AuthenticationPrincipal User userPrincipal){
+    public ResponseEntity<SuccessResponse<UserDetailVm>> changeInformation(@RequestBody @Valid ChangeInformationDTO dto, @AuthenticationPrincipal User userPrincipal){
         var result = userService.changeInformation(dto,userPrincipal);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -58,7 +57,7 @@ public class UserController {
 
     @GetMapping("/{userId}/following")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<PagingResponse<List<UserVm>>>> getListFollowing(
+    public ResponseEntity<SuccessResponse<PagingResponse<List<UserDetailVm>>>> getListFollowing(
             @PathVariable("userId") int userId,
             @RequestParam(value = "pageIndex",defaultValue = "0") int pageIndex,
             @RequestParam(value = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
@@ -70,7 +69,7 @@ public class UserController {
 
     @GetMapping("/{userId}/follower")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<PagingResponse<List<UserVm>>>> getListFollowers(
+    public ResponseEntity<SuccessResponse<PagingResponse<List<UserDetailVm>>>> getListFollowers(
             @PathVariable("userId") int userId,
             @RequestParam(value = "pageIndex",defaultValue = "0") int pageIndex,
             @RequestParam(value = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
@@ -112,7 +111,7 @@ public class UserController {
 
     @GetMapping("/me")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<UserVm>> getMe(@AuthenticationPrincipal User userPrincipal){
+    public ResponseEntity<SuccessResponse<UserDetailVm>> getMe(@AuthenticationPrincipal User userPrincipal){
         var result = userService.getMe(userPrincipal);
 
         return new ResponseEntity<>(result, HttpStatus.OK);

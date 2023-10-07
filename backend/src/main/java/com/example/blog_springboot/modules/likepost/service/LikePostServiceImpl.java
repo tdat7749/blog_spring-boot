@@ -11,7 +11,8 @@ import com.example.blog_springboot.modules.post.constant.PostConstants;
 import com.example.blog_springboot.modules.post.exception.PostNotFoundException;
 import com.example.blog_springboot.modules.post.repository.PostRepository;
 import com.example.blog_springboot.modules.user.model.User;
-import com.example.blog_springboot.modules.user.viewmodel.UserVm;
+import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
+import com.example.blog_springboot.utils.Utilities;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -90,32 +91,18 @@ public class LikePostServiceImpl implements LikePostService{
     }
 
     @Override
-    public SuccessResponse<List<UserVm>> getListUserLikedPost(int postId) {
+    public SuccessResponse<List<UserDetailVm>> getListUserLikedPost(int postId) {
         var foundPost = postRepository.findById(postId).orElse(null);
         if(foundPost == null){
             throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
         }
 
         var list = likePostRepository.findByPost(foundPost);
-        List<UserVm> result = list.stream().map(item -> {
+        List<UserDetailVm> result = list.stream().map(item -> {
             var user = item.getUser();
-            return getUserVm(user);
+            return Utilities.getUserDetailVm(user);
         }).toList();
 
         return new SuccessResponse<>("Thành công",result);
-    }
-
-    private UserVm getUserVm(User user){
-        UserVm userVm = new UserVm();
-        userVm.setAvatar(user.getAvatar());
-        userVm.setFirstName(user.getFirstName());
-        userVm.setLastName(user.getLastName());
-        userVm.setEmail(user.getEmail());
-        userVm.setNotLocked(user.isAccountNonLocked());
-        userVm.setRole(user.getRole().toString());
-        userVm.setUserName(user.getUsername());
-        userVm.setId(user.getId());
-
-        return userVm;
     }
 }

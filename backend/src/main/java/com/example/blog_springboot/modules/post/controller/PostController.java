@@ -11,7 +11,7 @@ import com.example.blog_springboot.modules.post.service.PostService;
 import com.example.blog_springboot.modules.post.viewmodel.PostListVm;
 import com.example.blog_springboot.modules.post.viewmodel.PostVm;
 import com.example.blog_springboot.modules.user.model.User;
-import com.example.blog_springboot.modules.user.viewmodel.UserVm;
+import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -87,6 +87,17 @@ public class PostController {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+    @GetMapping("/not-published")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<PagingResponse<List<PostListVm>>>> getAllPostNotPublished(
+            @RequestParam(name = "pageIndex",required = true,defaultValue = "0") Integer pageIndex,
+            @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy)
+    {
+        var result = postService.getAllPostNotPublished(sortBy,pageIndex);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
     @GetMapping("/slug/{slug}")
     @ResponseBody
     public ResponseEntity<SuccessResponse<PostVm>> getPostBySlug(@PathVariable("slug") String slug){
@@ -142,7 +153,7 @@ public class PostController {
 
     @GetMapping("/{postId}/likes")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<List<UserVm>>> getListUserLikedPost(@PathVariable("postId") int postId){
+    public ResponseEntity<SuccessResponse<List<UserDetailVm>>> getListUserLikedPost(@PathVariable("postId") int postId){
         var result = likePostService.getListUserLikedPost(postId);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
