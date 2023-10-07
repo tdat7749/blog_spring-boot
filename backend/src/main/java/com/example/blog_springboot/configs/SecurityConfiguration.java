@@ -76,6 +76,12 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.PUT,"/api/posts/**").hasAnyRole("USER","ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/api/posts/**").hasAnyRole("USER","ADMIN")
 
+                        //comment
+                        .requestMatchers(HttpMethod.GET,"/api/comments/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/comments/**").hasAnyRole("USER","ADMIN")
+                        .requestMatchers(HttpMethod.PATCH,"/api/comments/**").hasAnyRole("USER","ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/api/comments/**").hasAnyRole("USER","ADMIN")
+
                         .anyRequest().authenticated())
                         .sessionManagement(session -> session
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
