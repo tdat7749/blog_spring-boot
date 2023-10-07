@@ -11,7 +11,7 @@ import com.example.blog_springboot.modules.post.service.PostService;
 import com.example.blog_springboot.modules.post.viewmodel.PostListVm;
 import com.example.blog_springboot.modules.post.viewmodel.PostVm;
 import com.example.blog_springboot.modules.user.model.User;
-import com.example.blog_springboot.modules.user.viewmodel.UserVm;
+import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -153,7 +153,7 @@ public class PostController {
 
     @GetMapping("/{postId}/likes")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<List<UserVm>>> getListUserLikedPost(@PathVariable("postId") int postId){
+    public ResponseEntity<SuccessResponse<List<UserDetailVm>>> getListUserLikedPost(@PathVariable("postId") int postId){
         var result = likePostService.getListUserLikedPost(postId);
 
         return new ResponseEntity<>(result,HttpStatus.OK);

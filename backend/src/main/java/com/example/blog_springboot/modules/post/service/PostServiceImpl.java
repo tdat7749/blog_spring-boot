@@ -3,6 +3,8 @@ package com.example.blog_springboot.modules.post.service;
 import com.example.blog_springboot.commons.Constants;
 import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
+import com.example.blog_springboot.modules.follow.model.Follow;
+import com.example.blog_springboot.modules.follow.repository.FollowRepository;
 import com.example.blog_springboot.modules.notification.dto.CreateNotificationDTO;
 import com.example.blog_springboot.modules.notification.service.NotificationService;
 import com.example.blog_springboot.modules.notification.service.UserNotificationService;
@@ -20,17 +22,16 @@ import com.example.blog_springboot.modules.series.constant.SeriesConstants;
 import com.example.blog_springboot.modules.series.exception.NotAuthorSeriesException;
 import com.example.blog_springboot.modules.series.exception.SeriesNotFoundException;
 import com.example.blog_springboot.modules.series.repository.SeriesRepository;
-import com.example.blog_springboot.modules.tag.constant.TagConstants;
 import com.example.blog_springboot.modules.tag.dto.CreateTagDTO;
-import com.example.blog_springboot.modules.tag.exception.TagNotFoundException;
 import com.example.blog_springboot.modules.tag.model.Tag;
 import com.example.blog_springboot.modules.tag.repository.TagRepository;
 import com.example.blog_springboot.modules.tag.serivce.TagService;
 import com.example.blog_springboot.modules.tag.viewmodel.TagVm;
 import com.example.blog_springboot.modules.user.enums.Role;
 import com.example.blog_springboot.modules.user.model.User;
-import com.example.blog_springboot.modules.user.viewmodel.UserVm;
+import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
 import com.example.blog_springboot.modules.websocket.service.WebSocketService;
+import com.example.blog_springboot.utils.Utilities;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,6 +57,9 @@ public class PostServiceImpl implements PostService {
 
     private final WebSocketService webSocketService;
 
+    private final FollowRepository followRepository;
+
+
     public PostServiceImpl(
             PostRepository postRepository,
             SeriesRepository seriesRepository,
@@ -63,7 +67,8 @@ public class PostServiceImpl implements PostService {
             TagService tagService,
             NotificationService notificationService,
             UserNotificationService userNotificationService,
-            WebSocketService webSocketService
+            WebSocketService webSocketService,
+            FollowRepository followRepository
     ){
         this.postRepository = postRepository;
         this.seriesRepository = seriesRepository;
@@ -72,6 +77,7 @@ public class PostServiceImpl implements PostService {
         this.notificationService = notificationService;
         this.userNotificationService = userNotificationService;
         this.webSocketService = webSocketService;
+        this.followRepository = followRepository;
     }
 
     @Override
@@ -80,7 +86,7 @@ public class PostServiceImpl implements PostService {
 
         Page<Post> pagingResult = postRepository.findAllByPublished(true,paging);
 
-        List<PostListVm> listPostVm = pagingResult.stream().map(this::getPostListVm).toList();
+        List<PostListVm> listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
 
         return new SuccessResponse<>("Thành công",new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listPostVm));
     }
@@ -133,7 +139,7 @@ public class PostServiceImpl implements PostService {
         var newNotification = notificationService.createNotification(notification);
 
         // sau đó nối thông báo với user
-        List<User> users = userPrincipal.getFollowers();
+        List<User> users = followRepository.getListFollowersByUser(userPrincipal);
 
         userNotificationService.createUserNotification(users,newNotification);
 
@@ -146,7 +152,7 @@ public class PostServiceImpl implements PostService {
 
         webSocketService.sendNotificationToClient(users,notificationVm);
 
-        var newPostListVm = getPostListVm(savePost);
+        var newPostListVm = Utilities.getPostListVm(savePost);
         return new SuccessResponse<>(PostConstants.CREATE_POST_SUCCESS,newPostListVm);
     }
 
@@ -196,7 +202,7 @@ public class PostServiceImpl implements PostService {
             throw new UpdatePostException(PostConstants.UPDATE_POST_FAILED);
         }
 
-        var postListVm = getPostListVm(savePost);
+        var postListVm = Utilities.getPostListVm(savePost);
 
         return new SuccessResponse<>(PostConstants.UPDATE_POST_SUCCESS,postListVm);
     }
@@ -228,7 +234,7 @@ public class PostServiceImpl implements PostService {
             throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
         }
 
-        var postVm = getPostVm(foundPost);
+        var postVm = Utilities.getPostVm(foundPost);
 
         return new SuccessResponse<>("Thành công",postVm);
 
@@ -240,7 +246,7 @@ public class PostServiceImpl implements PostService {
 
         Page<Post> pagingResult = postRepository.getAllPostByUsername(username,paging);
 
-        List<PostListVm> listPostVm = pagingResult.stream().map(this::getPostListVm).toList();
+        List<PostListVm> listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
 
         return new SuccessResponse<>("Thành công",new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listPostVm));
     }
@@ -251,7 +257,7 @@ public class PostServiceImpl implements PostService {
 
         Page<Post> pagingResult = postRepository.getAllPostNotPublished(paging);
 
-        List<PostListVm> listPostVm = pagingResult.stream().map(this::getPostListVm).toList();
+        List<PostListVm> listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
 
         return new SuccessResponse<>("Thành công",new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listPostVm));
     }
@@ -321,7 +327,7 @@ public class PostServiceImpl implements PostService {
 
         Page<Post> pagingResult = postRepository.getPostByTagSlug(tagSlug,paging);
 
-        var postListVm = pagingResult.stream().map(this::getPostListVm).toList();
+        var postListVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
 
         return new SuccessResponse<>("Thành công",new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),postListVm));
 
@@ -340,82 +346,5 @@ public class PostServiceImpl implements PostService {
         return listTag;
     }
 
-    private PostListVm getPostListVm(Post post){
-        PostListVm postListVm = new PostListVm();
-        UserVm userVm = new UserVm();
 
-        postListVm.setId(post.getId());
-        postListVm.setTitle(post.getTitle());
-        postListVm.setSlug(post.getSlug());
-        postListVm.setSummary(post.getSummary());
-        postListVm.setThumbnail(post.getThumbnail());
-        postListVm.setCreatedAt(post.getCreatedAt().toString());
-        postListVm.setUpdatedAt(post.getUpdatedAt().toString());
-        postListVm.setTotalView(post.getTotalView());
-
-        // set userVm
-        var user = post.getUser();
-
-        userVm.setUserName(user.getUsername());
-        userVm.setLastName(user.getLastName());
-        userVm.setFirstName(user.getFirstName());
-        userVm.setUserName(user.getUsername());
-        userVm.setId(user.getId());
-
-        // set tagVm
-        List<TagVm> listTagVm = post.getTags().stream().map(tag -> {
-            TagVm tagVm = new TagVm();
-            tagVm.setId(tag.getId());
-            tagVm.setTitle(tag.getTitle());
-            tagVm.setSlug(tag.getSlug());
-
-            return tagVm;
-        }).toList();
-
-        postListVm.setTags(listTagVm);
-        postListVm.setAuthor(userVm);
-
-        return postListVm;
-    }
-
-    private PostVm getPostVm(Post post){
-        PostVm postVm = new PostVm();
-
-        UserVm userVm = new UserVm();
-
-        postVm.setId(post.getId());
-        postVm.setTitle(post.getTitle());
-        postVm.setSlug(post.getSlug());
-        postVm.setSummary(post.getSummary());
-        postVm.setThumbnail(post.getThumbnail());
-        postVm.setCreatedAt(post.getCreatedAt().toString());
-        postVm.setUpdatedAt(post.getUpdatedAt().toString());
-        postVm.setContent(post.getContent());
-        postVm.setTotalView(post.getTotalView());
-
-        // set userVm
-
-        var user = post.getUser();
-
-        userVm.setUserName(user.getUsername());
-        userVm.setLastName(user.getLastName());
-        userVm.setFirstName(user.getFirstName());
-        userVm.setUserName(user.getUsername());
-        userVm.setId(user.getId());
-
-        // set tagVm
-        List<TagVm> listTagVm = post.getTags().stream().map(tag -> {
-            TagVm tagVm = new TagVm();
-            tagVm.setId(tag.getId());
-            tagVm.setTitle(tag.getTitle());
-            tagVm.setSlug(tag.getSlug());
-
-            return tagVm;
-        }).toList();
-
-        postVm.setTags(listTagVm);
-        postVm.setAuthor(userVm);
-
-        return postVm;
-    }
 }

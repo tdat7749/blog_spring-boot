@@ -1,5 +1,6 @@
 package com.example.blog_springboot.modules.comment.viewmodel;
 
+import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
 import com.example.blog_springboot.modules.user.viewmodel.UserVm;
 
 import java.util.ArrayList;

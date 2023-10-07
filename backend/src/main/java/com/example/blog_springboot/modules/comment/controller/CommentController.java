@@ -9,6 +9,7 @@ import com.example.blog_springboot.modules.comment.dto.EditCommentDTO;
 import com.example.blog_springboot.modules.comment.service.CommentService;
 import com.example.blog_springboot.modules.comment.viewmodel.CommentVm;
 import com.example.blog_springboot.modules.user.model.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -49,20 +50,19 @@ public class CommentController {
             @PathVariable("postId") int postId,
             @RequestBody CreateCommentDTO dto,
             @AuthenticationPrincipal User userPrincipal
-    ){
+    ) throws JsonProcessingException {
         var result = commentService.createComment(dto,postId,userPrincipal);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
-    @PatchMapping("/{postId}/posts")
+    @PatchMapping("/")
     @ResponseBody
     public ResponseEntity<SuccessResponse<CommentVm>> editComment(
-            @PathVariable("postId") int postId,
             @RequestBody EditCommentDTO dto,
             @AuthenticationPrincipal User userPrincipal
     ){
-        var result = commentService.editComment(dto,postId,userPrincipal);
+        var result = commentService.editComment(dto,userPrincipal);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }

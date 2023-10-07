@@ -1,11 +1,14 @@
 package com.example.blog_springboot.modules.user.viewmodel;
 
-public class UserVm {
+public class UserDetailVm {
     private int id;
+    private String userName;
+    private String email;
     private String firstName;
     private String lastName;
     private String avatar;
-    private String userName;
+    private Boolean isNotLocked;
+    private String Role;
 
     public int getId() {
         return id;
@@ -13,6 +16,22 @@ public class UserVm {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getFirstName() {
@@ -39,11 +58,19 @@ public class UserVm {
         this.avatar = avatar;
     }
 
-    public String getUserName() {
-        return userName;
+    public Boolean getNotLocked() {
+        return isNotLocked;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setNotLocked(Boolean notLocked) {
+        isNotLocked = notLocked;
+    }
+
+    public String getRole() {
+        return Role;
+    }
+
+    public void setRole(String role) {
+        Role = role;
     }
 }

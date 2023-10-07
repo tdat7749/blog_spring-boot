@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     }
 
     @Override
+    @Transactional
     public void sendNotificationToClient(String sendTo, NotificationVm vm) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         String message = mapper.writeValueAsString(vm);
@@ -29,6 +31,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     }
 
     @Override
+    @Transactional
     public void sendNotificationToClient(List<User> users, NotificationVm vm) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         String message = mapper.writeValueAsString(vm);

@@ -13,6 +13,7 @@ import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.user.enums.Role;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.repository.UserRepository;
+import com.example.blog_springboot.utils.Utilities;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +42,7 @@ public class SeriesServiceImpl implements SeriesService{
         if(series == null){
             throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
         }
-        var seriesVm = getSeriesVm(series);
+        var seriesVm = Utilities.getSeriesVm(series);
 
         return new SuccessResponse<>("Thành công !",seriesVm);
     }
@@ -66,7 +67,7 @@ public class SeriesServiceImpl implements SeriesService{
             throw new CreateSeriesException(SeriesConstants.CREATE_SERIES_FAILED);
         }
 
-        var result = getSeriesVm(saveSeries);
+        var result = Utilities.getSeriesVm(saveSeries);
         return new SuccessResponse<>(SeriesConstants.CREATE_SERIES_SUCCESS,result);
     }
 
@@ -118,7 +119,7 @@ public class SeriesServiceImpl implements SeriesService{
             throw new UpdateSeriesException(SeriesConstants.UPDATE_SERIES_FAILED);
         }
 
-        var result = getSeriesVm(isUpdate);
+        var result = Utilities.getSeriesVm(isUpdate);
 
         return new SuccessResponse<>(SeriesConstants.UPDATE_SERIES_SUCCESS,result);
     }
@@ -139,7 +140,7 @@ public class SeriesServiceImpl implements SeriesService{
 
         Page<Series> pagingResult = seriesRepository.findAll(paging);
 
-        List<SeriesVm> listSeriesVm = pagingResult.getContent().stream().map(this::getSeriesVm).toList();
+        List<SeriesVm> listSeriesVm = pagingResult.getContent().stream().map(Utilities::getSeriesVm).toList();
 
         var result = new PagingResponse<>(pagingResult.getTotalPages(), (int) pagingResult.getTotalElements(),listSeriesVm);
 
@@ -147,15 +148,4 @@ public class SeriesServiceImpl implements SeriesService{
 
     }
 
-    private SeriesVm getSeriesVm(Series series){
-        var seriesVm = new SeriesVm();
-        seriesVm.setId(series.getId());
-        seriesVm.setTitle(series.getTitle());
-        seriesVm.setSlug(series.getSlug());
-        seriesVm.setContent(series.getContent());
-        seriesVm.setCreatedAt(series.getCreatedAt().toString());
-        seriesVm.setUpdatedAt(series.getUpdatedAt().toString());
-
-        return seriesVm;
-    }
 }
