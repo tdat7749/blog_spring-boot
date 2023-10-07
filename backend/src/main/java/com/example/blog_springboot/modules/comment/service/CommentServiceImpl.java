@@ -4,6 +4,8 @@ package com.example.blog_springboot.modules.comment.service;
 import com.example.blog_springboot.commons.Constants;
 import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
+import com.example.blog_springboot.modules.authenticate.constant.AuthConstants;
+import com.example.blog_springboot.modules.authenticate.exception.UserNotFoundException;
 import com.example.blog_springboot.modules.comment.constant.CommentConstants;
 import com.example.blog_springboot.modules.comment.dto.CreateCommentDTO;
 import com.example.blog_springboot.modules.comment.dto.EditCommentDTO;
@@ -14,15 +16,24 @@ import com.example.blog_springboot.modules.comment.exception.UpdateCommentExcept
 import com.example.blog_springboot.modules.comment.model.Comment;
 import com.example.blog_springboot.modules.comment.repository.CommentRepository;
 import com.example.blog_springboot.modules.comment.viewmodel.CommentVm;
+import com.example.blog_springboot.modules.notification.dto.CreateNotificationDTO;
+import com.example.blog_springboot.modules.notification.service.NotificationService;
+import com.example.blog_springboot.modules.notification.service.UserNotificationService;
+import com.example.blog_springboot.modules.notification.viewmodel.NotificationVm;
 import com.example.blog_springboot.modules.post.constant.PostConstants;
 import com.example.blog_springboot.modules.post.exception.PostNotFoundException;
 import com.example.blog_springboot.modules.post.repository.PostRepository;
 import com.example.blog_springboot.modules.user.model.User;
-import com.example.blog_springboot.modules.user.viewmodel.UserVm;
+import com.example.blog_springboot.modules.user.repository.UserRepository;
+import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
+import com.example.blog_springboot.modules.websocket.service.WebSocketService;
+import com.example.blog_springboot.utils.Utilities;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,12 +45,31 @@ public class CommentServiceImpl implements CommentService{
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
-    public CommentServiceImpl(CommentRepository commentRepository,PostRepository postRepository){
+    private final WebSocketService webSocketService;
+
+    private final NotificationService notificationService;
+
+    private final UserNotificationService userNotificationService;
+    private final UserRepository userRepository;
+
+    public CommentServiceImpl(
+            CommentRepository commentRepository,
+            PostRepository postRepository,
+            NotificationService notificationService,
+            UserNotificationService userNotificationService,
+            WebSocketService webSocketService,
+            UserRepository userRepository
+    ){
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.notificationService = notificationService;
+        this.userNotificationService = userNotificationService;
+        this.webSocketService = webSocketService;
+        this.userRepository = userRepository;
     }
     @Override
-    public SuccessResponse<CommentVm> createComment(CreateCommentDTO dto,int postId, User user) {
+    @Transactional
+    public SuccessResponse<CommentVm> createComment(CreateCommentDTO dto,int postId, User user) throws JsonProcessingException {
         var foundPost = postRepository.findById(postId).orElse(null);
         if(foundPost == null){
             throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
@@ -53,18 +83,44 @@ public class CommentServiceImpl implements CommentService{
         newComment.setUpdatedAt(new Date());
         if(dto.getParentId() != null){
             newComment.setParentId(dto.getParentId());
+            var foundComment = commentRepository.findById(dto.getParentId()).orElse(null);
+            if(foundComment == null){
+                throw new CommentNotFoundException(CommentConstants.COMMENT_NOT_FOUND);
+            }
+
+            // sau khi khởi tạo follow thành công thì tạo ra 1 thông báo
+            CreateNotificationDTO notification = new CreateNotificationDTO();
+            notification.setLink("");
+            notification.setMessage("");
+
+            var newNotification = notificationService.createNotification(notification);
+
+            // sau đó nối thông báo với user
+            var foundUserByComment = foundComment.getUser();
+            List<User> users = new ArrayList<>();
+            users.add(foundUserByComment);
+            userNotificationService.createUserNotification(users,newNotification);
+
+            // Tạo ra 1 notification view model và gửi tới client
+            NotificationVm notificationVm = new NotificationVm();
+            notificationVm.setId(newNotification.getId());
+            notificationVm.setLink(newNotification.getLink());
+            notificationVm.setMessage(newNotification.getMessage());
+            notificationVm.setRead(false);
+
+            webSocketService.sendNotificationToClient(foundUserByComment.getUsername(),notificationVm);
         }
 
         var save = commentRepository.save(newComment);
         if(save == null){
             throw new CreateCommentException(CommentConstants.CREATE_COMMENT_FAILED);
         }
-        var commentVm = getCommentVM(save);
+        var commentVm = Utilities.getCommentVM(save);
         return new SuccessResponse<>(CommentConstants.CREATE_COMMENT_SUCCESS,commentVm);
     }
 
     @Override
-    public SuccessResponse<CommentVm> editComment(EditCommentDTO dto,int postId, User user) {
+    public SuccessResponse<CommentVm> editComment(EditCommentDTO dto, User user) {
         var isAuthor = commentRepository.existsByUserAndId(user,dto.getId());
         if(!isAuthor){
             throw new NotAuthorCommentException(CommentConstants.NOT_AUTHOR_COMMENT);
@@ -83,7 +139,7 @@ public class CommentServiceImpl implements CommentService{
             throw new UpdateCommentException(CommentConstants.EDIT_COMMENT_FAILED);
         }
 
-        var commentVm = getCommentVM(save);
+        var commentVm = Utilities.getCommentVM(save);
         return new SuccessResponse<>(CommentConstants.EDIT_COMMENT_SUCCESS,commentVm);
     }
 
@@ -131,51 +187,20 @@ public class CommentServiceImpl implements CommentService{
         return commentRepository.getTotalComment(foundPost);
     }
 
-    private CommentVm getCommentVM(Comment cm){
-        var commentVm = new CommentVm();
-        commentVm.setId(cm.getId());
-        commentVm.setContent(cm.getContent());
-        if (cm.getParentId() != null){
-            commentVm.setParentId(cm.getParentId());
-        }
-        commentVm.setPostId(cm.getPost().getId());
-
-        var user = cm.getUser();
-        var userVm = new UserVm();
-
-        userVm.setUserName(user.getUsername());
-        userVm.setLastName(user.getLastName());
-        userVm.setFirstName(user.getFirstName());
-        userVm.setUserName(user.getUsername());
-        userVm.setId(user.getId());
-
-
-        commentVm.setUser(userVm);
-        return commentVm;
-    }
-
     private CommentVm getCommentVmWithChild(Comment cm){
         var commentVm = new CommentVm();
         commentVm.setId(cm.getId());
         commentVm.setContent(cm.getContent());
 
 
-        var user = cm.getUser();
-        var userVm = new UserVm();
-
-        userVm.setUserName(user.getUsername());
-        userVm.setLastName(user.getLastName());
-        userVm.setFirstName(user.getFirstName());
-        userVm.setUserName(user.getUsername());
-        userVm.setId(user.getId());
+        var userVm = Utilities.getUserVm(cm.getUser());
 
         commentVm.setUser(userVm);
 
         // get list child
-
         var child = commentRepository.getListChildCommentByParent(cm.getId());
 
-        var listChildVm = child.stream().map(this::getCommentVM).toList();
+        var listChildVm = child.stream().map(Utilities::getCommentVM).toList();
 
 
         commentVm.setChildComment(listChildVm);

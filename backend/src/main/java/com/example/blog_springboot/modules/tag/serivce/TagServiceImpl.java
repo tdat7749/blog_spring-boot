@@ -12,6 +12,7 @@ import com.example.blog_springboot.modules.tag.exception.UpdateTagException;
 import com.example.blog_springboot.modules.tag.model.Tag;
 import com.example.blog_springboot.modules.tag.repository.TagRepository;
 import com.example.blog_springboot.modules.tag.viewmodel.TagVm;
+import com.example.blog_springboot.utils.Utilities;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -32,7 +33,7 @@ public class TagServiceImpl implements TagService{
         if(foundTag == null){
             throw new TagNotFoundException(TagConstants.TAG_NOT_FOUND);
         }
-        var tagVm = getTagVm(foundTag);
+        var tagVm = Utilities.getTagVm(foundTag);
 
         return new SuccessResponse<>("Thành công",tagVm);
     }
@@ -41,7 +42,7 @@ public class TagServiceImpl implements TagService{
     public SuccessResponse<List<TagVm>> getAllTag() {
         var listTags = tagRepository.findAll();
 
-        List<TagVm> listTagsVm = listTags.stream().map(this::getTagVm).toList();
+        List<TagVm> listTagsVm = listTags.stream().map(Utilities::getTagVm).toList();
 
         return new SuccessResponse<>("Thành công",listTagsVm);
     }
@@ -92,7 +93,7 @@ public class TagServiceImpl implements TagService{
             throw new UpdateTagException(TagConstants.UPDATE_TAG_FAILED);
         }
 
-        var tagVm = getTagVm(updateTag);
+        var tagVm = Utilities.getTagVm(updateTag);
         return new SuccessResponse<>(TagConstants.UPDATE_TAG_SUCCESS,tagVm);
 
     }
@@ -109,15 +110,4 @@ public class TagServiceImpl implements TagService{
 
     }
 
-    private TagVm getTagVm(Tag tag){
-        TagVm tagVm = new TagVm();
-        tagVm.setId(tag.getId());
-        tagVm.setTitle(tag.getTitle());
-        tagVm.setSlug(tag.getSlug());
-        tagVm.setThumbnail(tag.getThumbnail());
-        tagVm.setCreatedAt(tag.getCreatedAt().toString());
-        tagVm.setUpdatedAt(tag.getUpdatedAt().toString());
-
-        return tagVm;
-    }
 }

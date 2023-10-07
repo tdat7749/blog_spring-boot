@@ -1,7 +1,7 @@
 package com.example.blog_springboot.modules.post.viewmodel;
 
 import com.example.blog_springboot.modules.tag.viewmodel.TagVm;
-import com.example.blog_springboot.modules.user.model.User;
+import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
 import com.example.blog_springboot.modules.user.viewmodel.UserVm;
 
 import java.util.List;

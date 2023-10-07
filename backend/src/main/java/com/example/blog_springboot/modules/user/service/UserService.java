@@ -7,8 +7,7 @@ import com.example.blog_springboot.modules.user.dto.ChangePasswordDTO;
 import com.example.blog_springboot.modules.user.dto.ChangePermissionDTO;
 import com.example.blog_springboot.modules.user.dto.ForgotPasswordDTO;
 import com.example.blog_springboot.modules.user.model.User;
-import com.example.blog_springboot.modules.user.viewmodel.UserVm;
-import org.springframework.data.domain.Page;
+import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,9 +17,9 @@ public interface UserService {
     public SuccessResponse<Boolean> changePassword(ChangePasswordDTO dto,User userPrincipal);
     public SuccessResponse<Boolean> changeAvatar(String avatar,User userPrincipal);
 
-    public SuccessResponse<UserVm> changeInformation(ChangeInformationDTO dto,User userPrincipal);
+    public SuccessResponse<UserDetailVm> changeInformation(ChangeInformationDTO dto, User userPrincipal);
 
-    public SuccessResponse<UserVm> getMe(User user);
+    public SuccessResponse<UserDetailVm> getMe(User user);
 
     public SuccessResponse<Boolean> changePermission(ChangePermissionDTO dto);
 
@@ -28,9 +27,9 @@ public interface UserService {
 
     public SuccessResponse<Boolean> sendCodeForgotPassword(String email);
 
-    public SuccessResponse<PagingResponse<List<UserVm>>> getListFollowing(String sortBy,int pageIndex,int userId);
+    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowing(String sortBy, int pageIndex, int userId);
 
-    public SuccessResponse<PagingResponse<List<UserVm>>> getListFollowers(String sortBy,int pageIndex,int userId);
+    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowers(String sortBy, int pageIndex, int userId);
 
 
 }

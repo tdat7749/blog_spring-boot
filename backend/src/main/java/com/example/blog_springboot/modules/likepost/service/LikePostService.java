@@ -2,7 +2,7 @@ package com.example.blog_springboot.modules.likepost.service;
 
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.user.model.User;
-import com.example.blog_springboot.modules.user.viewmodel.UserVm;
+import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,5 +13,5 @@ public interface LikePostService{
     public SuccessResponse<Boolean> unLikePost(int postId, User userPrincipal);
     public SuccessResponse<Boolean> checkUserLikedPost(int postId,User userPrincipal);
 
-    public SuccessResponse<List<UserVm>> getListUserLikedPost(int postId);
+    public SuccessResponse<List<UserDetailVm>> getListUserLikedPost(int postId);
 }
