@@ -17,6 +17,8 @@ public interface AuthService {
 
     public SuccessResponse<Boolean> resendEmail(String email);
 
+    public SuccessResponse<String> refreshToken(String refreshToken);
+
     public SuccessResponse<Boolean> lockAccount(int id);
 
     public SuccessResponse<Boolean> unLockAccount(int id);
