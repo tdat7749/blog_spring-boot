@@ -36,6 +36,14 @@ public class AuthenController {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+    @PostMapping(value = "/refresh")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<String>> refreshToken(@RequestHeader("rfToken") String refreshToken){
+        var result = authService.refreshToken(refreshToken);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @PostMapping(value = "/logout")
     @ResponseBody
     public ResponseEntity<SuccessResponse<Boolean>> logout(){
