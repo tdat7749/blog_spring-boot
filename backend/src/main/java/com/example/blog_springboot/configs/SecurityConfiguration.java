@@ -3,6 +3,7 @@ package com.example.blog_springboot.configs;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,7 +25,7 @@ public class SecurityConfiguration {
 
     private final CorsConfigurationSource configurationSource;
 
-    public SecurityConfiguration(JwtFilter jwtFilter,AuthenticationProvider authenticationProvider,CorsConfigurationSource configurationSource){
+    public SecurityConfiguration(JwtFilter jwtFilter, AuthenticationProvider authenticationProvider, @Qualifier("corsConfigurationSource") CorsConfigurationSource configurationSource){
         this.jwtFilter = jwtFilter;
         this.authenticationProvider = authenticationProvider;
         this.configurationSource = configurationSource;
