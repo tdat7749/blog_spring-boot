@@ -4,5 +4,11 @@
   <p-button styleClass="p-button-success" label="Button 10"></p-button>
   <p-button styleClass="p-button-help" label="Button 3"></p-button>
 </div>
+
+  <form [formGroup]="loginForm">
+    <input type="text" pInputText formControlName="userName"/>
+    <input type="text" pInputText formControlName="password"/>
+    <p-button label="Đăng nhập" type="submit" (click)="login()"></p-button>
+  </form>
 <main-footer></main-footer>
 
