@@ -3,6 +3,7 @@ package com.example.blog_springboot.configs;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -21,9 +23,12 @@ public class SecurityConfiguration {
     private final JwtFilter jwtFilter;
     private final AuthenticationProvider authenticationProvider;
 
-    public SecurityConfiguration(JwtFilter jwtFilter,AuthenticationProvider authenticationProvider){
+    private final CorsConfigurationSource configurationSource;
+
+    public SecurityConfiguration(JwtFilter jwtFilter, AuthenticationProvider authenticationProvider, @Qualifier("corsConfigurationSource") CorsConfigurationSource configurationSource){
         this.jwtFilter = jwtFilter;
         this.authenticationProvider = authenticationProvider;
+        this.configurationSource = configurationSource;
     }
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfiguration.class);
@@ -31,7 +36,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         logger.info("Security run");
         http
-        .cors(AbstractHttpConfigurer::disable)
+        .cors(cors -> cors.configurationSource(configurationSource))
         .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
 

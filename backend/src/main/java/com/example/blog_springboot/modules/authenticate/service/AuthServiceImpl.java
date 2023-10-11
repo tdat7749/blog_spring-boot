@@ -11,6 +11,7 @@ import com.example.blog_springboot.modules.authenticate.exception.*;
 import com.example.blog_springboot.modules.authenticate.viewmodel.AuthenVm;
 import com.example.blog_springboot.modules.jwt.service.JwtService;
 import com.example.blog_springboot.modules.mail.service.MailService;
+import com.example.blog_springboot.modules.user.constant.UserConstants;
 import com.example.blog_springboot.modules.user.enums.Role;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.repository.UserRepository;
@@ -142,6 +143,22 @@ public class AuthServiceImpl implements AuthService{
 
         return new SuccessResponse<>(AuthConstants.REGISTER_SUCCESS,true);
 
+    }
+
+    @Override
+    public SuccessResponse<String> refreshToken(String refreshToken) {
+        String userName = jwtService.extractUsername(refreshToken);
+        if(userName != null){
+            var userFound = userRepository.findByUserName(userName).orElse(null);
+            if(userFound == null){
+                throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
+            }
+
+            var accessToken = jwtService.generateAccessToken(userFound);
+            return new SuccessResponse<>("Thành công",accessToken);
+        }
+
+        throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
     }
 
     @Override
