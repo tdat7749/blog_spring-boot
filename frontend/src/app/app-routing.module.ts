@@ -2,13 +2,13 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes,PreloadAllModules } from '@angular/router';
 
 const routes: Routes = [
+
   {
     path:"admin",
     loadChildren:() => import("./layouts/admin/admin.module").then(m => m.AdminModule)
   },
   {
     path:"",
-    pathMatch: "full",
     loadChildren:() => import("./layouts/main/main.module").then(m => m.MainModule)
   }
 ];

@@ -1,14 +1,30 @@
 import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from "@angular/common/http";
-import {BehaviorSubject, catchError, filter, mergeMap, Observable, switchMap, take, throwError} from "rxjs";
+import {
+  BehaviorSubject,
+  catchError,
+  filter,
+  finalize,
+  mergeMap,
+  Observable,
+  switchMap,
+  take,
+  tap,
+  throwError
+} from "rxjs";
 import {CookieService} from "ngx-cookie-service";
 import {Injectable} from "@angular/core";
 import {AuthService} from "../services/auth.service";
+import {environment} from "../../../environments/environment";
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthInterceptor implements HttpInterceptor{
+
+  private allowRoute = [
+    `${environment.apiUrl}/auth/login`,
+  ]
 
   private isRetry: boolean = false;
   private refreshToken$: BehaviorSubject<any> = new BehaviorSubject<any>(null)
@@ -17,19 +33,20 @@ export class AuthInterceptor implements HttpInterceptor{
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let request = req;
     const token = this.cookieService.get("accessToken")
-    if(token === null || token === ""){
+    const rfToken = this.cookieService.get("refreshToken")
+    if((token === null || token === "") || this.allowRoute.includes(request.url)){
       return next.handle(req);
     }
 
-    request = this.addTokenToHeader(request,token)
+    request = this.addTokenToHeader(request,token,rfToken)
 
     return next.handle(request).pipe(
-      catchError((error:any) =>{
+      catchError((error) =>{
         if(error instanceof HttpErrorResponse && error.status === 401){
           return this.handleRefreshToken(request,next)
         }
 
-        return throwError(error)
+        return throwError(() => error.error)
       })
     )
   }
@@ -45,16 +62,16 @@ export class AuthInterceptor implements HttpInterceptor{
         return this.authService.getAccessToken(refreshToken).pipe(
           switchMap((response:any) =>{
             this.isRetry = false;
-
             this.cookieService.set("accessToken",response.data.accessToken)
             this.refreshToken$.next(response.data.accessToken)
 
-            return next.handle(this.addTokenToHeader(request,response.data.accessToken))
+            return next.handle(this.addTokenToHeader(request,response.data.accessToken,refreshToken))
           }),
-          catchError((error) =>{
+          catchError((error:HttpErrorResponse) =>{
             this.isRetry = false;
-
-            return throwError(error);
+            this.cookieService.delete("accessToken")
+            this.cookieService.delete("refreshToken")
+            return throwError(() => error.error);
           })
         )
       }
@@ -67,9 +84,16 @@ export class AuthInterceptor implements HttpInterceptor{
     )
   }
 
-  private addTokenToHeader(request:HttpRequest<any>,token: string){
-    return request.clone({
-      headers: request.headers.set("Authorization",`Bearer ${token}`)
-    })
+  private addTokenToHeader(request:HttpRequest<any>,token: string,refreshToken?:string){
+    let headers = request.headers;
+
+    headers = headers.set("Authorization",`Bearer ${token}`)
+
+    if(refreshToken){
+      headers = headers.set("rfToken",refreshToken)
+      console.log(refreshToken)
+    }
+
+    return request.clone({headers})
   }
 }

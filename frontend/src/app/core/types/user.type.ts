@@ -1,8 +1,10 @@
 export interface User {
-  email: string,
-  firstName: string,
-  lastName: string,
-  userName:string,
-  role: string,
-  avatar: string
+  email: string | unknown,
+  firstName: string | unknown,
+  lastName: string | unknown,
+  userName:string | unknown,
+  role: string | unknown,
+  avatar: string | unknown,
+  id: number | unknown
+  notLocked: boolean | unknown
 }
