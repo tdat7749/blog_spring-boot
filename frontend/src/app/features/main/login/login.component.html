@@ -1,0 +1,26 @@
+<div class="tw-h-[calc(100vh-4rem)] tw-flex tw-items-center tw-justify-center">
+    <div class="tw-border-2 tw-border-gray-300 tw-w-full md:tw-w-[40%]">
+        <div class="tw-p-4 tw-space-y-[1rem]">
+            <h2 class="tw-text-center tw-text-2xl tw-text-gray-900">ĐĂNG NHẬP</h2>
+            <form [formGroup]="loginForm" class="tw-space-y-[2rem]" (submit)="onLogin()">
+                <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+                    <label>Tài Khoản</label>
+                    <input class="hover:tw-border-gray-900" pInputText formControlName="userName"/>
+                    <ng-container *ngIf="loginForm.controls?.['userName']?.touched && loginForm.controls?.['userName']?.dirty">
+                        <small *ngIf="loginForm.controls?.['userName']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Tài khoản không được để trống</small>
+                    </ng-container>
+                </div>
+                <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+                    <label >Mật Khẩu</label>
+                    <input class="hover:tw-border-gray-900" pInputText type="password" formControlName="password"/>
+                    <ng-container *ngIf="loginForm.controls?.['password']?.touched && loginForm.dirty">
+                        <small *ngIf="loginForm.controls?.['password']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Mật khẩu không được để trống</small>
+                    </ng-container>
+                </div>
+            </form>
+            <div class="tw-text-right">
+                <p-button label="Đăng Nhập" type="submit" (onClick)="onLogin()" [disabled]=this.loginForm.invalid [loading]="isLoading"></p-button>
+            </div>
+        </div>
+    </div>
+</div>
