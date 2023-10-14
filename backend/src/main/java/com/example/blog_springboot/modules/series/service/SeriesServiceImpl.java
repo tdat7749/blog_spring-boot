@@ -28,12 +28,10 @@ import java.util.List;
 public class SeriesServiceImpl implements SeriesService{
 
     private final SeriesRepository seriesRepository;
-    private final UserRepository userRepository;
 
 
-    public SeriesServiceImpl(SeriesRepository seriesRepository, UserRepository userRepository){
+    public SeriesServiceImpl(SeriesRepository seriesRepository){
         this.seriesRepository = seriesRepository;
-        this.userRepository = userRepository;
     }
 
     @Override
@@ -146,6 +144,22 @@ public class SeriesServiceImpl implements SeriesService{
 
         return new SuccessResponse<>("Thành công",result);
 
+    }
+
+    @Override
+    public SuccessResponse<List<SeriesVm>> getListSeriesByUserPrincipal(User userPrincipal) {
+        var listSeries = seriesRepository.findByUser(userPrincipal);
+        var listSeriesVm = listSeries.stream().map(Utilities::getSeriesVm).toList();
+
+        return new SuccessResponse<>("Thành công",listSeriesVm);
+    }
+
+    @Override
+    public SuccessResponse<List<SeriesVm>> getListSeriesByUserName(String userName) {
+        var listSeries = seriesRepository.getListSeriesByUserName(userName);
+        var listSeriesVm = listSeries.stream().map(Utilities::getSeriesVm).toList();
+
+        return new SuccessResponse<>("Thành công",listSeriesVm);
     }
 
 }

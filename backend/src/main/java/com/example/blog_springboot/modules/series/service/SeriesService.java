@@ -22,4 +22,9 @@ public interface SeriesService {
     public SuccessResponse<Series> getSeriesDetail(String slug); // for view
     
     public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(String sortBy,int pageIndex);
+
+    public SuccessResponse<List<SeriesVm>> getListSeriesByUserPrincipal(User userPrincipal); // for create post
+
+    public SuccessResponse<List<SeriesVm>> getListSeriesByUserName(String userName); // for detail user
+
 }
