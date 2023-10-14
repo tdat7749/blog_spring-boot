@@ -1,0 +1,70 @@
+<div class="tw-h-[auto)] tw-flex tw-items-center tw-justify-center">
+    <div class="tw-border-2 tw-border-gray-300 tw-w-full md:tw-w-[40%]">
+        <div class="tw-p-4 tw-space-y-[1rem]">
+            <h2 class="tw-text-center tw-text-2xl tw-text-gray-900">ĐĂNG KÝ</h2>
+            <form [formGroup]="registerForm" class="tw-space-y-[2rem]" (submit)="onRegister()">
+                <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+                    <label>Tên tài khoản</label>
+                    <input class="hover:tw-border-gray-900" pInputText formControlName="userName"/>
+                    <ng-container *ngIf="registerForm.controls?.['userName']?.touched && registerForm.controls?.['userName']?.dirty">
+                        <small *ngIf="registerForm.controls?.['userName']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Tài khoản không được để trống</small>
+                        <small *ngIf="registerForm.controls?.['userName']?.errors?.['minlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối thiểu là 6</small>
+                        <small *ngIf="registerForm.controls?.['userName']?.errors?.['maxlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối đa là 50</small>
+                        <small *ngIf="registerForm.controls?.['userName']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
+                    </ng-container>
+                </div>
+                <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+                    <label>Họ</label>
+                    <input class="hover:tw-border-gray-900" pInputText formControlName="firstName"/>
+                    <ng-container *ngIf="registerForm.controls?.['firstName']?.touched && registerForm.controls?.['firstName']?.dirty">
+                        <small *ngIf="registerForm.controls?.['firstName']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Họ không được để trống</small>
+                        <small *ngIf="registerForm.controls?.['firstName']?.errors?.['minlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối thiểu là 1</small>
+                        <small *ngIf="registerForm.controls?.['firstName']?.errors?.['maxlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối đa là 60</small>
+                        <small *ngIf="registerForm.controls?.['firstName']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
+                    </ng-container>
+                </div>
+                <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+                    <label>Tên</label>
+                    <input class="hover:tw-border-gray-900" pInputText formControlName="lastName"/>
+                    <ng-container *ngIf="registerForm.controls?.['lastName']?.touched && registerForm.controls?.['lastName']?.dirty">
+                        <small *ngIf="registerForm.controls?.['lastName']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Tên không được để trống</small>
+                        <small *ngIf="registerForm.controls?.['lastName']?.errors?.['minlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối thiểu là 1</small>
+                        <small *ngIf="registerForm.controls?.['lastName']?.errors?.['maxlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối đa là 70</small>
+                        <small *ngIf="registerForm.controls?.['lastName']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
+                    </ng-container>
+                </div>
+                <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+                    <label>Địa chỉ email</label>
+                    <input class="hover:tw-border-gray-900" pInputText formControlName="email"/>
+                    <ng-container *ngIf="registerForm.controls?.['email']?.touched && registerForm.controls?.['email']?.dirty">
+                        <small *ngIf="registerForm.controls?.['email']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Email không được để trống</small>
+                        <small *ngIf="registerForm.controls?.['email']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
+                    </ng-container>
+                </div>
+                <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+                    <label>Mật khẩu</label>
+                    <input type="password" class="hover:tw-border-gray-900" pInputText formControlName="password"/>
+                    <ng-container *ngIf="registerForm.controls?.['password']?.touched && registerForm.controls?.['password']?.dirty">
+                        <small *ngIf="registerForm.controls?.['password']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Mật khẩu không được để trống</small>
+                        <small *ngIf="registerForm.controls?.['password']?.errors?.['minlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối thiểu là 6</small>
+                        <small *ngIf="registerForm.controls?.['password']?.errors?.['maxlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối đa là 50</small>
+                        <small *ngIf="registerForm.controls?.['password']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
+                    </ng-container>
+                </div>
+                <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+                    <label>Mật khẩu</label>
+                    <input type="password" class="hover:tw-border-gray-900" pInputText formControlName="confirmPassword"/>
+                    <ng-container *ngIf="registerForm.controls?.['confirmPassword']?.touched && registerForm.controls?.['confirmPassword']?.dirty">
+                        <small *ngIf="registerForm.controls?.['confirmPassword']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Xác nhận khẩu không được để trống</small>
+                        <small *ngIf="registerForm.controls?.['confirmPassword']?.errors?.['minlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối thiểu là 6</small>
+                        <small *ngIf="registerForm.controls?.['confirmPassword']?.errors?.['maxlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối đa là 50</small>
+                        <small *ngIf="registerForm.controls?.['confirmPassword']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
+                    </ng-container>
+                </div>
+            </form>
+            <div class="tw-text-right">
+                <p-button label="Đăng Nhập" type="submit" (onClick)="onRegister()" [disabled]=this.registerForm.invalid [loading]="isLoading"></p-button>
+            </div>
+        </div>
+    </div>
+</div>
