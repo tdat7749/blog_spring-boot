@@ -3,6 +3,7 @@ package com.example.blog_springboot.modules.authenticate.controller;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.authenticate.dto.LoginDTO;
 import com.example.blog_springboot.modules.authenticate.dto.RegisterDTO;
+import com.example.blog_springboot.modules.authenticate.dto.ResendMailDTO;
 import com.example.blog_springboot.modules.authenticate.dto.VerifyDTO;
 import com.example.blog_springboot.modules.authenticate.service.AuthService;
 import com.example.blog_springboot.modules.authenticate.viewmodel.AuthenVm;
@@ -62,8 +63,8 @@ public class AuthenController {
 
     @PostMapping(value = "/resend")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> resendEmail(@RequestBody String email){
-        var result = authService.resendEmail(email);
+    public ResponseEntity<SuccessResponse<Boolean>> resendEmail(@RequestBody @Valid ResendMailDTO dto){
+        var result = authService.resendEmail(dto);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
