@@ -1,7 +1,17 @@
-<p-sidebar class="md:hidden" [(visible)]="isOpen" [fullScreen]="true">
-    <div class="pl-6">
-        <ul class="space-y">
-            <li class="p-2 text-gray-500 hover:text-gray-900 cursor-pointer" routerLink="{{nav.path}}" *ngFor="let nav of listNav">{{nav.title}}</li>
+<p-sidebar class="md:tw-hidden" [(visible)]="isOpen" [fullScreen]="true">
+    <div class="tw-pl-6">
+        <ul class="tw-space-y-[1rem]">
+            <li class="tw-p-2 tw-text-gray-500 hover:tw-text-gray-900 tw-cursor-pointer" routerLink="{{nav.path}}" *ngFor="let nav of listNav">{{nav.title}}</li>
         </ul>
+
+        <ng-container *ngIf="userInfo;else noUser">
+
+        </ng-container>
+        <ng-template #noUser>
+            <div class="tw-mt-4 tw-space-x-[1rem]">
+                <p-button routerLink="/dang-nhap" styleClass="p-button-primary" label="Đăng Nhập"></p-button>
+                <p-button routerLink="/dang-ky"  styleClass="p-button-secondary"  label="Đăng Ký"></p-button>
+            </div>
+        </ng-template>
     </div>
 </p-sidebar>

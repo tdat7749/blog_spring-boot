@@ -1,0 +1,10 @@
+<div class="tw-p-4 tw-w-full">
+    <div class="tw-flex tw-flex-wrap tw-gap-[1rem]  tw-items-center">
+        <p-avatar image="{{cardInfo.avatar ? cardInfo.avatar :'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}" styleClass="mr-2" shape="circle"></p-avatar>
+        <p class="tw-text-gray-500 tw-text-base md:tw-text-sm"><span>{{cardInfo.firstName}} {{cardInfo.lastName}}</span></p>
+        <p class="tw-text-gray-500 tw-text-base md:tw-text-sm"><i class="pi pi-calendar tw-text-gray-900"></i> {{cardInfo.createdAt }}</p>
+        <p class="tw-text-gray-500 tw-text-base md:tw-text-sm"><i class="pi pi-heart tw-text-gray-900"></i> {{cardInfo.totalLike}}</p>
+        <p class="tw-text-gray-500 tw-text-base md:tw-text-sm"><i class="pi pi-comments tw-text-gray-900"></i> {{cardInfo.totalComment}}</p>
+    </div>
+<!--    <h1 class="w-full text-2xl font-semibold mt-4">{{cardInfo.title}}</h1>-->
+</div>

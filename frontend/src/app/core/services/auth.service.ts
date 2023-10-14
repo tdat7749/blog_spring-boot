@@ -4,7 +4,7 @@ import {BehaviorSubject, catchError, Observable, of, throwError} from "rxjs";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {ApiResponse} from "../types/api-response.type";
 import {environment} from "../../../environments/environment";
-import {Login} from "../types/auth.type";
+import {Login, Register, VerifyEmail} from "../types/auth.type";
 import {Token} from "../types/token.type";
 import {CookieService} from "ngx-cookie-service";
 import {MessageService} from "primeng/api";
@@ -41,6 +41,27 @@ export class AuthService {
     return this.http.post<ApiResponse<Token>>(`${environment.apiUrl}/auth/login`,data).pipe(
       catchError(this.handleError)
     );
+  }
+
+  register(data:Register):Observable<ApiResponse<boolean>>{
+    return this.http.post<ApiResponse<boolean>>(`${environment.apiUrl}/auth/register`,data).pipe(
+        catchError(this.handleError)
+    )
+  }
+
+  verifyEmail(data:VerifyEmail):Observable<ApiResponse<boolean>>{
+    return this.http.post<ApiResponse<boolean>>(`${environment.apiUrl}/auth/verify`,data).pipe(
+        catchError(this.handleError)
+    )
+  }
+
+  resendVerifyEmail(email:string):Observable<ApiResponse<boolean>>{
+    const data = {
+      email:email
+    }
+    return this.http.post<ApiResponse<boolean>>(`${environment.apiUrl}/auth/resend`,data).pipe(
+        catchError(this.handleError)
+    )
   }
 
   logout():void {

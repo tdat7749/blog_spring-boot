@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService{
             throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
         }
 
-        final String code = Utilities.generateCode();
+        final String code = passwordEncoder.encode(Utilities.generateCode());
 
         foundUser.setCode(code);
 
@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService{
             throw new SendMailForgotPasswordException(UserConstants.SEND_MAIL_FORGOT_PASSWORD_FAILED);
         }
 
-        mailService.sendMail(email,Constants.SUBJECT_EMAIL_FORGOT_PASSWORD,"Đây là mã xác minh để lấy lại mật khẩu của bạn, vui lòng không cung cấp cho ai : !" + code);
+        mailService.sendMail(email,Constants.SUBJECT_EMAIL_FORGOT_PASSWORD,"Nhấp vào đây để thay đổi mật khẩu của bạn, vui lòng không cung cấp nó cho bất kì ai : " + Constants.PUBLIC_HOST + "?email=" +saveUser.getEmail() + "&code=" + saveUser.getCode());
 
         return new SuccessResponse<>(UserConstants.SEND_MAIL_FORGOT_PASSWORD_SUCCESS,true);
     }

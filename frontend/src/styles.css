@@ -1,6 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import "primeicons/primeicons.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
@@ -8,7 +11,7 @@
 */
 
 html{
-  font-size:16px;
+  font-size:62.5%;
 }
 
 html, body, span, applet, object, iframe,
@@ -45,11 +48,7 @@ ol, ul {
 blockquote, q {
   quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-  content: '';
-  content: none;
-}
+
 table {
   border-collapse: collapse;
   border-spacing: 0;
@@ -58,13 +57,4 @@ table {
 :root{
   --primary: "#6610f2";
   --secondary: "#b3b3b3";
-}
-
-
-.space-x > *:not(:first-child){
-  margin: 0 1rem;
-}
-
-.space-y > *:not(:first-child){
-  margin: 1rem 0;
 }
