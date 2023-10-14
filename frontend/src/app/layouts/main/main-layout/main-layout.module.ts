@@ -13,15 +13,16 @@ import { SideBarComponent } from './header/side-bar/side-bar.component';
 import { SidebarModule } from 'primeng/sidebar';
 import {AvatarModule} from "primeng/avatar";
 import {OverlayPanelModule} from "primeng/overlaypanel";
-import {PostComponent} from "../../../features/main/post/post.component";
+import {HomeComponent} from "../../../features/main/home/home.component";
+import {PostModule} from "../../../features/main/post/post.module";
 
 @NgModule({
   declarations:[
     MainLayoutComponent,
     FooterComponent,
     HeaderComponent,
-      SideBarComponent,
-      PostComponent
+    SideBarComponent,
+    HomeComponent
 
   ],
     imports: [
@@ -35,7 +36,8 @@ import {PostComponent} from "../../../features/main/post/post.component";
         RouterLink,
         AvatarModule,
         OverlayPanelModule,
-        RouterOutlet
+        RouterOutlet,
+        PostModule
     ],
 
 })

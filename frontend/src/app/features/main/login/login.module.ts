@@ -5,6 +5,7 @@ import {ButtonModule} from "primeng/button";
 import {InputTextModule} from "primeng/inputtext";
 import {LoginRoutingModule} from "./login-routing.module";
 import {CommonModule} from "@angular/common";
+import {DialogModule} from "primeng/dialog";
 
 @NgModule({
     declarations:[
@@ -16,6 +17,7 @@ import {CommonModule} from "@angular/common";
         ButtonModule,
         InputTextModule,
         LoginRoutingModule,
+        DialogModule,
     ]
 })
 

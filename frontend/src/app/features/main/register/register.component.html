@@ -1,7 +1,7 @@
 <div class="tw-h-[auto)] tw-flex tw-items-center tw-justify-center">
     <div class="tw-border-2 tw-border-gray-300 tw-w-full md:tw-w-[40%]">
         <div class="tw-p-4 tw-space-y-[1rem]">
-            <h2 class="tw-text-center tw-text-2xl tw-text-gray-900">ĐĂNG KÝ</h2>
+            <h2 class="tw-text-center tw-text-3xl tw-text-gray-900">ĐĂNG KÝ</h2>
             <form [formGroup]="registerForm" class="tw-space-y-[2rem]" (submit)="onRegister()">
                 <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
                     <label>Tên tài khoản</label>
@@ -39,6 +39,7 @@
                     <ng-container *ngIf="registerForm.controls?.['email']?.touched && registerForm.controls?.['email']?.dirty">
                         <small *ngIf="registerForm.controls?.['email']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Email không được để trống</small>
                         <small *ngIf="registerForm.controls?.['email']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
+                        <small *ngIf="registerForm.controls?.['email']?.errors?.['email']" class="tw-ml-2 tw-text-red-600">Email không đúng định dạng</small>
                     </ng-container>
                 </div>
                 <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
@@ -63,7 +64,7 @@
                 </div>
             </form>
             <div class="tw-text-right">
-                <p-button label="Đăng Nhập" type="submit" (onClick)="onRegister()" [disabled]=this.registerForm.invalid [loading]="isLoading"></p-button>
+                <p-button label="Đăng Ký" type="submit" (onClick)="onRegister()" [disabled]=this.registerForm.invalid [loading]="isLoading"></p-button>
             </div>
         </div>
     </div>

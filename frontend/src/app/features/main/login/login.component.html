@@ -1,7 +1,7 @@
 <div class="tw-h-[calc(100vh-4rem)] tw-flex tw-items-center tw-justify-center">
     <div class="tw-border-2 tw-border-gray-300 tw-w-full md:tw-w-[40%]">
         <div class="tw-p-4 tw-space-y-[1rem]">
-            <h2 class="tw-text-center tw-text-2xl tw-text-gray-900">ĐĂNG NHẬP</h2>
+            <h2 class="tw-text-center tw-text-3xl tw-text-gray-900">ĐĂNG NHẬP</h2>
             <form [formGroup]="loginForm" class="tw-space-y-[2rem]" (submit)="onLogin()">
                 <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
                     <label>Tài Khoản</label>
@@ -16,6 +16,7 @@
                     <ng-container *ngIf="loginForm.controls?.['password']?.touched && loginForm.dirty">
                         <small *ngIf="loginForm.controls?.['password']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Mật khẩu không được để trống</small>
                     </ng-container>
+                    <p class="tw-text-yellow-500">Nếu tài khoản chưa xác thực, vui lòng nhấp <span (click)="showSendEmailDialog()" class="tw-cursor-pointer tw-underline tw-text-cyan-500">vào đây</span> để được gửi email</p>
                 </div>
             </form>
             <div class="tw-text-right">
@@ -24,3 +25,19 @@
         </div>
     </div>
 </div>
+
+<p-dialog header="GỬI EMAIL XÁC THỰC TÀI KHOẢN" [(visible)]="visible" [style]="{width: '50vw'}">
+    <form [formGroup]="sendEmailForm" class="tw-space-y-[2rem]" >
+        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+            <label>Email</label>
+            <input class="hover:tw-border-gray-900" pInputText formControlName="email"/>
+            <ng-container *ngIf="sendEmailForm.controls?.['email']?.touched && sendEmailForm.controls?.['email']?.dirty">
+                <small *ngIf="sendEmailForm.controls?.['email']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Email không được để trống</small>
+                <small *ngIf="sendEmailForm.controls?.['email']?.errors?.['email']" class="tw-ml-2 tw-text-red-600">Email không đúng định dạng</small>
+            </ng-container>
+        </div>
+        <div class="tw-text-right">
+            <p-button label="Gửi" type="submit" (click)="onSendEmail()" [disabled]=this.sendEmailForm.invalid [loading]="isLoading"></p-button>
+        </div>
+    </form>
+</p-dialog>

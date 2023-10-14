@@ -10,6 +10,7 @@ import {User} from "../../../core/types/user.type";
 import {CookieService} from "ngx-cookie-service";
 import {MessageService} from "primeng/api";
 import {Router} from "@angular/router";
+import {UserService} from "../../../core/services/user.service";
 
 @Component({
   selector: 'app-login',
@@ -19,8 +20,16 @@ import {Router} from "@angular/router";
 export class LoginComponent implements OnInit{
 
   loginForm: FormGroup
+  sendEmailForm: FormGroup
   isLoading: boolean
-  constructor(private authService:AuthService,private cookieService:CookieService,private messageService:MessageService,private fb:FormBuilder,private router:Router) {
+  visible: boolean = false
+  constructor(
+      private authService:AuthService,
+      private cookieService:CookieService,
+      private messageService:MessageService,
+      private fb:FormBuilder,
+      private router:Router
+  ) {
 
   }
 
@@ -41,12 +50,51 @@ export class LoginComponent implements OnInit{
           ])
       ]
     })
-      console.log(this.loginForm.errors)
+
+      this.sendEmailForm = this.fb.group({
+          email:[
+              '',
+              Validators.compose([
+                  Validators.email,
+                  Validators.required
+              ])
+          ]
+      })
   }
+
+  showSendEmailDialog(){
+      this.visible = true
+  }
+
+  onSendEmail(){
+      this.isLoading = true
+      const email:string = this.sendEmailForm.value.email
+
+      this.authService.resendVerifyEmail(email).subscribe({
+          next:(response) =>{
+              this.messageService.add({
+                  severity: "success",
+                  detail: response.message,
+                  summary:"Thành công"
+              })
+              this.isLoading = false
+              this.visible = false
+          },
+          error:(error) =>{
+              this.messageService.add({
+                  severity: "error",
+                  detail: error,
+                  summary:"Lỗi"
+              })
+              this.isLoading = false
+          }
+      })
+  }
+
     onLogin(){
         this.isLoading = true
         const login: Login = this.loginForm.value;
-        const response = this.authService.login(login).pipe(
+        this.authService.login(login).pipe(
             concatMap((response: ApiResponse<Token>) =>{
                 this.cookieService.set("refreshToken",response.data.refeshToken);
                 this.cookieService.set("accessToken",response.data.accessToken);

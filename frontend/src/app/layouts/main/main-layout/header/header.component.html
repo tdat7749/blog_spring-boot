@@ -1,42 +1,42 @@
 <header>
-    <div class="h-4rem w-full px-2 md:px-4 bg-gray-900 flex justify-content-between align-items-center">
-        <ul class="flex space-x text-sm md:text-base">
-            <span class="text-xl md:text-lg pi pi-facebook text-white"></span>
-            <span class="text-xl md:text-lg pi pi-google text-white"></span>
+    <div class="tw-h-[4rem] tw-w-full tw-px-2 md:tw-px-4 tw-bg-gray-900 tw-flex tw-justify-between tw-items-center">
+        <ul class="tw-flex tw-space-x-[1rem] tw-text-sm md:tw-text-base">
+            <span class="tw-text-xl md:tw-text-lg pi pi-facebook tw-text-white"></span>
+            <span class="tw-text-xl md:tw-text-lg pi pi-google tw-text-white"></span>
         </ul>
-        <div class="flex">
-            <input pInputText type="text" class="p-inputtext-sm md:p-inputtext-lg" placeholder="Tìm kiếm" />
+        <div class="tw-flex">
+            <input pInputText type="text" class="p-inputtext-sm md:tw-p-inputtext-lg" placeholder="Tìm kiếm" />
             <ng-container *ngIf="userInfo !== null;else noUser">
-                <div><p-avatar class="ml-4" (click)="op.toggle($event)" size="large" shape="circle" image="{{userInfo.avatar ? userInfo.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}"></p-avatar></div>
+                <div><p-avatar class="tw-ml-4" (click)="op.toggle($event)" size="large" shape="circle" image="{{userInfo.avatar ? userInfo.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}"></p-avatar></div>
                 <p-overlayPanel #op>
                     <ng-template pTemplate="content">
-                        <ul class=" space-y">
-                            <li class=" text-gray-500 hover:text-gray-900 cursor-pointer" routerLink="/">THÔNG TIN NGƯỜI DÙNG</li>
-                            <li class=" text-gray-500 hover:text-gray-900 cursor-pointer" routerLink="/">ĐỔI MẬT KHẨU</li>
-                            <li class="text-gray-500 hover:text-gray-900 cursor-pointer" routerLink="/">QUẢN LÝ BÀI VIẾT</li>
+                        <ul class="tw-space-y-[1rem]">
+                            <li class=" tw-text-gray-500 hover:tw-text-gray-900 tw-cursor-pointer" routerLink="/">THÔNG TIN NGƯỜI DÙNG</li>
+                            <li class=" tw-text-gray-500 hover:tw-text-gray-900 tw-cursor-pointer" routerLink="/">ĐỔI MẬT KHẨU</li>
+                            <li class="tw-text-gray-500 hover:tw-text-gray-900 tw-cursor-pointer" routerLink="/">QUẢN LÝ BÀI VIẾT</li>
                             <p-divider></p-divider>
-                            <li (click)="logout()" class="text-green-500 hover:text-green-900 cursor-pointer" routerLink="/">ĐĂNG XUẤT</li>
+                            <li (click)="logout()" class="tw-text-green-500 hover:tw-text-green-900 tw-cursor-pointer" routerLink="/">ĐĂNG XUẤT</li>
                         </ul>
                     </ng-template>
                 </p-overlayPanel>
             </ng-container>
             <ng-template #noUser>
-                <p-button styleClass="p-button-success" class="hidden md:block mx-4" label="Đăng Nhập"></p-button>
-                <p-button  styleClass="p-button-secondary" class="hidden md:block text-white" label="Đăng Ký"></p-button>
+                <p-button styleClass="p-button-primary" routerLink="/dang-nhap" class="tw-hidden md:tw-block tw-mx-4" label="Đăng Nhập"></p-button>
+                <p-button  styleClass="p-button-secondary" routerLink="/dang-ky" class="tw-hidden md:tw-block tw-text-white" label="Đăng Ký"></p-button>
             </ng-template>
         </div>
     </div>
-    <div class="w-11 mx-auto">
-        <div class="mb-6">
-            <div class="h-10rem flex align-items-center">
-                <span (click)="openSideBar()" class="pi pi-align-justify md:hidden text-3xl cursor-pointer"></span>
-                <h1 class="text-3xl md:text-5xl font-light mx-auto">Type Your Post</h1>
+    <div class="tw-w-[90%] tw-mx-auto">
+        <div class="tw-mb-6">
+            <div class="tw-h-[10rem] tw-flex tw-items-center">
+                <span (click)="openSideBar()" class="pi pi-align-justify md:tw-hidden tw-text-3xl tw-cursor-pointer"></span>
+                <h1 class="tw-text-3xl md:tw-text-5xl tw-font-light tw-mx-auto">Type Your Post</h1>
             </div>
-            <ul class="hidden md:flex space-x justify-content-center align-items-center">
-                <li class="p-2 text-gray-500 hover:text-gray-900 cursor-pointer" routerLink="{{nav.path}}" *ngFor="let nav of listNav">{{nav.title}}</li>
+            <ul class="tw-hidden md:tw-flex tw-space-x-[1rem] tw-justify-center tw-items-center">
+                <li class="tw-p-2 tw-text-gray-500 hover:tw-text-gray-900 tw-cursor-pointer" routerLink="{{nav.path}}" *ngFor="let nav of listNav">{{nav.title}}</li>
             </ul>
         </div>
-        <p-divider class="hidden md:block"></p-divider>
+        <p-divider class="tw-hidden md:tw-block"></p-divider>
     </div>
 </header>
 <main-side-bar #sideBar></main-side-bar>
