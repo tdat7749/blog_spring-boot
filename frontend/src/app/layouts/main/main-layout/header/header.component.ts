@@ -27,9 +27,6 @@ export class HeaderComponent implements OnInit, OnDestroy{
     this.authService.userState$.subscribe(response => {
       this.userInfo = response
     })
-
-
-    console.log(this.router)
   }
 
   logout() {

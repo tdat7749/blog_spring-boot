@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../../core/services/auth.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {NoWhiteSpaceValidator, removeSpecialCharacters} from "../../../shared/commons/shared";
+import {NoWhiteSpaceValidator} from "../../../shared/commons/shared";
 import {Register} from "../../../core/types/auth.type";
 import {MessageService} from "primeng/api";
 

@@ -15,8 +15,7 @@ export class AppComponent implements OnInit{
   title = 'bố thăng docker rách';
 
   ngOnInit() {
-    console.log(this.cookieService.get("accessToken"))
-    if(this.cookieService.get("accessToken") !== null &&  this.cookieService.get("accessToken") !== ""){
+    if(this.cookieService.get("accessToken") !== null &&  this.cookieService.get("accessToken") !== "" && this.authService.getCurrentUser() === null){
       this.authService.getMe().subscribe(
           (response) => {
             this.authService.userState$.next(response.data)

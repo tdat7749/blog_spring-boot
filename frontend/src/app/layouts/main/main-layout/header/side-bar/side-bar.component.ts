@@ -8,13 +8,18 @@ import {User} from "../../../../../core/types/user.type";
   templateUrl: './side-bar.component.html',
   styleUrls: ['./side-bar.component.css']
 })
-export class SideBarComponent{
+export class SideBarComponent implements OnInit{
 
-
+  userInfo: User | null = null
   listNav = listNav
   isOpen:boolean = false;
 
   constructor(private authService: AuthService) {
   }
 
+  ngOnInit() {
+    this.authService.userState$.subscribe(response => {
+      this.userInfo = response
+    })
+  }
 }
