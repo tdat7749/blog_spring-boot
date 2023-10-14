@@ -142,7 +142,7 @@ public class AuthServiceImpl implements AuthService{
 
         mailService.sendMail(setCodeUser.getEmail(), Constants.SUBJECT_EMAIL_VERIFY,Constants.PUBLIC_HOST + "/xac-thuc" + "?email=" + setCodeUser.getEmail() + "&code=" + setCodeUser.getCode());
 
-        return new SuccessResponse<>(AuthConstants.REGISTER_SUCCESS,true);
+        return new SuccessResponse<>(AuthConstants.RESEND_EMAIL,true);
 
     }
 

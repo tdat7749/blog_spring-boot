@@ -29,5 +29,5 @@ public class UserConstants {
 
     public static final String SEND_MAIL_FORGOT_PASSWORD_FAILED = "Gửi mã xác minh thất bại";
 
-    public static final String SEND_MAIL_FORGOT_PASSWORD_SUCCESS = "Đã gửi mã xác minh thành công, vui lòng kiểm tra email của bạn";
+    public static final String SEND_MAIL_FORGOT_PASSWORD_SUCCESS = "Đã gửi mã lấy lại tài khoản thành công, vui lòng kiểm tra email của bạn";
 }
