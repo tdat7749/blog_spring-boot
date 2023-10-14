@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -17,12 +18,17 @@ import java.util.Optional;
 public interface SeriesRepository extends JpaRepository<Series,Integer> {
 
     Optional<Series> findBySlug(String slug);
-    Optional<Series> findByUserAndId(User user,int id);
 
     @Query("SELECT DISTINCT s FROM Series s LEFT JOIN s.posts p  WHERE s.slug = :slug AND p.isPublished = true")
 
     Optional<Series> getSeriesDetail(@Param("slug") String slug);
 
     boolean existsByUserAndId(User user,int id);
+
+    List<Series> findByUser(User user);
+
+
+    @Query("SELECT DISTINCT s from Series as s LEFT JOIN s.user as u WHERE u.userName = :userName")
+    List<Series> getListSeriesByUserName(String userName);
 
 }

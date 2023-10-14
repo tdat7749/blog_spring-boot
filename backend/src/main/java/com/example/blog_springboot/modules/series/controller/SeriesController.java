@@ -53,6 +53,16 @@ public class SeriesController {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+    @GetMapping("/user")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<List<SeriesVm>>> getListSeriesByUserPrincipal(
+            @AuthenticationPrincipal User userPrincipal
+    ){
+        var result = seriesService.getListSeriesByUserPrincipal(userPrincipal);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
     @PostMapping("")
     @ResponseBody
     public ResponseEntity<SuccessResponse<SeriesVm>> createSeries(@RequestBody @Valid CreateSeriesDTO dto,@AuthenticationPrincipal User userPrincipal){
