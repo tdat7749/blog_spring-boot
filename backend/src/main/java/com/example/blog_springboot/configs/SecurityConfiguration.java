@@ -67,6 +67,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/api/users/notifications").hasAnyRole("USER","ADMIN")
                         .requestMatchers(HttpMethod.GET,"/api/users/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/users/me").hasAnyRole("USER","ADMIN")
+                        .requestMatchers(HttpMethod.PATCH,"/api/users/forgot").permitAll()
                         .requestMatchers(HttpMethod.PATCH,"/api/users/**").hasAnyRole("USER","ADMIN")
                         .requestMatchers(HttpMethod.PATCH,"/api/users/permission").hasAnyRole("ADMIN")
 

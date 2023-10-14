@@ -6,6 +6,7 @@ import com.example.blog_springboot.exceptions.NotFoundException;
 import com.example.blog_springboot.modules.authenticate.constant.AuthConstants;
 import com.example.blog_springboot.modules.authenticate.dto.LoginDTO;
 import com.example.blog_springboot.modules.authenticate.dto.RegisterDTO;
+import com.example.blog_springboot.modules.authenticate.dto.ResendMailDTO;
 import com.example.blog_springboot.modules.authenticate.dto.VerifyDTO;
 import com.example.blog_springboot.modules.authenticate.exception.*;
 import com.example.blog_springboot.modules.authenticate.viewmodel.AuthenVm;
@@ -88,7 +89,7 @@ public class AuthServiceImpl implements AuthService{
         newUser.setVerify(false);
         newUser.setNotLocked(true);
         newUser.setRole(Role.USER);
-        newUser.setCode(Utilities.generateCode());
+        newUser.setCode(passwordEncoder.encode(Utilities.generateCode()));
 
         var saveUser = userRepository.save(newUser);
         if(saveUser == null){
@@ -121,8 +122,8 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public SuccessResponse<Boolean> resendEmail(String email) {
-        var foundUser = userRepository.findByEmail(email).orElse(null);
+    public SuccessResponse<Boolean> resendEmail(ResendMailDTO dto) {
+        var foundUser = userRepository.findByEmail(dto.getEmail()).orElse(null);
         if(foundUser == null){
             throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
         }
@@ -131,7 +132,7 @@ public class AuthServiceImpl implements AuthService{
             return new SuccessResponse<>(AuthConstants.ACCOUNT_VERIFIED,true);
         }
 
-        foundUser.setCode(Utilities.generateCode());
+        foundUser.setCode(passwordEncoder.encode(Utilities.generateCode()));
 
         var setCodeUser = userRepository.save(foundUser);
 
