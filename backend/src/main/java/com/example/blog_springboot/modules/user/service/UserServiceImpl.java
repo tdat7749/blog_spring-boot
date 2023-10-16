@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService{
             throw new SendMailForgotPasswordException(UserConstants.SEND_MAIL_FORGOT_PASSWORD_FAILED);
         }
 
-        mailService.sendMail(email,Constants.SUBJECT_EMAIL_FORGOT_PASSWORD,"Nhấp vào đây để thay đổi mật khẩu của bạn, vui lòng không cung cấp nó cho bất kì ai : " + Constants.PUBLIC_HOST + "?email=" +saveUser.getEmail() + "&code=" + saveUser.getCode());
+        mailService.sendMail(email,Constants.SUBJECT_EMAIL_FORGOT_PASSWORD,"Nhấp vào đây để thay đổi mật khẩu của bạn, vui lòng không cung cấp nó cho bất kì ai : " + Constants.PUBLIC_HOST + "/lay-lai-mat-khau" + "?email=" +saveUser.getEmail() + "&code=" + saveUser.getCode());
 
         return new SuccessResponse<>(UserConstants.SEND_MAIL_FORGOT_PASSWORD_SUCCESS,true);
     }

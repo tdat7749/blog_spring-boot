@@ -96,7 +96,7 @@ public class AuthServiceImpl implements AuthService{
             throw new RegisterException(AuthConstants.REGISTER_FAILED);
         }
 
-        mailService.sendMail(saveUser.getEmail(), Constants.SUBJECT_EMAIL_VERIFY,Constants.PUBLIC_HOST + "?email=" + saveUser.getEmail() + "&code=" + saveUser.getCode());
+        mailService.sendMail(saveUser.getEmail(), Constants.SUBJECT_EMAIL_VERIFY,Constants.PUBLIC_HOST + "/xac-thuc" + "?email=" + saveUser.getEmail() + "&code=" + saveUser.getCode());
 
         return new SuccessResponse<>(AuthConstants.REGISTER_SUCCESS,true);
     }
@@ -140,7 +140,7 @@ public class AuthServiceImpl implements AuthService{
             throw new SetCodeUserException(AuthConstants.SET_CODE_FAILED);
         }
 
-        mailService.sendMail(setCodeUser.getEmail(), Constants.SUBJECT_EMAIL_VERIFY,Constants.PUBLIC_HOST + "?email=" + setCodeUser.getEmail() + "&code=" + setCodeUser.getCode());
+        mailService.sendMail(setCodeUser.getEmail(), Constants.SUBJECT_EMAIL_VERIFY,Constants.PUBLIC_HOST + "/xac-thuc" + "?email=" + setCodeUser.getEmail() + "&code=" + setCodeUser.getCode());
 
         return new SuccessResponse<>(AuthConstants.RESEND_EMAIL,true);
 
