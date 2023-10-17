@@ -34,4 +34,6 @@ public interface PostService {
 
     public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostNotPublished(String sortBy,int pageIndex);
 
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllByCurrentUser(User user,String sortBy,int pageIndex);
+
 }

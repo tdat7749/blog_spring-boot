@@ -39,7 +39,7 @@ public class AuthenController {
 
     @PostMapping(value = "/refresh")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<String>> refreshToken(@RequestHeader("rfToken") String refreshToken){
+    public ResponseEntity<SuccessResponse<String>> refreshToken(@RequestHeader("Rftoken") String refreshToken){
         var result = authService.refreshToken(refreshToken);
 
         return new ResponseEntity<>(result, HttpStatus.OK);

@@ -1,0 +1,29 @@
+<div class="tw-p-[2rem] tw-h-auto tw-w-full">
+    <h1 class="tw-text-2xl tw-text-gray-900 tw-text-center tw-mb-4">QUẢN LÝ BÀI VIẾT</h1>
+    <p-table [value]="listPost" [tableStyle]="{'min-width': '50rem'}">
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th>ID</th>
+                <th>Bài Viết</th>
+                <th style="width:10rem">Trạng Thái</th>
+                <th>Tag</th>
+                <th>Lượt Xem</th>
+                <th>Lượt Thích</th>
+                <th>Lượt Bình Luận</th>
+                <th>Chi Tiết</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-post let-columns="columns">
+            <tr>
+                <td>{{post.id}}</td>
+                <td>{{post.title}}</td>
+                <td><p-tag [rounded]="true" severity="{{post.isPublished ? 'success' : 'danger'}}" value="{{post.isPublished ? 'Đang hoạt động' : 'Ngưng hoạt động'}}"></p-tag></td>
+                <td class="tw-flex tw-space-[0.4rem]  tw-flex-wrap "><p-tag *ngFor="let tag of post.tags" [rounded]="true" severity="primary" value="{{tag.title}}"></p-tag></td>
+                <td>{{post.totalLike}}</td>
+                <td>{{post.totalView}}</td>
+                <td>{{post.totalComment}}</td>
+               <td>XEM</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

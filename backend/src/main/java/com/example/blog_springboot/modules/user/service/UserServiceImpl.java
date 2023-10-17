@@ -63,14 +63,14 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public SuccessResponse<Boolean> changeAvatar(String avatar, User userPrincipal) {
+    public SuccessResponse<String> changeAvatar(String avatar, User userPrincipal) {
         userPrincipal.setAvatar(avatar);
         var save = userRepository.save(userPrincipal);
         if(save == null){
             throw new ChangePasswordException(UserConstants.CHANGE_AVATAR_FAILED);
         }
 
-        return new SuccessResponse<>(UserConstants.CHANGE_AVATAR_SUCCESS,true);
+        return new SuccessResponse<>(UserConstants.CHANGE_AVATAR_SUCCESS,save.getAvatar());
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.example.blog_springboot.modules.post.model.Post;
 import com.example.blog_springboot.modules.post.viewmodel.PostListVm;
 import com.example.blog_springboot.modules.post.viewmodel.PostVm;
 import com.example.blog_springboot.modules.series.model.Series;
+import com.example.blog_springboot.modules.series.viewmodel.SeriesListPostVm;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.tag.model.Tag;
 import com.example.blog_springboot.modules.tag.viewmodel.TagVm;
@@ -73,6 +74,21 @@ public class Utilities {
         seriesVm.setUpdatedAt(series.getUpdatedAt().toString());
 
         return seriesVm;
+    }
+
+    public static SeriesListPostVm getSeriesListPostVm(Series series){
+        var seriesListPostVm = new SeriesListPostVm();
+        seriesListPostVm.setId(series.getId());
+        seriesListPostVm.setTitle(series.getTitle());
+        seriesListPostVm.setSlug(series.getSlug());
+        seriesListPostVm.setContent(series.getContent());
+        seriesListPostVm.setCreatedAt(series.getCreatedAt().toString());
+        seriesListPostVm.setUpdatedAt(series.getUpdatedAt().toString());
+
+        var listPostVm = series.getPosts().stream().map(Utilities::getPostListVm).toList();
+        seriesListPostVm.setPosts(listPostVm);
+
+        return seriesListPostVm;
     }
 
     public static PostVm transferPostVm(Post post){

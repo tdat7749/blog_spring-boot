@@ -54,7 +54,7 @@ public class UserController {
 
     @PatchMapping("/avatar")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> changeAvatar(@RequestBody String avatar, @AuthenticationPrincipal User userPrincipal){
+    public ResponseEntity<SuccessResponse<String>> changeAvatar(@RequestBody String avatar, @AuthenticationPrincipal User userPrincipal){
         var result = userService.changeAvatar(avatar,userPrincipal);
 
         return new ResponseEntity<>(result, HttpStatus.OK);

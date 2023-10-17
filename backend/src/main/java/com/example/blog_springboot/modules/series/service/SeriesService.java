@@ -5,6 +5,7 @@ import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.series.dto.CreateSeriesDTO;
 import com.example.blog_springboot.modules.series.dto.UpdateSeriesDTO;
 import com.example.blog_springboot.modules.series.model.Series;
+import com.example.blog_springboot.modules.series.viewmodel.SeriesListPostVm;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.user.model.User;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public interface SeriesService {
     public SuccessResponse<Boolean> deleteSeries(int id,User userPrincipal);
     public SuccessResponse<SeriesVm> updateSeries(UpdateSeriesDTO dto,int seriesId,User userPrincipal);
 
-    public SuccessResponse<Series> getSeriesDetail(String slug); // for view
+    public SuccessResponse<SeriesListPostVm> getSeriesDetail(String slug); // for view
     
     public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(String sortBy,int pageIndex);
 

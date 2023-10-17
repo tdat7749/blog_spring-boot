@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../../core/services/auth.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {NoWhiteSpaceValidator} from "../../../shared/commons/shared";
 import {Register} from "../../../core/types/auth.type";
 import {MessageService} from "primeng/api";
+import {noWhiteSpaceValidator} from "../../../shared/validators/no-white-space.validator";
+import {passwordsMatch} from "../../../shared/validators/password-smatch.validator";
 
 @Component({
   selector: 'app-register',
@@ -26,7 +27,7 @@ export class RegisterComponent implements OnInit{
               Validators.required,
               Validators.minLength(6),
               Validators.maxLength(50),
-              NoWhiteSpaceValidator()
+              noWhiteSpaceValidator()
           ])
       ],
       firstName:[
@@ -35,7 +36,7 @@ export class RegisterComponent implements OnInit{
           Validators.required,
           Validators.minLength(1),
           Validators.maxLength(60),
-          NoWhiteSpaceValidator()
+          noWhiteSpaceValidator()
         ])
       ],
       lastName:[
@@ -44,7 +45,7 @@ export class RegisterComponent implements OnInit{
           Validators.required,
           Validators.minLength(1),
           Validators.maxLength(70),
-          NoWhiteSpaceValidator()
+          noWhiteSpaceValidator()
         ])
       ],
       email:[
@@ -52,7 +53,7 @@ export class RegisterComponent implements OnInit{
         Validators.compose([
           Validators.required,
           Validators.email,
-          NoWhiteSpaceValidator()
+          noWhiteSpaceValidator()
         ])
       ],
       password:[
@@ -61,7 +62,7 @@ export class RegisterComponent implements OnInit{
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(50),
-          NoWhiteSpaceValidator()
+          noWhiteSpaceValidator()
         ])
       ],
       confirmPassword:[
@@ -70,9 +71,11 @@ export class RegisterComponent implements OnInit{
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(50),
-          NoWhiteSpaceValidator()
+          noWhiteSpaceValidator()
         ])
       ]
+    },{
+      validators: passwordsMatch('password','confirmPassword')
     })
   }
 
