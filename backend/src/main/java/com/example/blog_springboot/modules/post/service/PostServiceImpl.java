@@ -81,10 +81,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPost(String sortBy, int pageIndex) {
-        Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(sortBy));
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPost(String keyword,String sortBy, int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.DESC,sortBy));
 
-        Page<Post> pagingResult = postRepository.findAllByPublished(true,paging);
+        Page<Post> pagingResult = postRepository.findAllByPublished(true,keyword,paging);
 
         List<PostListVm> listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
 
@@ -241,21 +241,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostAuthor(String username, String sortBy, int pageIndex) {
-        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(sortBy));
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostAuthor(String username,String keyword, String sortBy, int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(Sort.Direction.DESC,sortBy));
 
-        Page<Post> pagingResult = postRepository.getAllPostByUsername(username,paging);
-
-        List<PostListVm> listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
-
-        return new SuccessResponse<>("Thành công",new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listPostVm));
-    }
-
-    @Override
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostNotPublished(String sortBy, int pageIndex) {
-        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(sortBy));
-
-        Page<Post> pagingResult = postRepository.getAllPostNotPublished(paging);
+        Page<Post> pagingResult = postRepository.getAllPostByUsername(keyword,username,paging);
 
         List<PostListVm> listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
 
@@ -263,10 +252,21 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllByCurrentUser(User user, String sortBy, int pageIndex) {
-        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(sortBy));
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostNotPublished(String sortBy,String keyword, int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(Sort.Direction.DESC,sortBy));
 
-        Page<Post> pagingResult = postRepository.getAllPostByCurrentUser(user,paging);
+        Page<Post> pagingResult = postRepository.getAllPostNotPublished(keyword,paging);
+
+        List<PostListVm> listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
+
+        return new SuccessResponse<>("Thành công",new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listPostVm));
+    }
+
+    @Override
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllByCurrentUser(User user, String keyword,String sortBy, int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(Sort.Direction.DESC,sortBy));
+
+        Page<Post> pagingResult = postRepository.getAllPostByCurrentUser(keyword,user,paging);
 
         List<PostListVm> listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
 
@@ -333,10 +333,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostByTag(String tagSlug, String sortBy, int pageIndex) {
-        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(sortBy));
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostByTag(String tagSlug,String keyword,String sortBy, int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(Sort.Direction.DESC,sortBy));
 
-        Page<Post> pagingResult = postRepository.getPostByTagSlug(tagSlug,paging);
+        Page<Post> pagingResult = postRepository.getPostByTagSlug(keyword,tagSlug,paging);
 
         var postListVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
 

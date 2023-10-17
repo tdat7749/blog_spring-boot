@@ -25,15 +25,15 @@ public interface PostService {
     public SuccessResponse<Boolean> addPostToSeries(int postId,int seriesId,User userPrincipal);
 
     // for client
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostByTag(String tagSlug,String sortBy,int pageIndex);
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPost(String sortBy, int pageIndex);
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostByTag(String tagSlug,String keyword,String sortBy,int pageIndex);
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPost(String keyword,String sortBy, int pageIndex);
 
     public SuccessResponse<PostVm> getPostBySlug(String slug);
 
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostAuthor(String username,String sortBy,int pageIndex);
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostAuthor(String username,String keyword,String sortBy,int pageIndex);
 
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostNotPublished(String sortBy,int pageIndex);
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostNotPublished(String sortBy,String keyword,int pageIndex);
 
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllByCurrentUser(User user,String sortBy,int pageIndex);
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllByCurrentUser(User user,String keyword,String sortBy,int pageIndex);
 
 }

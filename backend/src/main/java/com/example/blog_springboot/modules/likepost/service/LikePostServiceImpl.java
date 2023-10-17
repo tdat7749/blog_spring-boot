@@ -9,6 +9,7 @@ import com.example.blog_springboot.modules.likepost.model.LikePost;
 import com.example.blog_springboot.modules.likepost.repository.LikePostRepository;
 import com.example.blog_springboot.modules.post.constant.PostConstants;
 import com.example.blog_springboot.modules.post.exception.PostNotFoundException;
+import com.example.blog_springboot.modules.post.model.Post;
 import com.example.blog_springboot.modules.post.repository.PostRepository;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
@@ -104,5 +105,10 @@ public class LikePostServiceImpl implements LikePostService{
         }).toList();
 
         return new SuccessResponse<>("Thành công",result);
+    }
+
+    @Override
+    public long countLikePost(Post post) {
+        return likePostRepository.getTotalLike(post);
     }
 }

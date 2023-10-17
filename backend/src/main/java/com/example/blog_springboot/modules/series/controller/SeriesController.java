@@ -46,10 +46,11 @@ public class SeriesController {
     @GetMapping("/")
     @ResponseBody
     public ResponseEntity<SuccessResponse<PagingResponse<List<SeriesVm>>>> getAllSeries(
+            @RequestParam(name = "keyword",required = false,defaultValue = "") String keyword,
             @RequestParam(name = "pageIndex",required = true,defaultValue = "0") Integer pageIndex,
             @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
     ){
-        var result = seriesService.getAllSeries(sortBy,pageIndex);
+        var result = seriesService.getAllSeries(keyword,sortBy,pageIndex);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
