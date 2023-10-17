@@ -15,6 +15,8 @@ public class PostListVm {
     private List<TagVm> tags;
     private UserVm author;
 
+    private boolean isPublished;
+
     private String thumbnail;
     private String summary;
 
@@ -116,5 +118,13 @@ public class PostListVm {
 
     public void setTotalView(long totalView) {
         this.totalView = totalView;
+    }
+
+    public boolean isPublished() {
+        return isPublished;
+    }
+
+    public void setPublished(boolean published) {
+        isPublished = published;
     }
 }

@@ -5,6 +5,7 @@ import com.example.blog_springboot.modules.series.viewmodel.SeriesListPostVm;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.user.model.User;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,5 +31,8 @@ public interface SeriesRepository extends JpaRepository<Series,Integer> {
 
     @Query("SELECT DISTINCT s from Series as s LEFT JOIN s.user as u WHERE u.userName = :userName")
     List<Series> getListSeriesByUserName(String userName);
+
+    @Query("SELECT s from Series as s where s.title LIKE %:keyword%")
+    Page<Series> getAllSeries(String keyword,Pageable paging);
 
 }

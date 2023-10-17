@@ -13,7 +13,7 @@ public class PostVm {
     private String slug;
     private String summary;
     private String thumbnail;
-    private int isPublished;
+    private boolean isPublished;
     private String createdAt;
     private String updatedAt;
     private List<TagVm> tags;
@@ -71,11 +71,11 @@ public class PostVm {
         this.thumbnail = thumbnail;
     }
 
-    public int getIsPublished() {
+    public boolean getIsPublished() {
         return isPublished;
     }
 
-    public void setIsPublished(int isPublished) {
+    public void setIsPublished(boolean isPublished) {
         this.isPublished = isPublished;
     }
 

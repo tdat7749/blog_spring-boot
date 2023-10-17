@@ -21,21 +21,21 @@ public interface PostRepository extends JpaRepository<Post,Integer> {
 
 
     //for client
-    @Query("select p from Post as p left join p.tags as t where t.slug = :slug and p.isPublished = true")
-    Page<Post> getPostByTagSlug(String slug, Pageable paging);
+    @Query("select p from Post as p left join p.tags as t where t.slug = :slug and p.isPublished = true AND p.title LIKE %:keyword%")
+    Page<Post> getPostByTagSlug(String keyword,String slug, Pageable paging);
 
     @Query("select p from Post as p where p.slug = :slug and p.isPublished = true")
     Optional<Post> getPostBySlug(String slug);
 
-    @Query("select p from Post as p where p.isPublished = :isPublished")
-    Page<Post> findAllByPublished(boolean isPublished,Pageable paging);
+    @Query("select p from Post as p where p.isPublished = :isPublished AND p.title LIKE %:keyword%")
+    Page<Post> findAllByPublished(boolean isPublished,String keyword,Pageable paging);
 
-    @Query("select p from Post as p left join p.user as u where u.userName = :userName and p.isPublished = true")
-    Page<Post> getAllPostByUsername(String userName,Pageable paging);
+    @Query("select p from Post as p left join p.user as u where u.userName = :userName and p.isPublished = true AND p.title LIKE %:keyword%")
+    Page<Post> getAllPostByUsername(String keyword,String userName,Pageable paging);
 
-    @Query("select p from Post as p where p.isPublished = false")
-    Page<Post> getAllPostNotPublished(Pageable paging);
+    @Query("select p from Post as p where p.isPublished = false AND p.title LIKE %:keyword%")
+    Page<Post> getAllPostNotPublished(String keyword,Pageable paging);
 
-    @Query("select p from Post as p where p.user = :user")
-    Page<Post> getAllPostByCurrentUser(User user, Pageable paging);
+    @Query("select p from Post as p where p.user = :user AND p.title LIKE %:keyword%")
+    Page<Post> getAllPostByCurrentUser(String keyword,User user, Pageable paging);
 }

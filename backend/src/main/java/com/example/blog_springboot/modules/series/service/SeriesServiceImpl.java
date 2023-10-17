@@ -136,10 +136,10 @@ public class SeriesServiceImpl implements SeriesService{
 
 
     @Override
-    public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(String sortBy,int pageIndex) {
-        Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(sortBy));
+    public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(String keyword,String sortBy,int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.DESC,sortBy));
 
-        Page<Series> pagingResult = seriesRepository.findAll(paging);
+        Page<Series> pagingResult = seriesRepository.getAllSeries(keyword,paging);
 
         List<SeriesVm> listSeriesVm = pagingResult.getContent().stream().map(Utilities::getSeriesVm).toList();
 

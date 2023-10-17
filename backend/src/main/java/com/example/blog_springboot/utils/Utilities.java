@@ -1,7 +1,9 @@
 package com.example.blog_springboot.utils;
 
 import com.example.blog_springboot.modules.comment.model.Comment;
+import com.example.blog_springboot.modules.comment.service.CommentService;
 import com.example.blog_springboot.modules.comment.viewmodel.CommentVm;
+import com.example.blog_springboot.modules.likepost.service.LikePostService;
 import com.example.blog_springboot.modules.notification.model.UserNotification;
 import com.example.blog_springboot.modules.notification.viewmodel.NotificationVm;
 import com.example.blog_springboot.modules.post.model.Post;
@@ -15,11 +17,22 @@ import com.example.blog_springboot.modules.tag.viewmodel.TagVm;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
 import com.example.blog_springboot.modules.user.viewmodel.UserVm;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Random;
 
+@Component
 public class Utilities {
+
+    private static CommentService commentService;
+    private static LikePostService likePostService;
+    public Utilities(CommentService commentService,LikePostService likePostService){
+        Utilities.commentService = commentService;
+        Utilities.likePostService = likePostService;
+    }
+
     public static String generateCode() {
         Random rnd = new Random();
         int number = rnd.nextInt(999999);
@@ -102,6 +115,9 @@ public class Utilities {
         postVm.setCreatedAt(post.getCreatedAt().toString());
         postVm.setUpdatedAt(post.getUpdatedAt().toString());
         postVm.setTotalView(post.getTotalView());
+        postVm.setIsPublished(post.isPublished());
+        postVm.setTotalComment(commentService.countCommentPost(post));
+        postVm.setTotalLike(likePostService.countLikePost(post));
 
         return postVm;
     }
@@ -117,6 +133,9 @@ public class Utilities {
         postListVm.setCreatedAt(post.getCreatedAt().toString());
         postListVm.setUpdatedAt(post.getUpdatedAt().toString());
         postListVm.setTotalView(post.getTotalView());
+        postListVm.setPublished(post.isPublished());
+        postListVm.setTotalComment(commentService.countCommentPost(post));
+        postListVm.setTotalLike(likePostService.countLikePost(post));
 
         return postListVm;
     }
