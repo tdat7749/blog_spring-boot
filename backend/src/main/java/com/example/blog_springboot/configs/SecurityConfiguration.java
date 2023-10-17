@@ -46,6 +46,7 @@ public class SecurityConfiguration {
 
                         //auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/auth/**").permitAll()
 
                         //upload file
                         .requestMatchers("/api/filestorage/**").hasAnyRole("USER","ADMIN")

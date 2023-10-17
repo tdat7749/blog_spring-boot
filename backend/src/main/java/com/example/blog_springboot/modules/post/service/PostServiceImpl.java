@@ -263,6 +263,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllByCurrentUser(User user, String sortBy, int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(sortBy));
+
+        Page<Post> pagingResult = postRepository.getAllPostByCurrentUser(user,paging);
+
+        List<PostListVm> listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
+
+        return new SuccessResponse<>("Thành công",new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listPostVm));
+    }
+
+    @Override
     public SuccessResponse<Boolean> updateStatus(int id, User userPrincipal, UpdatePostStatusDTO dto) {
         if(!(userPrincipal.getRole() == Role.ADMIN)){
             var isAuthor = postRepository.existsByUserAndId(userPrincipal,id);

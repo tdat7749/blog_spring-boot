@@ -27,6 +27,7 @@ public interface PostRepository extends JpaRepository<Post,Integer> {
     @Query("select p from Post as p where p.slug = :slug and p.isPublished = true")
     Optional<Post> getPostBySlug(String slug);
 
+    @Query("select p from Post as p where p.isPublished = :isPublished")
     Page<Post> findAllByPublished(boolean isPublished,Pageable paging);
 
     @Query("select p from Post as p left join p.user as u where u.userName = :userName and p.isPublished = true")
@@ -34,4 +35,7 @@ public interface PostRepository extends JpaRepository<Post,Integer> {
 
     @Query("select p from Post as p where p.isPublished = false")
     Page<Post> getAllPostNotPublished(Pageable paging);
+
+    @Query("select p from Post as p where p.user = :user")
+    Page<Post> getAllPostByCurrentUser(User user, Pageable paging);
 }

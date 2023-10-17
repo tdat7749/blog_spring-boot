@@ -4,12 +4,18 @@ import {MainLayoutComponent} from "./main-layout/layout/main-layout.component";
 import {MainLayoutModule} from "./main-layout/main-layout.module";
 import {HomeComponent} from "../../features/main/home/home.component";
 import {notAuthGuard} from "../../core/guards/not-auth.guard";
+import {authChildGuard, authGuard} from "../../core/guards/auth.guard";
 
 const routes: Routes = [
   {
     path:"",
     component: MainLayoutComponent,
     children:[
+      {
+        path:"nguoi-dung",
+        // canActivate:[authGuard],
+        loadChildren: () => import("../../features/main/user/user.module").then(m => m.UserModule)
+      },
       {
         path:"dang-nhap",
         canActivate:[notAuthGuard],
@@ -24,6 +30,11 @@ const routes: Routes = [
         path:"xac-thuc",
         canActivate:[notAuthGuard],
         loadChildren: () => import("../../features/main/verify-email/verify-email.module").then(m => m.VerifyEmailModule)
+      },
+      {
+        path:"lay-lai-mat-khau",
+        canActivate:[notAuthGuard],
+        loadChildren: () => import("../../features/main/forgot-password/forgot-password.module").then(m => m.ForgotPasswordModule)
       },
       {
         path:"",

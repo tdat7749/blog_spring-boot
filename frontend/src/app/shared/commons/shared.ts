@@ -1,5 +1,3 @@
-import {AbstractControl, ValidatorFn} from "@angular/forms";
-
 export const listNav = [
     {
         title:"TRANG CHỦ",
@@ -23,18 +21,20 @@ export const listNav = [
     },
 ]
 
-
-export function NoWhiteSpaceValidator(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-        let controlVal = control.value;
-        if (typeof controlVal === 'number') {
-            controlVal = `${controlVal}`;
-        }
-        let isWhitespace = (controlVal || '').trim().length === 0;
-        let isValid = !isWhitespace;
-        return isValid ? null : { whitespace: 'value is only whitespace' };
-    };
-}
+export const userSideBar = [
+    {
+        title:"Thông tin tài khoản",
+        path:"thong-tin"
+    },
+    {
+        title:"Quản lý bài viết",
+        path:"quan-ly-bai-viet"
+    },
+    {
+        title:"Đổi mật khẩu",
+        path:"doi-mat-khau"
+    }
+]
 
 export function removeSpecialCharacters(){
 

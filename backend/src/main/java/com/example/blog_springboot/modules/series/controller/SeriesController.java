@@ -7,6 +7,7 @@ import com.example.blog_springboot.modules.series.dto.CreateSeriesDTO;
 import com.example.blog_springboot.modules.series.dto.UpdateSeriesDTO;
 import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.series.service.SeriesService;
+import com.example.blog_springboot.modules.series.viewmodel.SeriesListPostVm;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.user.model.User;
 import jakarta.validation.Valid;
@@ -36,7 +37,7 @@ public class SeriesController {
 
     @GetMapping("/slug/{slug}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Series>> getSeriesDetail(@PathVariable String slug){
+    public ResponseEntity<SuccessResponse<SeriesListPostVm>> getSeriesDetail(@PathVariable String slug){
         var result = seriesService.getSeriesDetail(slug);
 
         return new ResponseEntity<>(result,HttpStatus.OK);

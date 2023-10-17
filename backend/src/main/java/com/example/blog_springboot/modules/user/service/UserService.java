@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public interface UserService {
     public SuccessResponse<Boolean> changePassword(ChangePasswordDTO dto,User userPrincipal);
-    public SuccessResponse<Boolean> changeAvatar(String avatar,User userPrincipal);
+    public SuccessResponse<String> changeAvatar(String avatar,User userPrincipal);
 
     public SuccessResponse<UserDetailVm> changeInformation(ChangeInformationDTO dto, User userPrincipal);
 

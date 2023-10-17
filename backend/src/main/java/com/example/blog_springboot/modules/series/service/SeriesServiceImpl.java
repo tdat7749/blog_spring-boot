@@ -9,6 +9,7 @@ import com.example.blog_springboot.modules.series.dto.UpdateSeriesDTO;
 import com.example.blog_springboot.modules.series.exception.*;
 import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.series.repository.SeriesRepository;
+import com.example.blog_springboot.modules.series.viewmodel.SeriesListPostVm;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.user.enums.Role;
 import com.example.blog_springboot.modules.user.model.User;
@@ -123,12 +124,14 @@ public class SeriesServiceImpl implements SeriesService{
     }
 
     @Override
-    public SuccessResponse<Series> getSeriesDetail(String slug) {
+    public SuccessResponse<SeriesListPostVm> getSeriesDetail(String slug) {
         var series = seriesRepository.getSeriesDetail(slug).orElse(null);
         if(series == null){
             throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
         }
-        return new SuccessResponse<>("Thành công",series);
+
+        var result = Utilities.getSeriesListPostVm(series);
+        return new SuccessResponse<>("Thành công",result);
     }
 
 

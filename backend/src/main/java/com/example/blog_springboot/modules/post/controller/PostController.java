@@ -87,6 +87,19 @@ public class PostController {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+    @GetMapping("/user")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<PagingResponse<List<PostListVm>>>> getAllPostByCurrentUser(
+            @RequestParam(name = "pageIndex",required = true,defaultValue = "0") Integer pageIndex,
+            @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy,
+            @AuthenticationPrincipal User userPrincipal
+    )
+    {
+        var result = postService.getAllByCurrentUser(userPrincipal,sortBy,pageIndex);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
     @GetMapping("/not-published")
     @ResponseBody
     public ResponseEntity<SuccessResponse<PagingResponse<List<PostListVm>>>> getAllPostNotPublished(
