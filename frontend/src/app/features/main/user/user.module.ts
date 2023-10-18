@@ -17,6 +17,9 @@ import {MultiSelectModule} from "primeng/multiselect";
 import {DropdownModule} from "primeng/dropdown";
 import {TagModule} from "primeng/tag";
 import {SliderModule} from "primeng/slider";
+import {PaginatorModule} from "primeng/paginator";
+import {EditorModule} from "primeng/editor";
+import { CreatePostComponent } from './create-post/create-post.component';
 
 @NgModule({
     declarations:[
@@ -24,7 +27,8 @@ import {SliderModule} from "primeng/slider";
     SidebarComponent,
     UserInformationComponent,
     ChangePasswordComponent,
-    PostManagementComponent
+    PostManagementComponent,
+    CreatePostComponent
   ],
     imports: [
         CommonModule,
@@ -40,7 +44,9 @@ import {SliderModule} from "primeng/slider";
         MultiSelectModule,
         DropdownModule,
         TagModule,
-        SliderModule
+        SliderModule,
+        PaginatorModule,
+        EditorModule
     ]
 })
 

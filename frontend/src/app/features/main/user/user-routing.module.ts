@@ -5,6 +5,7 @@ import {UserInformationComponent} from "./user-information/user-information.comp
 import {authChildGuard} from "../../../core/guards/auth.guard";
 import {ChangePasswordComponent} from "./change-password/change-password.component";
 import {PostManagementComponent} from "./post-management/post-management.component";
+import {CreatePostComponent} from "./create-post/create-post.component";
 
 const routes:Routes = [
     {
@@ -21,7 +22,11 @@ const routes:Routes = [
             },
             {
                 path:"quan-ly-bai-viet",
-                component:PostManagementComponent
+                component:PostManagementComponent,
+            },
+            {
+                path:"tao-bai-viet",
+                component:CreatePostComponent
             }
         ]
     }

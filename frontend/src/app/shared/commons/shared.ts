@@ -27,15 +27,23 @@ export const userSideBar = [
         path:"thong-tin"
     },
     {
+        title:"Đổi mật khẩu",
+        path:"doi-mat-khau"
+    },
+    {
         title:"Quản lý bài viết",
         path:"quan-ly-bai-viet"
     },
     {
-        title:"Đổi mật khẩu",
-        path:"doi-mat-khau"
+        title:"Tạo Bài Viết",
+        path:"tao-bai-viet"
     }
 ]
 
 export function removeSpecialCharacters(){
 
 }
+
+export const MAX_FILE:number = 3145728
+
+export const MIME_TYPES = ["image/png","image/jpeg","image/webp"]

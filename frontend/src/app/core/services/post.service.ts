@@ -21,32 +21,32 @@ export class PostService{
         )
     }
 
-    getAllPostByTag(slug:string,pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<PostList[]>>>{
-        return this.http.get<ApiResponse<PagingResponse<PostList[]>>>(`${environment.apiUrl}/posts/${slug}/tags?pageIndex=${pageIndex - 1}&sortBy=${sortBy}`).pipe(
+    getAllPostByTag(keyword:string,slug:string,pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<PostList[]>>>{
+        return this.http.get<ApiResponse<PagingResponse<PostList[]>>>(`${environment.apiUrl}/posts/${slug}/tags?pageIndex=${pageIndex}&sortBy=${sortBy}&keyword=${keyword}`).pipe(
             catchError(handleError)
         )
     }
 
-    getAllPost(pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<PostList[]>>>{
-        return this.http.get<ApiResponse<PagingResponse<PostList[]>>>(`${environment.apiUrl}/posts?pageIndex=${pageIndex - 1}&sortBy=${sortBy}`).pipe(
+    getAllPost(keyword:string,pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<PostList[]>>>{
+        return this.http.get<ApiResponse<PagingResponse<PostList[]>>>(`${environment.apiUrl}/posts/?pageIndex=${pageIndex}&sortBy=${sortBy}&keyword=${keyword}`).pipe(
             catchError(handleError)
         )
     }
 
-    getAllPostNotPublished(pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<PostList[]>>>{
-        return this.http.get<ApiResponse<PagingResponse<PostList[]>>>(`${environment.apiUrl}/posts/not-published?pageIndex=${pageIndex - 1}&sortBy=${sortBy}`).pipe(
+    getAllPostNotPublished(keyword:string,pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<PostList[]>>>{
+        return this.http.get<ApiResponse<PagingResponse<PostList[]>>>(`${environment.apiUrl}/posts/not-published?pageIndex=${pageIndex}&sortBy=${sortBy}&keyword=${keyword}`).pipe(
             catchError(handleError)
         )
     }
 
-    getAllPostOfAuthorByUserName(userName:string,pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<PostList[]>>>{
-        return this.http.get<ApiResponse<PagingResponse<PostList[]>>>(`${environment.apiUrl}/posts/${userName}?pageIndex=${pageIndex - 1}&sortBy=${sortBy}`).pipe(
+    getAllPostOfAuthorByUserName(keyword:string,userName:string,pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<PostList[]>>>{
+        return this.http.get<ApiResponse<PagingResponse<PostList[]>>>(`${environment.apiUrl}/posts/${userName}?pageIndex=${pageIndex}&sortBy=${sortBy}&keyword=${keyword}`).pipe(
             catchError(handleError)
         )
     }
 
-    getAllPostByCurrentUser(pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<PostList[]>>>{
-        return this.http.get<ApiResponse<PagingResponse<PostList[]>>>(`${environment.apiUrl}/posts/user?pageIndex=${pageIndex - 1}&sortBy=${sortBy}`).pipe(
+    getAllPostByCurrentUser(keyword:string,pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<PostList[]>>>{
+        return this.http.get<ApiResponse<PagingResponse<PostList[]>>>(`${environment.apiUrl}/posts/user?pageIndex=${pageIndex}&sortBy=${sortBy}&keyword=${keyword}`).pipe(
             catchError(handleError)
         )
     }

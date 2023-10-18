@@ -21,6 +21,7 @@ import {noWhiteSpaceValidator} from "../../../../shared/validators/no-white-spac
 import {HttpClient} from "@angular/common/http";
 import {ActivatedRoute} from "@angular/router";
 import {SidebarComponent} from "../sidebar/sidebar.component";
+import {MAX_FILE, MIME_TYPES} from "../../../../shared/commons/shared";
 
 @Component({
   selector: 'main-user-information',
@@ -117,6 +118,23 @@ export class UserInformationComponent implements OnInit{
 
   onSelectImage(event: any){
     const file = event.files[0]
+    if(file.size > MAX_FILE){
+      this.messageService.add({
+        severity: "error",
+        detail: "File bạn chọn vượt quá giới hạn (> 3mb)",
+        summary:"Lỗi"
+      })
+      return;
+    }
+    if(!MIME_TYPES.includes(file.type)){
+      this.messageService.add({
+        severity: "error",
+        detail: "Loại fileUploadValidator không đúng, vui lòng chọn lại (chỉ chấp nhận: image/png,image/jpeg,image/webp)",
+        summary:"Lỗi"
+      })
+      return;
+    }
+    console.log(file)
     this.avatarValueChange = file?.objectURL.changingThisBreaksApplicationSecurity
     this.fileUploadValue = file
   }

@@ -22,6 +22,7 @@ export interface PostList{
     totalComment:number,
     totalLike:number,
     totalView:number,
+    published:boolean,
     tags: Tag[],
     author: UserAbs
 }
@@ -39,7 +40,8 @@ export interface Post{
     totalView:number,
     tags: Tag[],
     author: UserAbs,
-    content:string
+    content:string,
+    published:boolean
 }
 
 export interface CreatePost{
