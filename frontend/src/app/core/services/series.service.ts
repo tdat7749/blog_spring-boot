@@ -49,4 +49,10 @@ export class SeriesService{
             catchError(handleError)
         )
     }
+
+    getSeriesByCurrentUser():Observable<ApiResponse<Series[]>>{
+        return this.http.get<ApiResponse<Series[]>>(`${environment.apiUrl}/series/user`).pipe(
+            catchError(handleError)
+        )
+    }
 }

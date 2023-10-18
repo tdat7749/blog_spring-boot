@@ -20,6 +20,7 @@ import {SliderModule} from "primeng/slider";
 import {PaginatorModule} from "primeng/paginator";
 import {EditorModule} from "primeng/editor";
 import { CreatePostComponent } from './create-post/create-post.component';
+import { EditPostComponent } from './edit-post/edit-post.component';
 
 @NgModule({
     declarations:[
@@ -28,7 +29,8 @@ import { CreatePostComponent } from './create-post/create-post.component';
     UserInformationComponent,
     ChangePasswordComponent,
     PostManagementComponent,
-    CreatePostComponent
+    CreatePostComponent,
+    EditPostComponent
   ],
     imports: [
         CommonModule,

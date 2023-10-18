@@ -46,4 +46,10 @@ export function removeSpecialCharacters(){
 
 export const MAX_FILE:number = 3145728
 
-export const MIME_TYPES = ["image/png","image/jpeg","image/webp"]
+export const MIME_TYPES = ["image/png","image/jpeg","image/webp","image/gif"]
+
+export function capitalizeFirstLetter(str:string) {
+    return str.replace(/\b\w/g, function(txt:string) {
+        return txt.toUpperCase();
+    });
+}
