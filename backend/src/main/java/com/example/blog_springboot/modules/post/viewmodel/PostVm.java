@@ -1,5 +1,6 @@
 package com.example.blog_springboot.modules.post.viewmodel;
 
+import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.tag.viewmodel.TagVm;
 import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
 import com.example.blog_springboot.modules.user.viewmodel.UserVm;
@@ -22,6 +23,16 @@ public class PostVm {
     private long totalComment;
     private long totalLike;
     private long totalView;
+
+    private SeriesVm series;
+
+    public SeriesVm getSeries() {
+        return series;
+    }
+
+    public void setSeries(SeriesVm series) {
+        this.series = series;
+    }
 
     public int getId() {
         return id;

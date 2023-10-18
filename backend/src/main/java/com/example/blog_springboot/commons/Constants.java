@@ -14,7 +14,7 @@ public class Constants {
 
     public static final long MAX_FILE = 1024 * 1024 * 3;
 
-    public static final String[] MIME_TYPES = {"image/png","image/jpeg","image/webp"};
+    public static final String[] MIME_TYPES = {"image/png","image/jpeg","image/webp","image/gif"};
 
     public static final String FROM_EMAIL = "noreply@bloghayhay.info";
 
