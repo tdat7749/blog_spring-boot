@@ -241,6 +241,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public SuccessResponse<PostVm> getPostBySlug(String slug, User user) {
+        var foundPost = postRepository.getPostBySlug(slug,user).orElse(null);
+        if(foundPost == null){
+            throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
+        }
+
+        var postVm = Utilities.getPostVm(foundPost);
+
+        return new SuccessResponse<>("Thành công",postVm);
+    }
+
+    @Override
     public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostAuthor(String username,String keyword, String sortBy, int pageIndex) {
         Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(Sort.Direction.DESC,sortBy));
 

@@ -36,8 +36,8 @@ public class SeriesServiceImpl implements SeriesService{
     }
 
     @Override
-    public SuccessResponse<SeriesVm> getSeriesById(int id){
-        var series = seriesRepository.findById(id).orElse(null);
+    public SuccessResponse<SeriesVm> getSeriesDetail(String slug,User user){
+        var series = seriesRepository.findByUserAndSlug(user, slug).orElse(null);
         if(series == null){
             throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
         }

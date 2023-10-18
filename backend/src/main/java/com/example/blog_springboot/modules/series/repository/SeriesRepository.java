@@ -24,6 +24,8 @@ public interface SeriesRepository extends JpaRepository<Series,Integer> {
 
     Optional<Series> getSeriesDetail(@Param("slug") String slug);
 
+    Optional<Series> findByUserAndSlug(User user,String slug);
+
     boolean existsByUserAndId(User user,int id);
 
     List<Series> findByUser(User user);

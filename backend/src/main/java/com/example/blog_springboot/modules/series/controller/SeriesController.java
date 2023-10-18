@@ -27,10 +27,10 @@ public class SeriesController {
         this.seriesService = seriesService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/slug/{slug}/user")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<SeriesVm>> getSeriesById(@PathVariable int id){
-        var result = seriesService.getSeriesById(id);
+    public ResponseEntity<SuccessResponse<SeriesVm>> getSeriesDetail(@PathVariable String slug,@AuthenticationPrincipal User user){
+        var result = seriesService.getSeriesDetail(slug,user);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }

@@ -123,6 +123,14 @@ public class PostController {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+    @GetMapping("/slug/{slug}/user")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<PostVm>> getPostBySlug(@PathVariable("slug") String slug,@AuthenticationPrincipal User userPrincipal){
+        var result = postService.getPostBySlug(slug,userPrincipal);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
     @PostMapping("/{postId}/series/{seriesId}")
     @ResponseBody
     public ResponseEntity<SuccessResponse<Boolean>> addPostToSeries(@PathVariable("postId") int postId,@PathVariable("seriesId") int seriesId,@AuthenticationPrincipal User userPrincipal){
