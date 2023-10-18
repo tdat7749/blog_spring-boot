@@ -118,6 +118,10 @@ public class Utilities {
         postVm.setIsPublished(post.isPublished());
         postVm.setTotalComment(commentService.countCommentPost(post));
         postVm.setTotalLike(likePostService.countLikePost(post));
+        postVm.setSeries(getSeriesVm(post.getSeries()));
+        if(post.getSeries() != null){
+            postVm.setSeries(getSeriesVm(post.getSeries()));
+        }
 
         return postVm;
     }
@@ -136,6 +140,9 @@ public class Utilities {
         postListVm.setPublished(post.isPublished());
         postListVm.setTotalComment(commentService.countCommentPost(post));
         postListVm.setTotalLike(likePostService.countLikePost(post));
+        if(post.getSeries() != null){
+            postListVm.setSeries(getSeriesVm(post.getSeries()));
+        }
 
         return postListVm;
     }
