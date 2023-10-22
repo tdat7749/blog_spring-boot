@@ -31,7 +31,6 @@ export const authGuard:CanActivateFn = (route:ActivatedRouteSnapshot, state:Rout
         map(response => response.data),
     ).subscribe({
         next:(response) => {
-            console.log(response)
             authService.setCurrentUser(response)
             if(response !== null){
                 flag = true

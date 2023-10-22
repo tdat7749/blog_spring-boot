@@ -3,7 +3,6 @@ import { RouterModule, Routes,PreloadAllModules } from '@angular/router';
 import {adminGuard} from "./core/guards/admin.guard";
 
 const routes: Routes = [
-
   {
     path:"admin",
     canActivate:[adminGuard],

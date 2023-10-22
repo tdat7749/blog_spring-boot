@@ -1,3 +1,7 @@
+import {CreateTag} from "../../core/types/tag.type";
+import {hasSpecialCharacters} from "../validators/has-special-characters.validator";
+import slugify from "slugify";
+
 export const listNav = [
     {
         title:"TRANG CHỦ",
@@ -35,8 +39,8 @@ export const userSideBar = [
         path:"quan-ly-bai-viet"
     },
     {
-        title:"Tạo Bài Viết",
-        path:"tao-bai-viet"
+        title:"Quản lý series",
+        path:"quan-ly-series"
     }
 ]
 
@@ -52,4 +56,38 @@ export function capitalizeFirstLetter(str:string) {
     return str.replace(/\b\w/g, function(txt:string) {
         return txt.toUpperCase();
     });
+}
+
+export const postStatus = [
+    {
+        title:"Ngừng Hoạt Động",
+        status:false
+    },
+    {
+        title:"Đang Hoạt Động",
+        status:true
+    }
+]
+
+export function getNewTagByString(newTagString:string):{data:any,success:boolean}{
+    if(newTagString === null || newTagString === undefined || newTagString === "") return {data:null,success:true}
+    let flag:boolean = true
+    const arrayNewTag:CreateTag[] = newTagString.split(",")
+        .map((tag:string) => {
+            const value =  tag.replace("_", ' ').trim()
+            if(hasSpecialCharacters(value)){
+                flag = false
+            }
+            const data:CreateTag = {
+                title: capitalizeFirstLetter(value),
+                thumbnail:"a",
+                slug: slugify(value.toLowerCase())
+            }
+            return data
+        })
+
+    if(!flag){
+        return {data:null,success:false}
+    }
+    return {data:arrayNewTag,success:true}
 }

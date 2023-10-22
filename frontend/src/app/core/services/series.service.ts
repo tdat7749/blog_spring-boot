@@ -26,6 +26,12 @@ export class SeriesService{
         )
     }
 
+    getSeriesDetailByAuth(slug:string):Observable<ApiResponse<SeriesListPost>>{
+        return this.http.get<ApiResponse<SeriesListPost>>(`${environment.apiUrl}/series/slug/${slug}/user`).pipe(
+            catchError(handleError)
+        )
+    }
+
     getAllSeries(pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<Series[]>>>{
         return this.http.get<ApiResponse<PagingResponse<Series[]>>>(`${environment.apiUrl}/series?pageIndex=${pageIndex}&sortBy=${sortBy}`).pipe(
             catchError(handleError)

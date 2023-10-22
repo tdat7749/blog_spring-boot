@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit, ViewChild, ViewChildren, ViewEncapsulation} from '@angular/core';
 import {PostService} from "../../../../core/services/post.service";
-import {BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, switchMap, tap} from "rxjs";
+import {BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, Observable, switchMap, tap} from "rxjs";
 import {SortBy} from "../../../../core/types/api-response.type";
 import {MessageService} from "primeng/api";
 import {PostList} from "../../../../core/types/post.type";
@@ -9,6 +9,7 @@ import {noWhiteSpaceValidator} from "../../../../shared/validators/no-white-spac
 import {Editor} from "primeng/editor";
 import {FileUpload} from "primeng/fileupload";
 import {MAX_FILE, MIME_TYPES} from "../../../../shared/commons/shared";
+import {PaginationService} from "../../../../core/services/pagination.service";
 
 @Component({
   selector: 'main-post-management',
@@ -20,57 +21,60 @@ export class PostManagementComponent implements OnInit{
 
   isLoading:boolean = false
 
-  listPost:PostList[]
+  listPost:PostList[] = []
   totalPage:number
-
-  pageIndex = new BehaviorSubject<number>(0)
-  keyword = new BehaviorSubject<string>("")
-  sortBy = new BehaviorSubject<SortBy>("createdAt")
-  search$ = combineLatest([this.pageIndex,this.keyword,this.sortBy])
+  totalRecord:number
 
 
-  constructor(private postService:PostService,private messageService:MessageService,private fb:FormBuilder) {
+  search$:Observable<[number,string,SortBy]>
+
+
+  constructor(private paginationService:PaginationService,private postService:PostService,private messageService:MessageService,private fb:FormBuilder) {
 
   }
 
   ngOnInit() {
-    // this.isLoading = true
-    // this.search$.pipe(
-    //     tap(() => this.isLoading = true),
-    //     debounceTime(700),
-    //     distinctUntilChanged(), // chỉ gọi lại khi có giá trị thay đổi
-    //     switchMap(([pageIndex,keyword,sortBy]) =>{
-    //       return this.postService.getAllPostByCurrentUser(keyword,pageIndex,sortBy)
-    //     })
-    // ).subscribe({
-    //   next:(response) =>{
-    //     this.listPost = response.data.data
-    //     this.totalPage = response.data.totalPage
-    //     this.totalRecord = response.data.totalRecord
-    //     console.log(response)
-    //     this.isLoading = false
-    //   },
-    //   error:(error) =>{
-    //     this.isLoading = false
-    //     this.messageService.add({
-    //       severity:"error",
-    //       detail:error,
-    //       summary:"Lỗi"
-    //     })
-    //   }
-    // })
+    this.isLoading = true
+    this.search$ = combineLatest([
+        this.paginationService.pageIndex$,
+        this.paginationService.keyword$,
+        this.paginationService.sortBy$
+    ])
+    this.search$.pipe(
+        tap(() => this.isLoading = true),
+        debounceTime(700),
+        distinctUntilChanged(), // chỉ gọi lại khi có giá trị thay đổi
+        switchMap(([pageIndex,keyword,sortBy]) =>{
+          return this.postService.getAllPostByCurrentUser(keyword,pageIndex,sortBy)
+        })
+    ).subscribe({
+      next:(response) =>{
+        this.listPost = response.data.data
+        this.totalPage = response.data.totalPage
+        this.totalRecord = response.data.totalRecord
+        this.isLoading = false
+      },
+      error:(error) =>{
+        this.isLoading = false
+        this.messageService.add({
+          severity:"error",
+          detail:error,
+          summary:"Lỗi"
+        })
+      }
+    })
   }
 
 
   onChangeSearch(event:any){
-    this.keyword.next(event.target.value)
+    this.paginationService.updateKeyword(event.target.value)
   }
 
   onChangePageIndex(event: any){
-    this.pageIndex.next(event.page)
+      this.paginationService.updatePageIndex(event.page)
   }
 
   onChangeSort(sortBy:SortBy){
-    this.sortBy.next(sortBy)
+    this.paginationService.updateSortBy(sortBy)
   }
 }

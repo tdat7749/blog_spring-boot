@@ -158,7 +158,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public SuccessResponse<PostListVm> updatePost(UpdatePostDTO dto,int id, User userPrincipal) {
+    public SuccessResponse<PostVm> updatePost(UpdatePostDTO dto,int id, User userPrincipal) {
         if(!(userPrincipal.getRole() == Role.ADMIN)){
             var isAuthor = postRepository.existsByUserAndId(userPrincipal,id);
             if(!isAuthor){
@@ -191,6 +191,14 @@ public class PostServiceImpl implements PostService {
             foundPost.setThumbnail(dto.getThumbnail());
         }
 
+        if(dto.getSeriesId() != null){
+            var foundSeries = seriesRepository.findById(dto.getSeriesId()).orElse(null);
+            if(foundSeries == null){
+                throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
+            }
+            foundPost.setSeries(foundSeries);
+        }
+
         // new tag update
         List<Tag> addTags = createListTag(dto.getListTags());
 
@@ -202,7 +210,7 @@ public class PostServiceImpl implements PostService {
             throw new UpdatePostException(PostConstants.UPDATE_POST_FAILED);
         }
 
-        var postListVm = Utilities.getPostListVm(savePost);
+        var postListVm = Utilities.getPostVm(savePost);
 
         return new SuccessResponse<>(PostConstants.UPDATE_POST_SUCCESS,postListVm);
     }
@@ -286,6 +294,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public SuccessResponse<List<PostListVm>> getAllPostNotBeLongSeries(User user) {
+        var listPost = postRepository.getAllPostNotBeLongSeries(user);
+
+        List<PostListVm> listPostVm  = listPost.stream().map(Utilities::getPostListVm).toList();
+
+        return new SuccessResponse<>("Thành công",listPostVm);
+    }
+
+    @Override
     public SuccessResponse<Boolean> updateStatus(int id, User userPrincipal, UpdatePostStatusDTO dto) {
         if(!(userPrincipal.getRole() == Role.ADMIN)){
             var isAuthor = postRepository.existsByUserAndId(userPrincipal,id);
@@ -332,6 +349,10 @@ public class PostServiceImpl implements PostService {
             throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
         }
 
+        if(foundPost.getSeries() != null){
+            throw new RemovePostFromSeriesException(PostConstants.POST_HAS_BELONG_SERIES);
+        }
+
         foundPost.setSeries(foundSeries);
 
         var savePost = postRepository.save(foundPost);
@@ -342,6 +363,45 @@ public class PostServiceImpl implements PostService {
 
         return new SuccessResponse<>(PostConstants.ADD_POST_SERIES_SUCCESS,true);
 
+    }
+
+    @Override
+    public SuccessResponse<Boolean> removePostFromSeries(int postId, int seriesId, User userPrincipal) {
+        if(!(userPrincipal.getRole() == Role.ADMIN)){
+            var isPostAuthor = postRepository.existsByUserAndId(userPrincipal,postId);
+            if(!isPostAuthor){
+                throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
+            }
+
+            var isSeriesAuthor = seriesRepository.existsByUserAndId(userPrincipal,seriesId);
+            if(!isSeriesAuthor){
+                throw new NotAuthorSeriesException(SeriesConstants.NOT_AUTHOR_SERIES);
+            }
+        }
+
+        var foundPost = postRepository.findById(postId).orElse(null);
+        if(foundPost == null){
+            throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
+        }
+
+        var foundSeries = seriesRepository.findById(seriesId).orElse(null);
+        if(foundSeries == null){
+            throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
+        }
+
+        if(foundPost.getSeries() == null){
+            throw new RemovePostFromSeriesException(PostConstants.POST_NOT_BELONG_SERIES);
+        }
+
+        foundPost.setSeries(null);
+
+        var savePost = postRepository.save(foundPost);
+
+        if(savePost == null){
+            throw new RemovePostFromSeriesException(PostConstants.REMOVE_POST_FROM_FAILED);
+        }
+
+        return new SuccessResponse<>(PostConstants.REMOVE_POST_FROM_SUCCESS,true);
     }
 
     @Override

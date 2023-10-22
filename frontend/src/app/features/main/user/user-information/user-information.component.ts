@@ -52,23 +52,14 @@ export class UserInformationComponent implements OnInit{
       private fb:FormBuilder,
       private messageService:MessageService,
       private userService:UserService,
-      private _route: ActivatedRoute
+      private authService:AuthService
   ) {
 
   }
   ngOnInit() {
 
 
-    this.currentUser = {
-      email:"abc@gmail.com",
-      firstName:"a",
-      lastName:"b",
-      role:"USER",
-      avatar:null,
-      userName:"a",
-      notLocked:true,
-      id:1
-    }
+    this.currentUser = this.authService.getCurrentUser() as User
     this.avatarValueChange = this.currentUser.avatar
 
     this.changeInformationForm = this.fb.group({
@@ -187,6 +178,7 @@ export class UserInformationComponent implements OnInit{
         firstName: this.changeInformationForm.get("firstName")?.value,
         lastName: this.changeInformationForm.get("lastName")?.value
       }
+      console.log(data)
       this.isLoading = true
       this.userService.changeInformation(data).subscribe({
         next:(response) =>{
@@ -195,6 +187,7 @@ export class UserInformationComponent implements OnInit{
             detail: response.message,
             summary:"Thành công"
           })
+          this.isLoading = false
         },
         error:(error) =>{
           this.messageService.add({
@@ -202,6 +195,7 @@ export class UserInformationComponent implements OnInit{
             detail: error,
             summary:"Lỗi"
           })
+          this.isLoading = false
         }
       })
 

@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public SuccessResponse<UserDetailVm> changeInformation(ChangeInformationDTO dto, User userPrincipal) {
         userPrincipal.setFirstName(dto.getFirstName());
-        userPrincipal.setFirstName(dto.getLastName());
+        userPrincipal.setLastName(dto.getLastName());
 
         // Nếu còn nhiều thng tin muốn sửa thì add ở trên;
 
@@ -187,6 +187,18 @@ public class UserServiceImpl implements UserService{
         var pagingResponse = new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listUserVm);
 
         return new SuccessResponse<>("Thành công",pagingResponse);
+    }
+
+    @Override
+    public SuccessResponse<UserDetailVm> getAuthor(String userName) {
+        var foundUser = userRepository.findByUserName(userName).orElse(null);
+        if(foundUser == null){
+            throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
+        }
+
+        var userDetailVm = Utilities.getUserDetailVm(foundUser);
+
+        return new SuccessResponse<>("Thành Công",userDetailVm);
     }
 
 }

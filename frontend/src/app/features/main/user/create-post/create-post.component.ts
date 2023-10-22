@@ -16,7 +16,7 @@ import {CreateTag, Tag} from "../../../../core/types/tag.type";
 import {CreatePost} from "../../../../core/types/post.type";
 import slugify from "slugify";
 import {hasSpecialCharacters} from "../../../../shared/validators/has-special-characters.validator";
-import {capitalizeFirstLetter} from "../../../../shared/commons/shared";
+import {capitalizeFirstLetter, getNewTagByString} from "../../../../shared/commons/shared";
 import {Router} from "@angular/router";
 
 @Component({
@@ -178,7 +178,7 @@ export class CreatePostComponent implements OnInit,AfterViewInit{
       return createTagDTO
     })
 
-    const getNewTag = this.getNewTag(formValue.newTag)
+    const getNewTag = getNewTagByString(formValue.newTag)
     if(!getNewTag.success){
       this.messageService.add({
         severity:"error",
@@ -260,28 +260,5 @@ export class CreatePostComponent implements OnInit,AfterViewInit{
     this.previewImage = ""
     this.imageFile = null
     this.fileUpload.clear()
-  }
-
-  getNewTag(newTagString:string):{data:any,success:boolean}{
-    if(newTagString === null || newTagString === undefined) return {data:null,success:true}
-    let flag:boolean = true
-    const arrayNewTag:CreateTag[] = newTagString.split(",")
-        .map((tag:string) => {
-          const value =  tag.replace("_", ' ').trim()
-          if(hasSpecialCharacters(value)){
-            flag = false
-          }
-          const data:CreateTag = {
-            title: capitalizeFirstLetter(value),
-            thumbnail:"a",
-            slug: slugify(value.toLowerCase())
-          }
-          return data
-        })
-
-    if(!flag){
-      return {data:null,success:false}
-    }
-    return {data:arrayNewTag,success:true}
   }
 }

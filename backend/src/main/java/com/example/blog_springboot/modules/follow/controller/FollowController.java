@@ -18,6 +18,12 @@ public class FollowController {
         this.followService = followService;
     }
 
+    @GetMapping("/{userName}")
+    public ResponseEntity<SuccessResponse<Boolean>> checkFollowed(@PathVariable("userName") @NotNull String userName, @AuthenticationPrincipal User userPrincipal) throws JsonProcessingException {
+        var result = followService.checkFollowed(userName,userPrincipal);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
     @PostMapping("/{id}")
     public ResponseEntity<SuccessResponse<Boolean>> follow(@PathVariable("id") @NotNull int id, @AuthenticationPrincipal User userPrincipal) throws JsonProcessingException {
         var result = followService.follow(id,userPrincipal);

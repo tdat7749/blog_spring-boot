@@ -118,7 +118,6 @@ public class Utilities {
         postVm.setIsPublished(post.isPublished());
         postVm.setTotalComment(commentService.countCommentPost(post));
         postVm.setTotalLike(likePostService.countLikePost(post));
-        postVm.setSeries(getSeriesVm(post.getSeries()));
         if(post.getSeries() != null){
             postVm.setSeries(getSeriesVm(post.getSeries()));
         }

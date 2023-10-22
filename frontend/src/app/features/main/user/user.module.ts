@@ -21,6 +21,11 @@ import {PaginatorModule} from "primeng/paginator";
 import {EditorModule} from "primeng/editor";
 import { CreatePostComponent } from './create-post/create-post.component';
 import { EditPostComponent } from './edit-post/edit-post.component';
+import { SeriesManagementComponent } from './series-management/series-management.component';
+import { CreateSeriesComponent } from './create-series/create-series.component';
+import { EditSeriesComponent } from './edit-series/edit-series.component';
+import {InputTextareaModule} from "primeng/inputtextarea";
+import {KeyFilterModule} from "primeng/keyfilter";
 
 @NgModule({
     declarations:[
@@ -30,7 +35,10 @@ import { EditPostComponent } from './edit-post/edit-post.component';
     ChangePasswordComponent,
     PostManagementComponent,
     CreatePostComponent,
-    EditPostComponent
+    EditPostComponent,
+    SeriesManagementComponent,
+    CreateSeriesComponent,
+    EditSeriesComponent
   ],
     imports: [
         CommonModule,
@@ -48,7 +56,9 @@ import { EditPostComponent } from './edit-post/edit-post.component';
         TagModule,
         SliderModule,
         PaginatorModule,
-        EditorModule
+        EditorModule,
+        InputTextareaModule,
+        KeyFilterModule
     ]
 })
 

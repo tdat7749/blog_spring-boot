@@ -1,0 +1,23 @@
+<div class="tw-min-height-[100vh] tw-space-y-[2rem]">
+    <div class="tw-flex tw-space-x-[1rem] tw-items-center tw-justify-center">
+        <p-avatar size="xlarge" shape="circle" image="{{post.author.avatar ? post.author.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}"></p-avatar>
+        <p class="tw-text-gray-500">{{post.author.firstName}} {{post.author.lastName}}</p>
+        <p class="tw-text-gray-500"><i class="tw-text-gray-900 pi pi-calendar"></i> {{post.createdAt | date:'short'}}</p>
+        <p class="tw-text-gray-500"><i class="tw-text-gray-900 pi pi-comments"></i> {{post.totalComment}}</p>
+    </div>
+    <h1 class="tw-text-center tw-text-4xl tw-text-gray-900">{{post.title}}</h1>
+    <ul class="tw-flex tw-gap-2 tw-justify-center">
+        <li routerLink="/tags/{{tag.slug}}" *ngFor="let tag of post.tags" class="tw-cursor-pointer" ><p-tag severity="primary"  value="{{tag.title}}"></p-tag></li>
+    </ul>
+
+    <div class=" main tw-mt-[2rem] tw-w-full md:tw-w-[80%] lg:tw-w-[70%] tw-mx-auto tw-text-lg">
+       {{post.content}}
+        <div class="tw-mt-[3rem] tw-text-right">
+            <p-button *ngIf="isLiked" label="Bỏ Thích" icon="pi pi-times tw-text-red-500" [loading]="isLoading" (click)="onUnLikePost(post.id)"></p-button>
+            <p-button *ngIf="!isLiked" label="Thích" icon="pi pi-heart-fill tw-text-red-500" [loading]="isLoading" (click)="onLikePost(post.id)"></p-button>
+        </div>
+    </div>
+    <div class="tw-mt-[4rem]">
+        <main-comment [postId]="post.id"></main-comment>
+    </div>
+</div>

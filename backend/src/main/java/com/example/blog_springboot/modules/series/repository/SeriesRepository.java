@@ -28,7 +28,9 @@ public interface SeriesRepository extends JpaRepository<Series,Integer> {
 
     boolean existsByUserAndId(User user,int id);
 
-    List<Series> findByUser(User user);
+
+    @Query("SELECT s from Series as s where s.user = :user ORDER BY s.createdAt desc")
+    List<Series> getByUser(User user);
 
 
     @Query("SELECT DISTINCT s from Series as s LEFT JOIN s.user as u WHERE u.userName = :userName")

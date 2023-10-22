@@ -7,6 +7,9 @@ import {ChangePasswordComponent} from "./change-password/change-password.compone
 import {PostManagementComponent} from "./post-management/post-management.component";
 import {CreatePostComponent} from "./create-post/create-post.component";
 import {EditPostComponent} from "./edit-post/edit-post.component";
+import {SeriesManagementComponent} from "./series-management/series-management.component";
+import {CreateSeriesComponent} from "./create-series/create-series.component";
+import {EditSeriesComponent} from "./edit-series/edit-series.component";
 
 const routes:Routes = [
     {
@@ -26,12 +29,24 @@ const routes:Routes = [
                 component:PostManagementComponent,
             },
             {
-                path:"tao-bai-viet",
+                path:"quan-ly-bai-viet/tao-bai-viet",
                 component:CreatePostComponent
             },
             {
-                path:"sua-bai-viet/:slug",
+                path:"quan-ly-bai-viet/sua-bai-viet/:slug",
                 component:EditPostComponent
+            },
+            {
+                path:"quan-ly-series",
+                component:SeriesManagementComponent,
+            },
+            {
+                path:"quan-ly-series/tao-series",
+                component:CreateSeriesComponent,
+            },
+            {
+                path:"quan-ly-series/sua-series/:slug",
+                component:EditSeriesComponent,
             }
         ]
     }

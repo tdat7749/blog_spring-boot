@@ -45,7 +45,7 @@
         </div>
         <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
             <label>Các Tag</label>
-            <p-multiSelect [options]="listTag" optionLabel="title" formControlName="tags" placeholder="Chọn tag cho bài viết"></p-multiSelect>
+            <p-multiSelect [options]="listTag" dataKey="title" optionLabel="title" formControlName="tags" placeholder="Chọn tag cho bài viết"></p-multiSelect>
             <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
                 <small class="tw-text-yellow-500">Nếu bạn muốn có tag mới thì vui lòng tạo dưới đây theo định dạng: Tên_Tag_1,Tên_Tag_2</small>
                 <input class="hover:tw-border-gray-900" placeholder="Ví dụ: Tên_Tag_1,Tên_Tag_2" pInputText formControlName="newTag"/>
@@ -53,11 +53,17 @@
         </div>
         <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
             <label>Series</label>
-            <p-dropdown [options]="listSeries" formControlName="series" optionLabel="title" placeholder="Chọn series cho bài viết"></p-dropdown>
+            <p-dropdown [options]="listSeries" dataKey="title" formControlName="series" optionLabel="title" placeholder="Chọn series cho bài viết"></p-dropdown>
+
+        </div>
+        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+            <label>Trạng Thái</label>
+            <p-dropdown [options]="postStatus" formControlName="isPublished" dataKey="status" optionLabel="title" placeholder="Trạng thái cho bài viết">
+            </p-dropdown>
 
         </div>
         <div class="tw-text-right">
-            <p-button label="Tạo Mới" type="submit" (click)="onCreatePost()" [disabled]=this.editPostForm.invalid [loading]="isLoading"></p-button>
+            <p-button label="Cập Nhật" type="submit" (click)="onUpdatePost()" [disabled]=this.editPostForm.invalid [loading]="isLoading"></p-button>
         </div>
     </form>
 </div>

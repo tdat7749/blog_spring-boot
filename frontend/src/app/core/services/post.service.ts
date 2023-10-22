@@ -21,6 +21,13 @@ export class PostService{
         )
     }
 
+    getPostDetailBySlugAuth(slug:string):Observable<ApiResponse<Post>>{
+        return this.http.get<ApiResponse<Post>>(`${environment.apiUrl}/posts/slug/${slug}/user`).pipe(
+            catchError(handleError)
+        )
+    }
+
+
     getAllPostByTag(keyword:string,slug:string,pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<PostList[]>>>{
         return this.http.get<ApiResponse<PagingResponse<PostList[]>>>(`${environment.apiUrl}/posts/${slug}/tags?pageIndex=${pageIndex}&sortBy=${sortBy}&keyword=${keyword}`).pipe(
             catchError(handleError)
@@ -57,6 +64,12 @@ export class PostService{
         )
     }
 
+    removePostToSeries(postId:number,seriesId:number):Observable<ApiResponse<boolean>>{
+        return this.http.patch<ApiResponse<boolean>>(`${environment.apiUrl}/posts/${postId}/series/${seriesId}`,{}).pipe(
+            catchError(handleError)
+        )
+    }
+
     likePost(postId:number):Observable<ApiResponse<boolean>>{
         return this.http.post<ApiResponse<boolean>>(`${environment.apiUrl}/posts/${postId}/likes`,{}).pipe(
             catchError(handleError)
@@ -64,7 +77,13 @@ export class PostService{
     }
 
     unlikePost(postId:number):Observable<ApiResponse<boolean>>{
-        return this.http.delete<ApiResponse<boolean>>(`${environment.apiUrl}/posts/${postId}/likes`,{}).pipe(
+        return this.http.delete<ApiResponse<boolean>>(`${environment.apiUrl}/posts/${postId}/likes`).pipe(
+            catchError(handleError)
+        )
+    }
+
+    checkUserLikePost(postSlug:string):Observable<ApiResponse<boolean>>{
+        return this.http.get<ApiResponse<boolean>>(`${environment.apiUrl}/posts/${postSlug}/liked`).pipe(
             catchError(handleError)
         )
     }
@@ -81,14 +100,20 @@ export class PostService{
         )
     }
 
-    updatePost(data:UpdatePost,postId:number):Observable<ApiResponse<PostList>>{
-        return this.http.put<ApiResponse<PostList>>(`${environment.apiUrl}/posts/${postId}`,data).pipe(
+    updatePost(data:UpdatePost,postId:number):Observable<ApiResponse<Post>>{
+        return this.http.put<ApiResponse<Post>>(`${environment.apiUrl}/posts/${postId}`,data).pipe(
             catchError(handleError)
         )
     }
 
     deletePost(postId:number):Observable<ApiResponse<boolean>>{
         return this.http.delete<ApiResponse<boolean>>(`${environment.apiUrl}/posts/${postId}`).pipe(
+            catchError(handleError)
+        )
+    }
+
+    getAllPostNotBeLongSeries():Observable<ApiResponse<PostList[]>>{
+        return this.http.get<ApiResponse<PostList[]>>(`${environment.apiUrl}/posts/not-belong-series/user`).pipe(
             catchError(handleError)
         )
     }

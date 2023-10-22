@@ -17,10 +17,10 @@
                         <small *ngIf="loginForm.controls?.['password']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Mật khẩu không được để trống</small>
                     </ng-container>
                 </div>
+                <div class="tw-text-right">
+                    <p-button label="Đăng Nhập" type="submit" (onClick)="onLogin()" [disabled]=this.loginForm.invalid [loading]="isLoading"></p-button>
+                </div>
             </form>
-            <div class="tw-text-right">
-                <p-button label="Đăng Nhập" type="submit" (onClick)="onLogin()" [disabled]=this.loginForm.invalid [loading]="isLoading"></p-button>
-            </div>
 
             <div class="tw-space-y-[1.5rem]">
                 <p class="tw-text-yellow-500">Nếu tài khoản chưa xác thực, vui lòng nhấp <span (click)="showSendEmailVerifyDialog()" class="tw-cursor-pointer tw-underline tw-text-cyan-500">vào đây</span></p>

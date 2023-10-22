@@ -29,7 +29,7 @@ public class SeriesController {
 
     @GetMapping("/slug/{slug}/user")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<SeriesVm>> getSeriesDetail(@PathVariable String slug,@AuthenticationPrincipal User user){
+    public ResponseEntity<SuccessResponse<SeriesListPostVm>> getSeriesDetail(@PathVariable String slug,@AuthenticationPrincipal User user){
         var result = seriesService.getSeriesDetail(slug,user);
 
         return new ResponseEntity<>(result,HttpStatus.OK);

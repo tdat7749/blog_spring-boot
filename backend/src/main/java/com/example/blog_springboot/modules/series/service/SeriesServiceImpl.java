@@ -36,12 +36,12 @@ public class SeriesServiceImpl implements SeriesService{
     }
 
     @Override
-    public SuccessResponse<SeriesVm> getSeriesDetail(String slug,User user){
+    public SuccessResponse<SeriesListPostVm> getSeriesDetail(String slug,User user){
         var series = seriesRepository.findByUserAndSlug(user, slug).orElse(null);
         if(series == null){
             throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
         }
-        var seriesVm = Utilities.getSeriesVm(series);
+        var seriesVm = Utilities.getSeriesListPostVm(series);
 
         return new SuccessResponse<>("Thành công !",seriesVm);
     }
@@ -151,7 +151,7 @@ public class SeriesServiceImpl implements SeriesService{
 
     @Override
     public SuccessResponse<List<SeriesVm>> getListSeriesByUserPrincipal(User userPrincipal) {
-        var listSeries = seriesRepository.findByUser(userPrincipal);
+        var listSeries = seriesRepository.getByUser(userPrincipal);
         var listSeriesVm = listSeries.stream().map(Utilities::getSeriesVm).toList();
 
         return new SuccessResponse<>("Thành công",listSeriesVm);

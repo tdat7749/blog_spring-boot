@@ -1,0 +1,75 @@
+<div class="tw-p-[2rem] tw-space-y-[3rem] tw-h-auto tw-w-full">
+  <div class="tw-space-y-[1rem]">
+      <h1 class="tw-text-2xl tw-text-gray-900 tw-text-center tw-mb-4">SỬA SERIES</h1>
+      <p-button label="Quay lại" routerLink="/nguoi-dung/quan-ly-series" icon="pi pi-arrow-left"></p-button>
+      <form [formGroup]="editSeriesForm" class="tw-space-y-[2rem]" >
+          <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+              <label>Tiêu Đề Series</label>
+              <input class="hover:tw-border-gray-900" pInputText formControlName="title"/>
+              <ng-container *ngIf="editSeriesForm.controls?.['title']?.touched && editSeriesForm.controls?.['title']?.dirty">
+                  <small *ngIf="editSeriesForm.controls?.['title']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Tiêu đề không được để trống</small>
+                  <small *ngIf="editSeriesForm.controls?.['title']?.errors?.['maxlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối đa là 100</small>
+                  <small *ngIf="editSeriesForm.controls?.['title']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
+              </ng-container>
+          </div>
+
+          <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+              <label>Nội Dung</label>
+              <textarea [autoResize]="true"  class="hover:tw-border-gray-900 tw-w-full" id="float-input" rows="10" cols="30" formControlName="content" pInputTextarea></textarea>
+              <ng-container *ngIf="editSeriesForm.controls?.['content']?.touched && editSeriesForm.controls?.['content']?.dirty">
+                  <small *ngIf="editSeriesForm.controls?.['content']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Nội dung không được để trống</small>
+                  <small *ngIf="editSeriesForm.controls?.['content']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
+              </ng-container>
+          </div>
+
+          <div class="tw-text-right">
+              <p-button label="Cập Nhật" type="submit" (click)="onEditSeries()" [disabled]=this.editSeriesForm.invalid [loading]="isLoading"></p-button>
+          </div>
+      </form>
+  </div>
+    <div class="tw-space-y-[1rem]">
+        <h1 class="tw-text-2xl tw-text-gray-900 tw-text-center tw-mb-4">BÀI VIẾT CỦA SERIES</h1>
+        <p-button label="Thêm bài viết" (click)="onShow()" icon="pi pi-plus"></p-button>
+        <div class="tw-space-y-[1rem]">
+            <h2 *ngIf="listPost.length < 1; else hasPost" class="tw-text-center tw-text-xl">KHÔNG CÓ BÀI VIẾT NÀO</h2>
+            <ng-template #hasPost>
+                <div class="tw-overflow-visible">
+                    <p-table [value]="listPost" [loading]="isLoading" class="tw-overflow-visible">
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th>ID</th>
+                                <th style="width:40rem">Bài Viết</th>
+                                <th style="width:40rem">Trạng Thái</th>
+                                <th style="width:15rem">Thao Tác</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-post let-columns="columns">
+                            <tr>
+                                <td>{{post.id}}</td>
+                                <td>{{post.title}}</td>
+                                <td><p-tag [rounded]="true" severity="{{post.published ? 'success' : 'danger'}}" value="{{post.published ? 'Đang hoạt động' : 'Ngưng hoạt động'}}"></p-tag></td>
+                                <td class="tw-cursor-pointer" (click)="onRemovePost(series.id,post.id)">GỠ BÀI VIẾT</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>
+
+
+<p-dialog header="THÊM BÀI VIẾT VÀO SERIES" [(visible)]="addPostToSeriesVisible" [style]="{width: '50vw',height:'30vw'}">
+    <form [formGroup]="addPostToSeriesForm" class="tw-space-y-[2rem]" >
+        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+            <label>Bài viết</label>
+            <p-dropdown [options]="listPostAdd" formControlName="posts" optionLabel="title" placeholder="Chọn bài viết"></p-dropdown>
+            <ng-container *ngIf="addPostToSeriesForm.controls?.['posts']?.touched && addPostToSeriesForm.controls?.['posts']?.dirty">
+                <small *ngIf="addPostToSeriesForm.controls?.['posts']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Vui lòng chọn bài viết</small>
+            </ng-container>
+        </div>
+        <div class="tw-text-right">
+            <p-button label="Thêm" type="submit" (click)="onAddPostToSeries(series.id)" [disabled]=this.addPostToSeriesForm.invalid [loading]="isLoading"></p-button>
+        </div>
+    </form>
+</p-dialog>

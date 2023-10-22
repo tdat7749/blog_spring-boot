@@ -31,5 +31,7 @@ public interface UserService {
 
     public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowers(String sortBy, int pageIndex, int userId);
 
+    public SuccessResponse<UserDetailVm> getAuthor(String userName);
+
 
 }

@@ -21,7 +21,7 @@ public interface SeriesService {
 
     public SuccessResponse<SeriesListPostVm> getSeriesDetail(String slug); // for view
 
-    public SuccessResponse<SeriesVm> getSeriesDetail(String slug,User user);
+    public SuccessResponse<SeriesListPostVm> getSeriesDetail(String slug,User user);
     
     public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(String keyword,String sortBy,int pageIndex);
 

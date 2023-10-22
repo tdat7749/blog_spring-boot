@@ -41,11 +41,9 @@ export class AuthInterceptor implements HttpInterceptor{
           "RfToken": rfToken
         }
       })
-      console.log(request.headers)
     }
 
     if((token === null || token === "") || this.allowRoute.includes(request.url)){
-      console.log("gogogo")
       return next.handle(request);
     }
 
@@ -68,13 +66,10 @@ export class AuthInterceptor implements HttpInterceptor{
 
 
       if(refreshToken){
-        console.log(refreshToken)
         return this.authService.getAccessToken().pipe(
           concatMap((response:any) =>{
             this.isRetry = false
-            console.log(response,response.data)
             this.cookieService.set("accessToken",response.data)
-            console.log(this.cookieService.get("accessToken"))
             return next.handle(this.addTokenToHeader(request,response.data))
           }),
           catchError((error:any) =>{
