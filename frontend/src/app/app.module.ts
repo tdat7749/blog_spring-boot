@@ -9,12 +9,12 @@ import {MessageService} from "primeng/api";
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
-      HttpClientModule,
+        HttpClientModule,
         AppRoutingModule,
     ],
   providers: [

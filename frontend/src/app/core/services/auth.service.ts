@@ -8,6 +8,7 @@ import {Login, Register, VerifyEmail} from "../types/auth.type";
 import {Token} from "../types/token.type";
 import {CookieService} from "ngx-cookie-service";
 import {MessageService} from "primeng/api";
+import {handleError} from "../../shared/commons/handle-error-http";
 
 @Injectable({
   providedIn: 'root',
@@ -33,25 +34,25 @@ export class AuthService {
     return this.http.get<ApiResponse<User>>(`${environment.apiUrl}/users/me`)
   }
 
-  getAccessToken(refreshToken: string):Observable<ApiResponse<string>> {
+  getAccessToken():Observable<ApiResponse<string>> {
     return this.http.post<ApiResponse<string>>(`${environment.apiUrl}/auth/refresh`,{})
   }
 
   login(data:Login):Observable<ApiResponse<Token>>{
     return this.http.post<ApiResponse<Token>>(`${environment.apiUrl}/auth/login`,data).pipe(
-      catchError(this.handleError)
+      catchError(handleError)
     );
   }
 
   register(data:Register):Observable<ApiResponse<boolean>>{
     return this.http.post<ApiResponse<boolean>>(`${environment.apiUrl}/auth/register`,data).pipe(
-        catchError(this.handleError)
+        catchError(handleError)
     )
   }
 
   verifyEmail(data:VerifyEmail):Observable<ApiResponse<boolean>>{
     return this.http.post<ApiResponse<boolean>>(`${environment.apiUrl}/auth/verify`,data).pipe(
-        catchError(this.handleError)
+        catchError(handleError)
     )
   }
 
@@ -60,7 +61,7 @@ export class AuthService {
       email:email
     }
     return this.http.post<ApiResponse<boolean>>(`${environment.apiUrl}/auth/resend`,data).pipe(
-        catchError(this.handleError)
+        catchError(handleError)
     )
   }
 
@@ -70,16 +71,4 @@ export class AuthService {
     this.setCurrentUser(null)
     this.userState$.next(null)
   }
-
-  private handleError(error: HttpErrorResponse){
-    if(error.status === 0){
-      console.error("An error occurred: ",error.error)
-    }else{
-      console.error(
-        `Backend returned code ${error.status}, body was: `, error.error);
-    }
-
-    return throwError(() => error.error.message)
-  }
-
 }

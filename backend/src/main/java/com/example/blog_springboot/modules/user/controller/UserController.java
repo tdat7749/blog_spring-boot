@@ -5,6 +5,8 @@ import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.notification.service.UserNotificationService;
 import com.example.blog_springboot.modules.notification.viewmodel.NotificationVm;
+import com.example.blog_springboot.modules.series.service.SeriesService;
+import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.user.dto.ChangeInformationDTO;
 import com.example.blog_springboot.modules.user.dto.ChangePasswordDTO;
 import com.example.blog_springboot.modules.user.dto.ChangePermissionDTO;
@@ -26,9 +28,12 @@ public class UserController {
     private final UserService userService;
     private final UserNotificationService userNotificationService;
 
-    public UserController(UserService userService, UserNotificationService userNotificationService){
+    private final SeriesService seriesService;
+
+    public UserController(UserService userService, UserNotificationService userNotificationService,SeriesService seriesService){
         this.userService = userService;
         this.userNotificationService = userNotificationService;
+        this.seriesService = seriesService;
     }
 
     @PatchMapping("/password")
@@ -49,7 +54,7 @@ public class UserController {
 
     @PatchMapping("/avatar")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> changeAvatar(@RequestBody String avatar, @AuthenticationPrincipal User userPrincipal){
+    public ResponseEntity<SuccessResponse<String>> changeAvatar(@RequestBody String avatar, @AuthenticationPrincipal User userPrincipal){
         var result = userService.changeAvatar(avatar,userPrincipal);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -67,6 +72,14 @@ public class UserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping("/{userName}")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<UserDetailVm>> getAuthor(@PathVariable("userName") String userName){
+        var result = userService.getAuthor(userName);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @GetMapping("/{userId}/follower")
     @ResponseBody
     public ResponseEntity<SuccessResponse<PagingResponse<List<UserDetailVm>>>> getListFollowers(
@@ -75,6 +88,16 @@ public class UserController {
             @RequestParam(value = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
     ){
         var result = userService.getListFollowers(sortBy,pageIndex,userId);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/{userName}/series")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<List<SeriesVm>>> getListSeriesByUserName(
+           @PathVariable("userName") String userName
+    ){
+        var result = seriesService.getListSeriesByUserName(userName);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

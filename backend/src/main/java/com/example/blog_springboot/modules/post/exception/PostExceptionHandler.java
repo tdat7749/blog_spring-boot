@@ -49,4 +49,10 @@ public class PostExceptionHandler {
     public ErrorResponse maxTagExceptionHandler(MaxTagException ex){
         return new ErrorResponse(HttpStatus.BAD_REQUEST, 404, ex.getMessage());
     }
+
+    @ExceptionHandler(RemovePostFromSeriesException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse removePostFromSeriesExceptionHandler(RemovePostFromSeriesException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, 400,ex.getMessage());
+    }
 }

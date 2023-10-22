@@ -9,6 +9,14 @@ export interface User {
   notLocked: boolean | unknown
 }
 
+export interface UserAbs{
+  firstName: string | unknown,
+  lastName: string | unknown,
+  userName:string | unknown,
+  id: number | unknown,
+  avatar: string | unknown,
+}
+
 
 export interface ForgotPassword {
   newPassword:string,

@@ -1,24 +1,38 @@
 package com.example.blog_springboot.utils;
 
 import com.example.blog_springboot.modules.comment.model.Comment;
+import com.example.blog_springboot.modules.comment.service.CommentService;
 import com.example.blog_springboot.modules.comment.viewmodel.CommentVm;
+import com.example.blog_springboot.modules.likepost.service.LikePostService;
 import com.example.blog_springboot.modules.notification.model.UserNotification;
 import com.example.blog_springboot.modules.notification.viewmodel.NotificationVm;
 import com.example.blog_springboot.modules.post.model.Post;
 import com.example.blog_springboot.modules.post.viewmodel.PostListVm;
 import com.example.blog_springboot.modules.post.viewmodel.PostVm;
 import com.example.blog_springboot.modules.series.model.Series;
+import com.example.blog_springboot.modules.series.viewmodel.SeriesListPostVm;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.tag.model.Tag;
 import com.example.blog_springboot.modules.tag.viewmodel.TagVm;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
 import com.example.blog_springboot.modules.user.viewmodel.UserVm;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Random;
 
+@Component
 public class Utilities {
+
+    private static CommentService commentService;
+    private static LikePostService likePostService;
+    public Utilities(CommentService commentService,LikePostService likePostService){
+        Utilities.commentService = commentService;
+        Utilities.likePostService = likePostService;
+    }
+
     public static String generateCode() {
         Random rnd = new Random();
         int number = rnd.nextInt(999999);
@@ -75,6 +89,21 @@ public class Utilities {
         return seriesVm;
     }
 
+    public static SeriesListPostVm getSeriesListPostVm(Series series){
+        var seriesListPostVm = new SeriesListPostVm();
+        seriesListPostVm.setId(series.getId());
+        seriesListPostVm.setTitle(series.getTitle());
+        seriesListPostVm.setSlug(series.getSlug());
+        seriesListPostVm.setContent(series.getContent());
+        seriesListPostVm.setCreatedAt(series.getCreatedAt().toString());
+        seriesListPostVm.setUpdatedAt(series.getUpdatedAt().toString());
+
+        var listPostVm = series.getPosts().stream().map(Utilities::getPostListVm).toList();
+        seriesListPostVm.setPosts(listPostVm);
+
+        return seriesListPostVm;
+    }
+
     public static PostVm transferPostVm(Post post){
         var postVm = new PostVm();
 
@@ -86,6 +115,12 @@ public class Utilities {
         postVm.setCreatedAt(post.getCreatedAt().toString());
         postVm.setUpdatedAt(post.getUpdatedAt().toString());
         postVm.setTotalView(post.getTotalView());
+        postVm.setIsPublished(post.isPublished());
+        postVm.setTotalComment(commentService.countCommentPost(post));
+        postVm.setTotalLike(likePostService.countLikePost(post));
+        if(post.getSeries() != null){
+            postVm.setSeries(getSeriesVm(post.getSeries()));
+        }
 
         return postVm;
     }
@@ -101,6 +136,12 @@ public class Utilities {
         postListVm.setCreatedAt(post.getCreatedAt().toString());
         postListVm.setUpdatedAt(post.getUpdatedAt().toString());
         postListVm.setTotalView(post.getTotalView());
+        postListVm.setPublished(post.isPublished());
+        postListVm.setTotalComment(commentService.countCommentPost(post));
+        postListVm.setTotalLike(likePostService.countLikePost(post));
+        if(post.getSeries() != null){
+            postListVm.setSeries(getSeriesVm(post.getSeries()));
+        }
 
         return postListVm;
     }

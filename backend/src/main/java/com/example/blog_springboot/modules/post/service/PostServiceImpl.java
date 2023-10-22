@@ -81,10 +81,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPost(String sortBy, int pageIndex) {
-        Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(sortBy));
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPost(String keyword,String sortBy, int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.DESC,sortBy));
 
-        Page<Post> pagingResult = postRepository.findAllByPublished(true,paging);
+        Page<Post> pagingResult = postRepository.findAllByPublished(true,keyword,paging);
 
         List<PostListVm> listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
 
@@ -158,7 +158,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public SuccessResponse<PostListVm> updatePost(UpdatePostDTO dto,int id, User userPrincipal) {
+    public SuccessResponse<PostVm> updatePost(UpdatePostDTO dto,int id, User userPrincipal) {
         if(!(userPrincipal.getRole() == Role.ADMIN)){
             var isAuthor = postRepository.existsByUserAndId(userPrincipal,id);
             if(!isAuthor){
@@ -191,6 +191,14 @@ public class PostServiceImpl implements PostService {
             foundPost.setThumbnail(dto.getThumbnail());
         }
 
+        if(dto.getSeriesId() != null){
+            var foundSeries = seriesRepository.findById(dto.getSeriesId()).orElse(null);
+            if(foundSeries == null){
+                throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
+            }
+            foundPost.setSeries(foundSeries);
+        }
+
         // new tag update
         List<Tag> addTags = createListTag(dto.getListTags());
 
@@ -202,7 +210,7 @@ public class PostServiceImpl implements PostService {
             throw new UpdatePostException(PostConstants.UPDATE_POST_FAILED);
         }
 
-        var postListVm = Utilities.getPostListVm(savePost);
+        var postListVm = Utilities.getPostVm(savePost);
 
         return new SuccessResponse<>(PostConstants.UPDATE_POST_SUCCESS,postListVm);
     }
@@ -241,10 +249,22 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostAuthor(String username, String sortBy, int pageIndex) {
-        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(sortBy));
+    public SuccessResponse<PostVm> getPostBySlug(String slug, User user) {
+        var foundPost = postRepository.getPostBySlug(slug,user).orElse(null);
+        if(foundPost == null){
+            throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
+        }
 
-        Page<Post> pagingResult = postRepository.getAllPostByUsername(username,paging);
+        var postVm = Utilities.getPostVm(foundPost);
+
+        return new SuccessResponse<>("Thành công",postVm);
+    }
+
+    @Override
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostAuthor(String username,String keyword, String sortBy, int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(Sort.Direction.DESC,sortBy));
+
+        Page<Post> pagingResult = postRepository.getAllPostByUsername(keyword,username,paging);
 
         List<PostListVm> listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
 
@@ -252,14 +272,34 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostNotPublished(String sortBy, int pageIndex) {
-        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(sortBy));
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostNotPublished(String sortBy,String keyword, int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(Sort.Direction.DESC,sortBy));
 
-        Page<Post> pagingResult = postRepository.getAllPostNotPublished(paging);
+        Page<Post> pagingResult = postRepository.getAllPostNotPublished(keyword,paging);
 
         List<PostListVm> listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
 
         return new SuccessResponse<>("Thành công",new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listPostVm));
+    }
+
+    @Override
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllByCurrentUser(User user, String keyword,String sortBy, int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(Sort.Direction.DESC,sortBy));
+
+        Page<Post> pagingResult = postRepository.getAllPostByCurrentUser(keyword,user,paging);
+
+        List<PostListVm> listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
+
+        return new SuccessResponse<>("Thành công",new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listPostVm));
+    }
+
+    @Override
+    public SuccessResponse<List<PostListVm>> getAllPostNotBeLongSeries(User user) {
+        var listPost = postRepository.getAllPostNotBeLongSeries(user);
+
+        List<PostListVm> listPostVm  = listPost.stream().map(Utilities::getPostListVm).toList();
+
+        return new SuccessResponse<>("Thành công",listPostVm);
     }
 
     @Override
@@ -309,6 +349,10 @@ public class PostServiceImpl implements PostService {
             throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
         }
 
+        if(foundPost.getSeries() != null){
+            throw new RemovePostFromSeriesException(PostConstants.POST_HAS_BELONG_SERIES);
+        }
+
         foundPost.setSeries(foundSeries);
 
         var savePost = postRepository.save(foundPost);
@@ -322,10 +366,49 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostByTag(String tagSlug, String sortBy, int pageIndex) {
-        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(sortBy));
+    public SuccessResponse<Boolean> removePostFromSeries(int postId, int seriesId, User userPrincipal) {
+        if(!(userPrincipal.getRole() == Role.ADMIN)){
+            var isPostAuthor = postRepository.existsByUserAndId(userPrincipal,postId);
+            if(!isPostAuthor){
+                throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
+            }
 
-        Page<Post> pagingResult = postRepository.getPostByTagSlug(tagSlug,paging);
+            var isSeriesAuthor = seriesRepository.existsByUserAndId(userPrincipal,seriesId);
+            if(!isSeriesAuthor){
+                throw new NotAuthorSeriesException(SeriesConstants.NOT_AUTHOR_SERIES);
+            }
+        }
+
+        var foundPost = postRepository.findById(postId).orElse(null);
+        if(foundPost == null){
+            throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
+        }
+
+        var foundSeries = seriesRepository.findById(seriesId).orElse(null);
+        if(foundSeries == null){
+            throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
+        }
+
+        if(foundPost.getSeries() == null){
+            throw new RemovePostFromSeriesException(PostConstants.POST_NOT_BELONG_SERIES);
+        }
+
+        foundPost.setSeries(null);
+
+        var savePost = postRepository.save(foundPost);
+
+        if(savePost == null){
+            throw new RemovePostFromSeriesException(PostConstants.REMOVE_POST_FROM_FAILED);
+        }
+
+        return new SuccessResponse<>(PostConstants.REMOVE_POST_FROM_SUCCESS,true);
+    }
+
+    @Override
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostByTag(String tagSlug,String keyword,String sortBy, int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex,Constants.PAGE_SIZE,Sort.by(Sort.Direction.DESC,sortBy));
+
+        Page<Post> pagingResult = postRepository.getPostByTagSlug(keyword,tagSlug,paging);
 
         var postListVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
 

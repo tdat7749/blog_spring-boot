@@ -11,6 +11,19 @@ const routes: Routes = [
     component: MainLayoutComponent,
     children:[
       {
+        path:"bai-viet",
+        loadChildren: () => import("../../features/main/post/post.module").then(m => m.PostModule)
+      },
+      {
+        path:"tac-gia",
+        loadChildren: () => import("../../features/main/author/author.module").then(m => m.AuthorModule)
+      },
+      {
+        path:"nguoi-dung",
+        // canActivate:[authGuard],
+        loadChildren: () => import("../../features/main/user/user.module").then(m => m.UserModule)
+      },
+      {
         path:"dang-nhap",
         canActivate:[notAuthGuard],
         loadChildren: () => import("../../features/main/login/login.module").then(m => m.LoginModule)
@@ -24,6 +37,11 @@ const routes: Routes = [
         path:"xac-thuc",
         canActivate:[notAuthGuard],
         loadChildren: () => import("../../features/main/verify-email/verify-email.module").then(m => m.VerifyEmailModule)
+      },
+      {
+        path:"lay-lai-mat-khau",
+        canActivate:[notAuthGuard],
+        loadChildren: () => import("../../features/main/forgot-password/forgot-password.module").then(m => m.ForgotPasswordModule)
       },
       {
         path:"",

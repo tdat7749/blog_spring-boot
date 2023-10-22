@@ -1,7 +1,7 @@
 import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from "@angular/common/http";
 import {
   BehaviorSubject,
-  catchError,
+  catchError, concatMap,
   filter,
   finalize,
   mergeMap,
@@ -24,74 +24,71 @@ export class AuthInterceptor implements HttpInterceptor{
 
   private allowRoute = [
     `${environment.apiUrl}/auth/login`,
+    `${environment.apiUrl}/auth/refresh`
   ]
 
   private isRetry: boolean = false;
-  private refreshToken$: BehaviorSubject<any> = new BehaviorSubject<any>(null)
   constructor(private cookieService: CookieService,private authService: AuthService) {
   }
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let request = req;
     const token = this.cookieService.get("accessToken")
     const rfToken = this.cookieService.get("refreshToken")
-    if((token === null || token === "") || this.allowRoute.includes(request.url)){
-      return next.handle(req);
+
+    if(rfToken !== null){
+      request =  request.clone({
+        setHeaders:{
+          "RfToken": rfToken
+        }
+      })
     }
 
-    request = this.addTokenToHeader(request,token,rfToken)
+    if((token === null || token === "") || this.allowRoute.includes(request.url)){
+      return next.handle(request);
+    }
+
+    request = this.addTokenToHeader(request,token)
 
     return next.handle(request).pipe(
       catchError((error) =>{
-        if(error instanceof HttpErrorResponse && error.status === 401){
+        if(error instanceof HttpErrorResponse && error.status === 401 && !this.isRetry){
           return this.handleRefreshToken(request,next)
         }
-
         return throwError(() => error.error)
       })
     )
   }
 
   private handleRefreshToken(request: HttpRequest<any>,next: HttpHandler){
+    const refreshToken = this.cookieService.get("refreshToken")
     if(!this.isRetry){
       this.isRetry = true
-      this.refreshToken$.next(null)
 
-      const refreshToken = this.cookieService.get("refreshToken")
 
       if(refreshToken){
-        return this.authService.getAccessToken(refreshToken).pipe(
-          switchMap((response:any) =>{
-            this.isRetry = false;
-            this.cookieService.set("accessToken",response.data.accessToken)
-            this.refreshToken$.next(response.data.accessToken)
-
-            return next.handle(this.addTokenToHeader(request,response.data.accessToken,refreshToken))
+        return this.authService.getAccessToken().pipe(
+          concatMap((response:any) =>{
+            this.isRetry = false
+            this.cookieService.set("accessToken",response.data)
+            return next.handle(this.addTokenToHeader(request,response.data))
           }),
-          catchError((error:HttpErrorResponse) =>{
-            this.isRetry = false;
+          catchError((error:any) =>{
+            this.isRetry = false
             this.cookieService.delete("accessToken")
             this.cookieService.delete("refreshToken")
-            return throwError(() => error.error);
+            return throwError(() => error);
           })
         )
       }
     }
-
-    return this.refreshToken$.pipe(
-      filter(token => token !== null),
-      take(1),
-      switchMap((token) => next.handle(this.addTokenToHeader(request,token)))
-    )
+    return next.handle(request)
   }
 
-  private addTokenToHeader(request:HttpRequest<any>,token: string,refreshToken?:string){
+  private addTokenToHeader(request:HttpRequest<any>,token?: string){
     let headers = request.headers;
 
-    headers = headers.set("Authorization",`Bearer ${token}`)
-
-    if(refreshToken){
-      headers = headers.set("rfToken",refreshToken)
-      console.log(refreshToken)
+    if(token){
+      headers = headers.set("Authorization",`Bearer ${token}`)
     }
 
     return request.clone({headers})

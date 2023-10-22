@@ -22,6 +22,7 @@ import com.example.blog_springboot.modules.notification.service.UserNotification
 import com.example.blog_springboot.modules.notification.viewmodel.NotificationVm;
 import com.example.blog_springboot.modules.post.constant.PostConstants;
 import com.example.blog_springboot.modules.post.exception.PostNotFoundException;
+import com.example.blog_springboot.modules.post.model.Post;
 import com.example.blog_springboot.modules.post.repository.PostRepository;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.repository.UserRepository;
@@ -178,13 +179,8 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public long countCommentPost(int postId) {
-        var foundPost = postRepository.findById(postId).orElse(null);
-        if(foundPost == null){
-            throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
-        }
-
-        return commentRepository.getTotalComment(foundPost);
+    public long countCommentPost(Post post) {
+        return commentRepository.getTotalComment(post);
     }
 
     private CommentVm getCommentVmWithChild(Comment cm){

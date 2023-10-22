@@ -1,0 +1,58 @@
+<div class="tw-p-[2rem] tw-h-auto tw-w-full">
+    <h1 class="tw-text-2xl tw-text-gray-900 tw-text-center tw-mb-4">THÔNG TIN TÀI KHOẢN</h1>
+    <div class="tw-flex tw-flex-col tw-text-center tw-space-y-[1rem]">
+        <p-avatar  image="{{currentUser.avatar ? currentUser.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}" size="xlarge" shape="circle"></p-avatar>
+        <p-button (click)="onChangeAvatarFormVisible()" label="Thay đổi"></p-button>
+    </div>
+    <form [formGroup]="changeInformationForm" class="tw-space-y-[2rem]" (submit)="changeInformation()">
+        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+            <label>Tài khoản</label>
+            <input class="hover:tw-border-gray-900" pInputText formControlName="userName"/>
+        </div>
+        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+            <label>Email</label>
+            <input class="hover:tw-border-gray-900" pInputText formControlName="email" />
+        </div>
+        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+            <label>Quyền người dùng</label>
+            <input class="hover:tw-border-gray-900" pInputText type="text" formControlName="role"/>
+        </div>
+        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+            <label>Họ</label>
+            <input class="hover:tw-border-gray-900" pInputText formControlName="firstName"/>
+            <ng-container *ngIf="changeInformationForm.controls?.['firstName']?.touched && changeInformationForm.controls?.['firstName']?.dirty">
+                <small *ngIf="changeInformationForm.controls?.['firstName']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Họ không được để trống</small>
+                <small *ngIf="changeInformationForm.controls?.['firstName']?.errors?.['minlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối thiểu là 1</small>
+                <small *ngIf="changeInformationForm.controls?.['firstName']?.errors?.['maxlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối đa là 60</small>
+                <small *ngIf="changeInformationForm.controls?.['firstName']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
+
+            </ng-container>
+        </div>
+        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+            <label>Tên</label>
+            <input class="hover:tw-border-gray-900" pInputText type="text" formControlName="lastName"/>
+            <ng-container *ngIf="changeInformationForm.controls?.['lastName']?.touched && changeInformationForm.dirty">
+                <small *ngIf="changeInformationForm.controls?.['lastName']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Tên không được để trống</small>
+                <small *ngIf="changeInformationForm.controls?.['lastName']?.errors?.['minlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối thiểu là 1</small>
+                <small *ngIf="changeInformationForm.controls?.['lastName']?.errors?.['maxlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối đa là 70</small>
+                <small *ngIf="changeInformationForm.controls?.['lastName']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
+            </ng-container>
+        </div>
+        <div class="tw-text-right">
+            <p-button label="Cập Nhật" type="submit" (onClick)="changeInformation()" [disabled]=!this.changeInformationForm.dirty [loading]="isLoading"></p-button>
+        </div>
+    </form>
+</div>
+
+<p-dialog header="THAY ĐỔI HÌNH ẢNH ĐẠI DIỆN" [(visible)]="changeAvatarFormVisible" [style]="{width: '50vw'}">
+    <div class="tw-text-center tw-space-y-[1rem]">
+        <p-avatar  #avatar image="{{avatarValueChange ? avatarValueChange : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}" size="xlarge" shape="circle"></p-avatar>
+        <p-fileUpload #fileUpload mode="basic" chooseLabel="Chọn Ảnh" accept="image/*" (onSelect)="onSelectImage($event)" [maxFileSize]="3145728">
+
+        </p-fileUpload>
+        <div class="tw-text-right tw-space-x-[1rem]">
+            <p-button styleClass="p-button-secondary" (click)="clearUpload()" label="Hủy ảnh đang chọn" type="submit" [loading]="isLoading"></p-button>
+            <p-button label="Xác Nhận" type="submit" (click)="onUploadImage()" [loading]="isLoading"></p-button>
+        </div>
+    </div>
+</p-dialog>

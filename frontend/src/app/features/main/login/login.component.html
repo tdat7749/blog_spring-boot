@@ -16,17 +16,23 @@
                     <ng-container *ngIf="loginForm.controls?.['password']?.touched && loginForm.dirty">
                         <small *ngIf="loginForm.controls?.['password']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Mật khẩu không được để trống</small>
                     </ng-container>
-                    <p class="tw-text-yellow-500">Nếu tài khoản chưa xác thực, vui lòng nhấp <span (click)="showSendEmailDialog()" class="tw-cursor-pointer tw-underline tw-text-cyan-500">vào đây</span> để được gửi email</p>
+                </div>
+                <div class="tw-text-right">
+                    <p-button label="Đăng Nhập" type="submit" (onClick)="onLogin()" [disabled]=this.loginForm.invalid [loading]="isLoading"></p-button>
                 </div>
             </form>
-            <div class="tw-text-right">
-                <p-button label="Đăng Nhập" type="submit" (onClick)="onLogin()" [disabled]=this.loginForm.invalid [loading]="isLoading"></p-button>
+
+            <div class="tw-space-y-[1.5rem]">
+                <p class="tw-text-yellow-500">Nếu tài khoản chưa xác thực, vui lòng nhấp <span (click)="showSendEmailVerifyDialog()" class="tw-cursor-pointer tw-underline tw-text-cyan-500">vào đây</span></p>
+                <p class="tw-text-gray-900">Quên mật khẩu? Vui lòng nhấp <span (click)="showSendEmailForgotPassword()" class="tw-cursor-pointer tw-underline tw-text-cyan-500">vào đây</span></p>
+                <p class="tw-text-gray-900">Chưa có tài khoản? Vui lòng nhấp <span routerLink="/dang-ky" class="tw-cursor-pointer tw-underline tw-text-cyan-500">vào đây</span></p>
             </div>
         </div>
     </div>
 </div>
 
-<p-dialog header="GỬI EMAIL XÁC THỰC TÀI KHOẢN" [(visible)]="visible" [style]="{width: '50vw'}">
+
+<p-dialog header="GỬI EMAIL XÁC THỰC TÀI KHOẢN" [(visible)]="verifyFormVisible" [style]="{width: '50vw'}">
     <form [formGroup]="sendEmailForm" class="tw-space-y-[2rem]" >
         <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
             <label>Email</label>
@@ -37,7 +43,23 @@
             </ng-container>
         </div>
         <div class="tw-text-right">
-            <p-button label="Gửi" type="submit" (click)="onSendEmail()" [disabled]=this.sendEmailForm.invalid [loading]="isLoading"></p-button>
+            <p-button label="Gửi" type="submit" (click)="onSendEmailVerify()" [disabled]=this.sendEmailForm.invalid [loading]="isLoading"></p-button>
+        </div>
+    </form>
+</p-dialog>
+
+<p-dialog header="LẤY LẠI MẬT KHẨU" [(visible)]="forgotPasswordVisible" [style]="{width: '50vw'}">
+    <form [formGroup]="sendEmailForm" class="tw-space-y-[2rem]" >
+        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+            <label>Email</label>
+            <input class="hover:tw-border-gray-900" pInputText formControlName="email"/>
+            <ng-container *ngIf="sendEmailForm.controls?.['email']?.touched && sendEmailForm.controls?.['email']?.dirty">
+                <small *ngIf="sendEmailForm.controls?.['email']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Email không được để trống</small>
+                <small *ngIf="sendEmailForm.controls?.['email']?.errors?.['email']" class="tw-ml-2 tw-text-red-600">Email không đúng định dạng</small>
+            </ng-container>
+        </div>
+        <div class="tw-text-right">
+            <p-button label="Gửi" type="submit" (click)="onSendEmailForgotPassword()" [disabled]=this.sendEmailForm.invalid [loading]="isLoading"></p-button>
         </div>
     </form>
 </p-dialog>

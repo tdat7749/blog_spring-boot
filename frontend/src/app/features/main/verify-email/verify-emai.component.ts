@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, ViewEncapsulation} from "@angular/core";
 import {AuthService} from "../../../core/services/auth.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {VerifyEmail} from "../../../core/types/auth.type";
@@ -6,7 +6,8 @@ import {map} from "rxjs";
 
 @Component({
     selector:"main-verify-account",
-    templateUrl:"./verify-email.component.html"
+    templateUrl:"./verify-email.component.html",
+    encapsulation: ViewEncapsulation.None
 })
 
 export class VerifyEmailComponent implements OnInit{

@@ -6,6 +6,7 @@ import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.comment.dto.CreateCommentDTO;
 import com.example.blog_springboot.modules.comment.dto.EditCommentDTO;
 import com.example.blog_springboot.modules.comment.viewmodel.CommentVm;
+import com.example.blog_springboot.modules.post.model.Post;
 import com.example.blog_springboot.modules.user.model.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Service;
@@ -20,5 +21,5 @@ public interface CommentService {
     public SuccessResponse<Boolean> deleteComment(int id,User user);
     public SuccessResponse<PagingResponse<List<CommentVm>>> getListCommentPost(String slug,String sortBy,int pageIndex);
 
-    public long countCommentPost(int postId);
+    public long countCommentPost(Post post);
 }

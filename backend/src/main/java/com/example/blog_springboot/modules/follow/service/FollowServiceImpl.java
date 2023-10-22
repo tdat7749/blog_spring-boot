@@ -115,4 +115,17 @@ public class FollowServiceImpl implements FollowService {
         followRepository.delete(isFollowed);
         return new SuccessResponse<>(FollowConstants.UNFOLLOW_SUCCESS,true);
     }
+
+    @Override
+    public SuccessResponse<Boolean> checkFollowed(String userName, User userPrincipal) {
+        var userFound = userRepository.findByUserName(userName).orElse(null);
+        if(userFound == null){
+            throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
+        }
+
+        var isFollow = followRepository.existsByFollowersAndFollowing(userFound,userPrincipal);
+
+        return new SuccessResponse<>("Thành Công",isFollow);
+
+    }
 }

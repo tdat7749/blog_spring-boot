@@ -42,7 +42,7 @@ public class PostController {
 
     @PutMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<PostListVm>> updatePost(@PathVariable("id") int id,@RequestBody @Valid UpdatePostDTO dto, @AuthenticationPrincipal User userPrincipal){
+    public ResponseEntity<SuccessResponse<PostVm>> updatePost(@PathVariable("id") int id,@RequestBody @Valid UpdatePostDTO dto, @AuthenticationPrincipal User userPrincipal){
         var result = postService.updatePost(dto,id,userPrincipal);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
@@ -68,10 +68,11 @@ public class PostController {
     @ResponseBody
     public ResponseEntity<SuccessResponse<PagingResponse<List<PostListVm>>>> getAllPostByTag(
             @PathVariable("slug") String tagSlug,
+            @RequestParam(name = "keyword",required = false,defaultValue = "") String keyword,
             @RequestParam(name = "pageIndex",required = true,defaultValue = "0") Integer pageIndex,
             @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy)
     {
-        var result = postService.getAllPostByTag(tagSlug,sortBy,pageIndex);
+        var result = postService.getAllPostByTag(tagSlug,keyword,sortBy,pageIndex);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
@@ -79,10 +80,25 @@ public class PostController {
     @GetMapping("/")
     @ResponseBody
     public ResponseEntity<SuccessResponse<PagingResponse<List<PostListVm>>>> getAllPost(
+            @RequestParam(name = "keyword",required = false,defaultValue = "") String keyword,
             @RequestParam(name = "pageIndex",required = true,defaultValue = "0") Integer pageIndex,
             @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy)
     {
-        var result = postService.getAllPost(sortBy,pageIndex);
+        var result = postService.getAllPost(keyword,sortBy,pageIndex);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @GetMapping("/user")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<PagingResponse<List<PostListVm>>>> getAllPostByCurrentUser(
+            @RequestParam(name = "keyword",required = false,defaultValue = "") String keyword,
+            @RequestParam(name = "pageIndex",required = true,defaultValue = "0") Integer pageIndex,
+            @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy,
+            @AuthenticationPrincipal User userPrincipal
+    )
+    {
+        var result = postService.getAllByCurrentUser(userPrincipal,keyword,sortBy,pageIndex);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
@@ -90,10 +106,11 @@ public class PostController {
     @GetMapping("/not-published")
     @ResponseBody
     public ResponseEntity<SuccessResponse<PagingResponse<List<PostListVm>>>> getAllPostNotPublished(
+            @RequestParam(name = "keyword",required = false,defaultValue = "") String keyword,
             @RequestParam(name = "pageIndex",required = true,defaultValue = "0") Integer pageIndex,
             @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy)
     {
-        var result = postService.getAllPostNotPublished(sortBy,pageIndex);
+        var result = postService.getAllPostNotPublished(sortBy,keyword,pageIndex);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
@@ -106,10 +123,34 @@ public class PostController {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+    @GetMapping("/not-belong-series/user")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<List<PostListVm>>> getAllPostNotBeLongSeries(@AuthenticationPrincipal User userPrincipal){
+        var result = postService.getAllPostNotBeLongSeries(userPrincipal);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @GetMapping("/slug/{slug}/user")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<PostVm>> getPostBySlug(@PathVariable("slug") String slug,@AuthenticationPrincipal User userPrincipal){
+        var result = postService.getPostBySlug(slug,userPrincipal);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
     @PostMapping("/{postId}/series/{seriesId}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> getPostBySlug(@PathVariable("postId") int postId,@PathVariable("seriesId") int seriesId,@AuthenticationPrincipal User userPrincipal){
+    public ResponseEntity<SuccessResponse<Boolean>> addPostToSeries(@PathVariable("postId") int postId,@PathVariable("seriesId") int seriesId,@AuthenticationPrincipal User userPrincipal){
         var result = postService.addPostToSeries(postId,seriesId,userPrincipal);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @PatchMapping("/{postId}/series/{seriesId}")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> removePostFromSeries(@PathVariable("postId") int postId,@PathVariable("seriesId") int seriesId,@AuthenticationPrincipal User userPrincipal){
+        var result = postService.removePostFromSeries(postId,seriesId,userPrincipal);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
@@ -117,12 +158,13 @@ public class PostController {
     @GetMapping("/{userName}")
     @ResponseBody
     public ResponseEntity<SuccessResponse<PagingResponse<List<PostListVm>>>> getAllPostAuthor(
+            @RequestParam(name = "keyword",required = false,defaultValue = "") String keyword,
             @PathVariable("userName") String userName,
             @RequestParam(name = "pageIndex",required = true,defaultValue = "0") Integer pageIndex,
             @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
     )
     {
-        var result = postService.getAllPostAuthor(userName,sortBy,pageIndex);
+        var result = postService.getAllPostAuthor(userName,keyword,sortBy,pageIndex);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
@@ -143,10 +185,10 @@ public class PostController {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
-    @GetMapping("/{postId}/liked")
+    @GetMapping("/{postSlug}/liked")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> checkUserLikedPost(@PathVariable("postId") int postId,@AuthenticationPrincipal User userPrincipal){
-        var result = likePostService.checkUserLikedPost(postId,userPrincipal);
+    public ResponseEntity<SuccessResponse<Boolean>> checkUserLikedPost(@PathVariable("postSlug") String postSlug,@AuthenticationPrincipal User userPrincipal){
+        var result = likePostService.checkUserLikedPost(postSlug,userPrincipal);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }

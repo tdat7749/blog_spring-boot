@@ -46,12 +46,14 @@ public class SecurityConfiguration {
 
                         //auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/auth/**").permitAll()
 
                         //upload file
                         .requestMatchers("/api/filestorage/**").hasAnyRole("USER","ADMIN")
 
                         //series
                         .requestMatchers(HttpMethod.GET,"/api/series/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/series/user").hasAnyRole("USER","ADMIN")
                         .requestMatchers(HttpMethod.POST,"/api/series/").hasAnyRole("USER","ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/api/series/{seriesId}").hasAnyRole("USER","ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/api/series/{id}").hasAnyRole("USER","ADMIN")

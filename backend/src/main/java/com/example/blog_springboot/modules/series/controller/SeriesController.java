@@ -7,6 +7,7 @@ import com.example.blog_springboot.modules.series.dto.CreateSeriesDTO;
 import com.example.blog_springboot.modules.series.dto.UpdateSeriesDTO;
 import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.series.service.SeriesService;
+import com.example.blog_springboot.modules.series.viewmodel.SeriesListPostVm;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.user.model.User;
 import jakarta.validation.Valid;
@@ -26,17 +27,17 @@ public class SeriesController {
         this.seriesService = seriesService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/slug/{slug}/user")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<SeriesVm>> getSeriesById(@PathVariable int id){
-        var result = seriesService.getSeriesById(id);
+    public ResponseEntity<SuccessResponse<SeriesListPostVm>> getSeriesDetail(@PathVariable String slug,@AuthenticationPrincipal User user){
+        var result = seriesService.getSeriesDetail(slug,user);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
     @GetMapping("/slug/{slug}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Series>> getSeriesDetail(@PathVariable String slug){
+    public ResponseEntity<SuccessResponse<SeriesListPostVm>> getSeriesDetail(@PathVariable String slug){
         var result = seriesService.getSeriesDetail(slug);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
@@ -45,10 +46,21 @@ public class SeriesController {
     @GetMapping("/")
     @ResponseBody
     public ResponseEntity<SuccessResponse<PagingResponse<List<SeriesVm>>>> getAllSeries(
+            @RequestParam(name = "keyword",required = false,defaultValue = "") String keyword,
             @RequestParam(name = "pageIndex",required = true,defaultValue = "0") Integer pageIndex,
             @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
     ){
-        var result = seriesService.getAllSeries(sortBy,pageIndex);
+        var result = seriesService.getAllSeries(keyword,sortBy,pageIndex);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @GetMapping("/user")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<List<SeriesVm>>> getListSeriesByUserPrincipal(
+            @AuthenticationPrincipal User userPrincipal
+    ){
+        var result = seriesService.getListSeriesByUserPrincipal(userPrincipal);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }

@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {AuthService} from "../../../core/services/auth.service";
-import {NoWhiteSpaceValidator} from "../../../shared/commons/shared";
 import {Login} from "../../../core/types/auth.type";
 import {concatMap} from "rxjs";
 import {ApiResponse} from "../../../core/types/api-response.type";
@@ -11,6 +10,7 @@ import {CookieService} from "ngx-cookie-service";
 import {MessageService} from "primeng/api";
 import {Router} from "@angular/router";
 import {UserService} from "../../../core/services/user.service";
+import {noWhiteSpaceValidator} from "../../../shared/validators/no-white-space.validator";
 
 @Component({
   selector: 'app-login',
@@ -22,11 +22,14 @@ export class LoginComponent implements OnInit{
   loginForm: FormGroup
   sendEmailForm: FormGroup
   isLoading: boolean
-  visible: boolean = false
+  verifyFormVisible: boolean = false
+  forgotPasswordVisible: boolean = false
+
   constructor(
       private authService:AuthService,
       private cookieService:CookieService,
       private messageService:MessageService,
+      private userService:UserService,
       private fb:FormBuilder,
       private router:Router
   ) {
@@ -39,14 +42,14 @@ export class LoginComponent implements OnInit{
           '',
           Validators.compose([
               Validators.required,
-              NoWhiteSpaceValidator()
+              noWhiteSpaceValidator()
           ])
       ],
       password:[
           '',
           Validators.compose([
               Validators.required,
-              NoWhiteSpaceValidator()
+              noWhiteSpaceValidator()
           ])
       ]
     })
@@ -62,11 +65,17 @@ export class LoginComponent implements OnInit{
       })
   }
 
-  showSendEmailDialog(){
-      this.visible = true
+  showSendEmailVerifyDialog(){
+      this.verifyFormVisible = true
   }
 
-  onSendEmail(){
+  showSendEmailForgotPassword(){
+      this.forgotPasswordVisible = true
+  }
+
+
+
+  onSendEmailVerify(){
       this.isLoading = true
       const email:string = this.sendEmailForm.value.email
 
@@ -78,7 +87,32 @@ export class LoginComponent implements OnInit{
                   summary:"Thành công"
               })
               this.isLoading = false
-              this.visible = false
+              this.verifyFormVisible = false
+          },
+          error:(error) =>{
+              this.messageService.add({
+                  severity: "error",
+                  detail: error,
+                  summary:"Lỗi"
+              })
+              this.isLoading = false
+          }
+      })
+  }
+
+  onSendEmailForgotPassword(){
+      this.isLoading = true
+      const email:string = this.sendEmailForm.value.email
+
+      this.userService.getEmailForgotPassword(email).subscribe({
+          next:(response) =>{
+              this.messageService.add({
+                  severity: "success",
+                  detail: response.message,
+                  summary:"Thành công"
+              })
+              this.isLoading = false
+              this.forgotPasswordVisible = false
           },
           error:(error) =>{
               this.messageService.add({

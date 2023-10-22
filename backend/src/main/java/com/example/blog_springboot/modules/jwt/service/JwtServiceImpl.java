@@ -20,7 +20,7 @@ import java.util.function.Function;
 public class JwtServiceImpl implements JwtService{
 
     private final String serectKey = "toikhongbietsudungenvtrongjavaspringbootlamonhaychitoi";
-    private final long accessTokenTime = 1000 * 60 * 60; // 60'
+    private final long accessTokenTime =  1000 * 60 * 60; // 60'
     private final long refreshTokenTime = 1000 * 60 * 60 * 24 * 7; // 7 days
 
 

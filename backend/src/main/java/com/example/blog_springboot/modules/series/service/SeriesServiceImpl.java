@@ -9,6 +9,7 @@ import com.example.blog_springboot.modules.series.dto.UpdateSeriesDTO;
 import com.example.blog_springboot.modules.series.exception.*;
 import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.series.repository.SeriesRepository;
+import com.example.blog_springboot.modules.series.viewmodel.SeriesListPostVm;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.user.enums.Role;
 import com.example.blog_springboot.modules.user.model.User;
@@ -28,21 +29,19 @@ import java.util.List;
 public class SeriesServiceImpl implements SeriesService{
 
     private final SeriesRepository seriesRepository;
-    private final UserRepository userRepository;
 
 
-    public SeriesServiceImpl(SeriesRepository seriesRepository, UserRepository userRepository){
+    public SeriesServiceImpl(SeriesRepository seriesRepository){
         this.seriesRepository = seriesRepository;
-        this.userRepository = userRepository;
     }
 
     @Override
-    public SuccessResponse<SeriesVm> getSeriesById(int id){
-        var series = seriesRepository.findById(id).orElse(null);
+    public SuccessResponse<SeriesListPostVm> getSeriesDetail(String slug,User user){
+        var series = seriesRepository.findByUserAndSlug(user, slug).orElse(null);
         if(series == null){
             throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
         }
-        var seriesVm = Utilities.getSeriesVm(series);
+        var seriesVm = Utilities.getSeriesListPostVm(series);
 
         return new SuccessResponse<>("Thành công !",seriesVm);
     }
@@ -125,20 +124,22 @@ public class SeriesServiceImpl implements SeriesService{
     }
 
     @Override
-    public SuccessResponse<Series> getSeriesDetail(String slug) {
+    public SuccessResponse<SeriesListPostVm> getSeriesDetail(String slug) {
         var series = seriesRepository.getSeriesDetail(slug).orElse(null);
         if(series == null){
             throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
         }
-        return new SuccessResponse<>("Thành công",series);
+
+        var result = Utilities.getSeriesListPostVm(series);
+        return new SuccessResponse<>("Thành công",result);
     }
 
 
     @Override
-    public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(String sortBy,int pageIndex) {
-        Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(sortBy));
+    public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(String keyword,String sortBy,int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.DESC,sortBy));
 
-        Page<Series> pagingResult = seriesRepository.findAll(paging);
+        Page<Series> pagingResult = seriesRepository.getAllSeries(keyword,paging);
 
         List<SeriesVm> listSeriesVm = pagingResult.getContent().stream().map(Utilities::getSeriesVm).toList();
 
@@ -146,6 +147,22 @@ public class SeriesServiceImpl implements SeriesService{
 
         return new SuccessResponse<>("Thành công",result);
 
+    }
+
+    @Override
+    public SuccessResponse<List<SeriesVm>> getListSeriesByUserPrincipal(User userPrincipal) {
+        var listSeries = seriesRepository.getByUser(userPrincipal);
+        var listSeriesVm = listSeries.stream().map(Utilities::getSeriesVm).toList();
+
+        return new SuccessResponse<>("Thành công",listSeriesVm);
+    }
+
+    @Override
+    public SuccessResponse<List<SeriesVm>> getListSeriesByUserName(String userName) {
+        var listSeries = seriesRepository.getListSeriesByUserName(userName);
+        var listSeriesVm = listSeries.stream().map(Utilities::getSeriesVm).toList();
+
+        return new SuccessResponse<>("Thành công",listSeriesVm);
     }
 
 }

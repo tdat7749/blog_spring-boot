@@ -1,5 +1,6 @@
 package com.example.blog_springboot.modules.post.viewmodel;
 
+import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.tag.viewmodel.TagVm;
 import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
 import com.example.blog_springboot.modules.user.viewmodel.UserVm;
@@ -13,7 +14,7 @@ public class PostVm {
     private String slug;
     private String summary;
     private String thumbnail;
-    private int isPublished;
+    private boolean isPublished;
     private String createdAt;
     private String updatedAt;
     private List<TagVm> tags;
@@ -22,6 +23,16 @@ public class PostVm {
     private long totalComment;
     private long totalLike;
     private long totalView;
+
+    private SeriesVm series;
+
+    public SeriesVm getSeries() {
+        return series;
+    }
+
+    public void setSeries(SeriesVm series) {
+        this.series = series;
+    }
 
     public int getId() {
         return id;
@@ -71,11 +82,11 @@ public class PostVm {
         this.thumbnail = thumbnail;
     }
 
-    public int getIsPublished() {
+    public boolean getIsPublished() {
         return isPublished;
     }
 
-    public void setIsPublished(int isPublished) {
+    public void setIsPublished(boolean isPublished) {
         this.isPublished = isPublished;
     }
 
