@@ -66,10 +66,10 @@
                 <ng-container *ngIf="registerForm.dirty">
                     <small *ngIf="registerForm.errors?.['passwordsMatch']" class="tw-mt-2 tw-ml-2 tw-text-red-600">Mật khẩu và nhập lại mật khẩu không trùng khớp</small>
                 </ng-container>
+                <div class="tw-text-right">
+                    <p-button label="Đăng Ký" type="submit" (onClick)="onRegister()" [disabled]=this.registerForm.invalid [loading]="isLoading"></p-button>
+                </div>
             </form>
-            <div class="tw-text-right">
-                <p-button label="Đăng Ký" type="submit" (onClick)="onRegister()" [disabled]=this.registerForm.invalid [loading]="isLoading"></p-button>
-            </div>
         </div>
     </div>
 </div>

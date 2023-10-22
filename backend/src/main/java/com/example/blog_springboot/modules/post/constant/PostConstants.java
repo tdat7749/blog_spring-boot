@@ -19,4 +19,10 @@ public class PostConstants {
     public static final String ADD_POST_SERIES_SUCCESS = "Thêm bài viết vào series thành công";
 
     public static final String ADD_POST_SERIES_FAILED = "Thêm bài viết vào series thất bại";
+
+    public static final String POST_NOT_BELONG_SERIES = "Bài viết này chưa thuộc về một series nào";
+
+    public static final String POST_HAS_BELONG_SERIES = "Bài viết đã thuộc về một series khác";
+    public static final String REMOVE_POST_FROM_SUCCESS = "Gỡ bài viết khỏi series thành công";
+    public static final String REMOVE_POST_FROM_FAILED = "Gỡ bài viết khỏi series thất bại, vui lòng thử lại sau";
 }

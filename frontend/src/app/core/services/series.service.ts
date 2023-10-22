@@ -26,8 +26,14 @@ export class SeriesService{
         )
     }
 
+    getSeriesDetailByAuth(slug:string):Observable<ApiResponse<SeriesListPost>>{
+        return this.http.get<ApiResponse<SeriesListPost>>(`${environment.apiUrl}/series/slug/${slug}/user`).pipe(
+            catchError(handleError)
+        )
+    }
+
     getAllSeries(pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<Series[]>>>{
-        return this.http.get<ApiResponse<PagingResponse<Series[]>>>(`${environment.apiUrl}/series?pageIndex=${pageIndex - 1}&sortBy=${sortBy}`).pipe(
+        return this.http.get<ApiResponse<PagingResponse<Series[]>>>(`${environment.apiUrl}/series?pageIndex=${pageIndex}&sortBy=${sortBy}`).pipe(
             catchError(handleError)
         )
     }
@@ -46,6 +52,12 @@ export class SeriesService{
 
     deleteSeries(id:number):Observable<ApiResponse<boolean>>{
         return this.http.delete<ApiResponse<boolean>>(`${environment.apiUrl}/series/${id}`).pipe(
+            catchError(handleError)
+        )
+    }
+
+    getSeriesByCurrentUser():Observable<ApiResponse<Series[]>>{
+        return this.http.get<ApiResponse<Series[]>>(`${environment.apiUrl}/series/user`).pipe(
             catchError(handleError)
         )
     }

@@ -12,4 +12,6 @@ public interface FollowService {
     public SuccessResponse<Boolean> follow(int followingId, User userPrincipal) throws JsonProcessingException;
     public SuccessResponse<Boolean> unFollow(int followingId,User userPrincipal);
 
+    public SuccessResponse<Boolean> checkFollowed(String userName,User userPrincipal);
+
 }

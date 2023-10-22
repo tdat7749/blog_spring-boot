@@ -12,7 +12,7 @@ import java.util.List;
 public interface LikePostService{
     public SuccessResponse<Boolean> likePost(int postId,User userPrincipal);
     public SuccessResponse<Boolean> unLikePost(int postId, User userPrincipal);
-    public SuccessResponse<Boolean> checkUserLikedPost(int postId,User userPrincipal);
+    public SuccessResponse<Boolean> checkUserLikedPost(String postSlug,User userPrincipal);
 
     public SuccessResponse<List<UserDetailVm>> getListUserLikedPost(int postId);
 

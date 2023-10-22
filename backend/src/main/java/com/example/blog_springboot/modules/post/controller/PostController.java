@@ -42,7 +42,7 @@ public class PostController {
 
     @PutMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<PostListVm>> updatePost(@PathVariable("id") int id,@RequestBody @Valid UpdatePostDTO dto, @AuthenticationPrincipal User userPrincipal){
+    public ResponseEntity<SuccessResponse<PostVm>> updatePost(@PathVariable("id") int id,@RequestBody @Valid UpdatePostDTO dto, @AuthenticationPrincipal User userPrincipal){
         var result = postService.updatePost(dto,id,userPrincipal);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
@@ -123,10 +123,34 @@ public class PostController {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+    @GetMapping("/not-belong-series/user")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<List<PostListVm>>> getAllPostNotBeLongSeries(@AuthenticationPrincipal User userPrincipal){
+        var result = postService.getAllPostNotBeLongSeries(userPrincipal);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @GetMapping("/slug/{slug}/user")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<PostVm>> getPostBySlug(@PathVariable("slug") String slug,@AuthenticationPrincipal User userPrincipal){
+        var result = postService.getPostBySlug(slug,userPrincipal);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
     @PostMapping("/{postId}/series/{seriesId}")
     @ResponseBody
     public ResponseEntity<SuccessResponse<Boolean>> addPostToSeries(@PathVariable("postId") int postId,@PathVariable("seriesId") int seriesId,@AuthenticationPrincipal User userPrincipal){
         var result = postService.addPostToSeries(postId,seriesId,userPrincipal);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @PatchMapping("/{postId}/series/{seriesId}")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> removePostFromSeries(@PathVariable("postId") int postId,@PathVariable("seriesId") int seriesId,@AuthenticationPrincipal User userPrincipal){
+        var result = postService.removePostFromSeries(postId,seriesId,userPrincipal);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
@@ -161,10 +185,10 @@ public class PostController {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
-    @GetMapping("/{postId}/liked")
+    @GetMapping("/{postSlug}/liked")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> checkUserLikedPost(@PathVariable("postId") int postId,@AuthenticationPrincipal User userPrincipal){
-        var result = likePostService.checkUserLikedPost(postId,userPrincipal);
+    public ResponseEntity<SuccessResponse<Boolean>> checkUserLikedPost(@PathVariable("postSlug") String postSlug,@AuthenticationPrincipal User userPrincipal){
+        var result = likePostService.checkUserLikedPost(postSlug,userPrincipal);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }

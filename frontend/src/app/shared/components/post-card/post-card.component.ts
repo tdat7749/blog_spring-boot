@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {PostCardInfo} from "../../../../core/types/post.type";
+import {PostCardInfo, PostList} from "../../../core/types/post.type";
 
 @Component({
   selector: 'main-post-card',
@@ -7,5 +7,5 @@ import {PostCardInfo} from "../../../../core/types/post.type";
   styleUrls: ['./post-card.component.css']
 })
 export class PostCardComponent {
-  @Input() cardInfo: PostCardInfo
+  @Input() cardInfo: PostList
 }

@@ -21,6 +21,7 @@ import {noWhiteSpaceValidator} from "../../../../shared/validators/no-white-spac
 import {HttpClient} from "@angular/common/http";
 import {ActivatedRoute} from "@angular/router";
 import {SidebarComponent} from "../sidebar/sidebar.component";
+import {MAX_FILE, MIME_TYPES} from "../../../../shared/commons/shared";
 
 @Component({
   selector: 'main-user-information',
@@ -51,23 +52,14 @@ export class UserInformationComponent implements OnInit{
       private fb:FormBuilder,
       private messageService:MessageService,
       private userService:UserService,
-      private _route: ActivatedRoute
+      private authService:AuthService
   ) {
 
   }
   ngOnInit() {
 
 
-    this.currentUser = {
-      email:"abc@gmail.com",
-      firstName:"a",
-      lastName:"b",
-      role:"USER",
-      avatar:null,
-      userName:"a",
-      notLocked:true,
-      id:1
-    }
+    this.currentUser = this.authService.getCurrentUser() as User
     this.avatarValueChange = this.currentUser.avatar
 
     this.changeInformationForm = this.fb.group({
@@ -117,6 +109,23 @@ export class UserInformationComponent implements OnInit{
 
   onSelectImage(event: any){
     const file = event.files[0]
+    if(file.size > MAX_FILE){
+      this.messageService.add({
+        severity: "error",
+        detail: "File bạn chọn vượt quá giới hạn (> 3mb)",
+        summary:"Lỗi"
+      })
+      return;
+    }
+    if(!MIME_TYPES.includes(file.type)){
+      this.messageService.add({
+        severity: "error",
+        detail: "Loại fileUploadValidator không đúng, vui lòng chọn lại (chỉ chấp nhận: image/png,image/jpeg,image/webp)",
+        summary:"Lỗi"
+      })
+      return;
+    }
+    console.log(file)
     this.avatarValueChange = file?.objectURL.changingThisBreaksApplicationSecurity
     this.fileUploadValue = file
   }
@@ -169,6 +178,7 @@ export class UserInformationComponent implements OnInit{
         firstName: this.changeInformationForm.get("firstName")?.value,
         lastName: this.changeInformationForm.get("lastName")?.value
       }
+      console.log(data)
       this.isLoading = true
       this.userService.changeInformation(data).subscribe({
         next:(response) =>{
@@ -177,6 +187,7 @@ export class UserInformationComponent implements OnInit{
             detail: response.message,
             summary:"Thành công"
           })
+          this.isLoading = false
         },
         error:(error) =>{
           this.messageService.add({
@@ -184,6 +195,7 @@ export class UserInformationComponent implements OnInit{
             detail: error,
             summary:"Lỗi"
           })
+          this.isLoading = false
         }
       })
 

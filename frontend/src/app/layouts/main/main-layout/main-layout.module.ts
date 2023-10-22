@@ -15,6 +15,7 @@ import {AvatarModule} from "primeng/avatar";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {HomeComponent} from "../../../features/main/home/home.component";
 import {PostModule} from "../../../features/main/post/post.module";
+import {SharedModule} from "../../../shared/components/shared.module";
 
 @NgModule({
   declarations:[
@@ -37,7 +38,7 @@ import {PostModule} from "../../../features/main/post/post.module";
         AvatarModule,
         OverlayPanelModule,
         RouterOutlet,
-        PostModule
+        SharedModule,
     ],
 
 })

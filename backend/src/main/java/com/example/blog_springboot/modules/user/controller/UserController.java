@@ -72,6 +72,14 @@ public class UserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping("/{userName}")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<UserDetailVm>> getAuthor(@PathVariable("userName") String userName){
+        var result = userService.getAuthor(userName);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @GetMapping("/{userId}/follower")
     @ResponseBody
     public ResponseEntity<SuccessResponse<PagingResponse<List<UserDetailVm>>>> getListFollowers(

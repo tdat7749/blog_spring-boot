@@ -1,5 +1,6 @@
 import {CreateTag, Tag} from "./tag.type";
 import {UserAbs} from "./user.type";
+import {Series} from "./series.type";
 
 export interface PostCardInfo{
     avatar:string,
@@ -22,8 +23,10 @@ export interface PostList{
     totalComment:number,
     totalLike:number,
     totalView:number,
+    published:boolean,
     tags: Tag[],
-    author: UserAbs
+    author: UserAbs,
+    series:Series
 }
 
 export interface Post{
@@ -39,7 +42,9 @@ export interface Post{
     totalView:number,
     tags: Tag[],
     author: UserAbs,
-    content:string
+    content:string,
+    isPublished:boolean,
+    series:Series
 }
 
 export interface CreatePost{
@@ -60,7 +65,7 @@ export interface UpdatePost{
     thumbnail?:string,
     seriesId?:number,
     listTags:CreateTag[],
-    isPublished:boolean,
+    published:boolean,
 }
 
 export interface UpdatePostStatus{

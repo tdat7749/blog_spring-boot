@@ -77,8 +77,8 @@ public class LikePostServiceImpl implements LikePostService{
     }
 
     @Override
-    public SuccessResponse<Boolean> checkUserLikedPost(int postId, User userPrincipal) {
-        var foundPost = postRepository.findById(postId).orElse(null);
+    public SuccessResponse<Boolean> checkUserLikedPost(String postSlug, User userPrincipal) {
+        var foundPost = postRepository.findBySlug(postSlug).orElse(null);
         if(foundPost == null){
             throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
         }

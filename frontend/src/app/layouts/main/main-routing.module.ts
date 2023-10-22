@@ -4,13 +4,20 @@ import {MainLayoutComponent} from "./main-layout/layout/main-layout.component";
 import {MainLayoutModule} from "./main-layout/main-layout.module";
 import {HomeComponent} from "../../features/main/home/home.component";
 import {notAuthGuard} from "../../core/guards/not-auth.guard";
-import {authChildGuard, authGuard} from "../../core/guards/auth.guard";
 
 const routes: Routes = [
   {
     path:"",
     component: MainLayoutComponent,
     children:[
+      {
+        path:"bai-viet",
+        loadChildren: () => import("../../features/main/post/post.module").then(m => m.PostModule)
+      },
+      {
+        path:"tac-gia",
+        loadChildren: () => import("../../features/main/author/author.module").then(m => m.AuthorModule)
+      },
       {
         path:"nguoi-dung",
         // canActivate:[authGuard],

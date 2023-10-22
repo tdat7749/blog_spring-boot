@@ -33,7 +33,7 @@ public class UpdatePostDTO {
     private String thumbnail;
 
     @Digits(integer = 10,fraction = 0,message = "Trường 'seriesID' phải là số nguyên") // Kiểm tra là số nguyên và ít hơn 10 chữ số
-    private int seriesId;
+    private Integer seriesId;
 
 
     @NotNull(message = "Không được thiếu trường 'listTags'")
@@ -87,11 +87,11 @@ public class UpdatePostDTO {
         this.thumbnail = thumbnail;
     }
 
-    public int getSeriesId() {
+    public Integer getSeriesId() {
         return seriesId;
     }
 
-    public void setSeriesId(int seriesId) {
+    public void setSeriesId(Integer seriesId) {
         this.seriesId = seriesId;
     }
 

@@ -12,14 +12,14 @@ import {HttpClient} from "@angular/common/http";
 export class TagService{
     constructor(private http:HttpClient) {
     }
-    getAllTag():Observable<ApiResponse<Tag>>{
-        return this.http.get<ApiResponse<Tag>>(`${environment.apiUrl}/tags`).pipe(
+    getAllTag():Observable<ApiResponse<Tag[]>>{
+        return this.http.get<ApiResponse<Tag[]>>(`${environment.apiUrl}/tags/`).pipe(
             catchError(handleError)
         )
     }
 
     createTag(data:CreateTag):Observable<ApiResponse<Tag>>{
-        return this.http.post<ApiResponse<Tag>>(`${environment.apiUrl}/tags`,data).pipe(
+        return this.http.post<ApiResponse<Tag>>(`${environment.apiUrl}/tags/`,data).pipe(
             catchError(handleError)
         )
     }

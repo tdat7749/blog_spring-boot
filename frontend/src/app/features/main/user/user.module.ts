@@ -17,6 +17,15 @@ import {MultiSelectModule} from "primeng/multiselect";
 import {DropdownModule} from "primeng/dropdown";
 import {TagModule} from "primeng/tag";
 import {SliderModule} from "primeng/slider";
+import {PaginatorModule} from "primeng/paginator";
+import {EditorModule} from "primeng/editor";
+import { CreatePostComponent } from './create-post/create-post.component';
+import { EditPostComponent } from './edit-post/edit-post.component';
+import { SeriesManagementComponent } from './series-management/series-management.component';
+import { CreateSeriesComponent } from './create-series/create-series.component';
+import { EditSeriesComponent } from './edit-series/edit-series.component';
+import {InputTextareaModule} from "primeng/inputtextarea";
+import {KeyFilterModule} from "primeng/keyfilter";
 
 @NgModule({
     declarations:[
@@ -24,7 +33,12 @@ import {SliderModule} from "primeng/slider";
     SidebarComponent,
     UserInformationComponent,
     ChangePasswordComponent,
-    PostManagementComponent
+    PostManagementComponent,
+    CreatePostComponent,
+    EditPostComponent,
+    SeriesManagementComponent,
+    CreateSeriesComponent,
+    EditSeriesComponent
   ],
     imports: [
         CommonModule,
@@ -40,7 +54,11 @@ import {SliderModule} from "primeng/slider";
         MultiSelectModule,
         DropdownModule,
         TagModule,
-        SliderModule
+        SliderModule,
+        PaginatorModule,
+        EditorModule,
+        InputTextareaModule,
+        KeyFilterModule
     ]
 })
 

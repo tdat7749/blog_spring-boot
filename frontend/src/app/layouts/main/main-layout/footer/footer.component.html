@@ -1,1 +1,26 @@
-<p>main footer works!</p>
+<div class="tw-mt-[10rem] tw-h-[15rem] tw-bg-gray-900 tw tw-flex tw-flex-col tw-space-y-10 tw-justify-center">
+
+    <ul class="tw-flex tw-justify-center tw-flex-wrap tw-gap-6 tw-text-gray-500 hover:tw-text-gray-100 tw-font-medium">
+        <li *ngFor="let nav of listNav" class="tw-cursor-pointer" routerLink="{{nav.path}}">{{nav.title}}</li>
+
+    </ul>
+
+    <div class="tw-flex tw-justify-center tw-space-x-5">
+        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/fluent/30/000000/facebook-new.png" />
+        </a>
+        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/fluent/30/000000/linkedin-2.png" />
+        </a>
+        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/fluent/30/000000/instagram-new.png" />
+        </a>
+        <a href="https://messenger.com" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/fluent/30/000000/facebook-messenger--v2.png" />
+        </a>
+        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/fluent/30/000000/twitter.png" />
+        </a>
+    </div>
+    <p class="tw-text-center tw-text-gray-500  tw-font-medium">&copy; 2023 SGU - Saigon University.</p>
+</div>
