@@ -5,6 +5,7 @@ import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.notification.service.UserNotificationService;
 import com.example.blog_springboot.modules.notification.viewmodel.NotificationVm;
+import com.example.blog_springboot.modules.notification.viewmodel.RpNotificationVm;
 import com.example.blog_springboot.modules.series.service.SeriesService;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.user.dto.ChangeInformationDTO;
@@ -60,14 +61,14 @@ public class UserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}/following")
+    @GetMapping("/{userName}/following")
     @ResponseBody
     public ResponseEntity<SuccessResponse<PagingResponse<List<UserDetailVm>>>> getListFollowing(
-            @PathVariable("userId") int userId,
+            @PathVariable("userName") String userName,
             @RequestParam(value = "pageIndex",defaultValue = "0") int pageIndex,
             @RequestParam(value = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
             ){
-        var result = userService.getListFollowing(sortBy,pageIndex,userId);
+        var result = userService.getListFollowing(sortBy,pageIndex,userName);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -80,14 +81,14 @@ public class UserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}/follower")
+    @GetMapping("/{userName}/follower")
     @ResponseBody
     public ResponseEntity<SuccessResponse<PagingResponse<List<UserDetailVm>>>> getListFollowers(
-            @PathVariable("userId") int userId,
+            @PathVariable("userName") String userName,
             @RequestParam(value = "pageIndex",defaultValue = "0") int pageIndex,
             @RequestParam(value = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
     ){
-        var result = userService.getListFollowers(sortBy,pageIndex,userId);
+        var result = userService.getListFollowers(sortBy,pageIndex,userName);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -142,7 +143,7 @@ public class UserController {
 
     @GetMapping("/top10-noti")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<List<NotificationVm>>> getTop10NotificationCurrentUser(@AuthenticationPrincipal User userPrincipal){
+    public ResponseEntity<SuccessResponse<RpNotificationVm>> getTop10NotificationCurrentUser(@AuthenticationPrincipal User userPrincipal){
         var result = userNotificationService.getTop10NotificationCurrentUser(userPrincipal);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -150,7 +151,7 @@ public class UserController {
 
     @GetMapping("/notifications")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<PagingResponse<List<NotificationVm>>>> getTop10NotificationCurrentUser(
+    public ResponseEntity<SuccessResponse<PagingResponse<RpNotificationVm>>> getTop10NotificationCurrentUser(
             @RequestParam(value = "pageIndex", defaultValue = "0",required = true) int pageIndex,
             @AuthenticationPrincipal User userPrincipal
     ){

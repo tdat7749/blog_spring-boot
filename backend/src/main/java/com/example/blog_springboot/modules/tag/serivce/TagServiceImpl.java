@@ -28,8 +28,8 @@ public class TagServiceImpl implements TagService{
     }
 
     @Override
-    public SuccessResponse<TagVm> getTagById(int id) {
-        var foundTag = tagRepository.findById(id).orElse(null);
+    public SuccessResponse<TagVm> getTagBySlug(String slug) {
+        var foundTag = tagRepository.findBySlug(slug).orElse(null);
         if(foundTag == null){
             throw new TagNotFoundException(TagConstants.TAG_NOT_FOUND);
         }
@@ -57,7 +57,6 @@ public class TagServiceImpl implements TagService{
         Tag newTag = new Tag();
         newTag.setSlug(dto.getSlug());
         newTag.setTitle(dto.getTitle());
-        newTag.setThumbnail(dto.getThumbnail());
         newTag.setStatus(true);
         newTag.setCreatedAt(new Date());
         newTag.setUpdatedAt(new Date());
@@ -84,9 +83,6 @@ public class TagServiceImpl implements TagService{
         foundTag.setSlug(dto.getSlug());
         foundTag.setTitle(dto.getTitle());
         foundTag.setUpdatedAt(new Date());
-        if(dto.getThumbnail() != null){
-            foundTag.setThumbnail(dto.getThumbnail());
-        }
 
         var updateTag = tagRepository.save(foundTag);
         if(updateTag == null){

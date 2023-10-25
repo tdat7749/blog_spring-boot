@@ -1,63 +1,69 @@
-<div class="tw-p-[2rem] tw-space-y-[1rem] tw-h-auto tw-w-full">
-    <h1 class="tw-text-2xl tw-text-gray-900 tw-text-center tw-mb-4">TẠO BÀI VIẾT</h1>
-    <p-button label="Quay lại" routerLink="/nguoi-dung/quan-ly-bai-viet" icon="pi pi-arrow-left"></p-button>
-    <form [formGroup]="createPostForm" class="tw-space-y-[2rem]" >
-        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
-            <label>Tiêu Đề Bài Viết</label>
-            <input class="hover:tw-border-gray-900" pInputText formControlName="title"/>
-            <ng-container *ngIf="createPostForm.controls?.['title']?.touched && createPostForm.controls?.['title']?.dirty">
-                <small *ngIf="createPostForm.controls?.['title']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Tiêu đề không được để trống</small>
-                <small *ngIf="createPostForm.controls?.['title']?.errors?.['minlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối thiểu là 1</small>
-                <small *ngIf="createPostForm.controls?.['title']?.errors?.['maxlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối đa là 60</small>
-                <small *ngIf="createPostForm.controls?.['title']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
-            </ng-container>
-        </div>
-        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
-            <label>Tóm Lược</label>
-            <div class="card">
-                <p-editor formControlName="summary" [style]="{ height: '320px' ,width: '100%'}"></p-editor>
-            </div>
-            <ng-container *ngIf="createPostForm.controls?.['summary']?.touched && createPostForm.controls?.['summary']?.dirty">
-                <small *ngIf="createPostForm.controls?.['summary']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Tóm lược không được để trống</small>
-            </ng-container>
-        </div>
-        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
-            <label>Nội Dung</label>
-            <div class="card">
-
-                <p-editor  formControlName="content" [style]="{ height: '320px' ,width: '100%'}"></p-editor>
-            </div>
-            <ng-container *ngIf="createPostForm.controls?.['content']?.touched && createPostForm.controls?.['content']?.dirty">
-                <small *ngIf="createPostForm.controls?.['content']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Nội dung không được để trống</small>
-            </ng-container>
-        </div>
-        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
-            <label>Hình Ảnh</label>
-            <div class="tw-flex tw-space-x-[1rem]">
-                <p-fileUpload #fileUpload mode="basic" chooseLabel="Chọn Ảnh" accept="image/*" (onSelect)="onSelectImage($event)" [maxFileSize]="3145728">
-
-                </p-fileUpload>
-                <p-button styleClass="p-button-secondary" label="Hủy" (click)="onClearUpload()"></p-button>
-            </div>
-            <div style="border: 1px solid #dee2e6" class="tw-w-full tw-h-[25rem]">
-                <img alt="PreviewImage" class="tw-w-full tw-h-full tw-object-cover" src="{{previewImage}}">
-            </div>
-        </div>
-        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
-            <label>Các Tag</label>
-            <p-multiSelect [options]="listTag" dataKey="title" optionLabel="title" formControlName="tags" placeholder="Chọn tag cho bài viết"></p-multiSelect>
+<ng-template #loaded>
+    <div class="tw-p-[2rem] tw-space-y-[1rem] tw-h-auto tw-w-full">
+        <h1 class="tw-text-2xl tw-text-gray-900 tw-text-center tw-mb-4">TẠO BÀI VIẾT</h1>
+        <p-button label="Quay lại" routerLink="/nguoi-dung/quan-ly-bai-viet" icon="pi pi-arrow-left"></p-button>
+        <form [formGroup]="createPostForm" class="tw-space-y-[2rem]" >
             <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
-                <small class="tw-text-yellow-500">Nếu bạn muốn có tag mới thì vui lòng tạo dưới đây theo định dạng: Tên_Tag_1,Tên_Tag_2</small>
-                <input class="hover:tw-border-gray-900" placeholder="Ví dụ: Tên_Tag_1,Tên_Tag_2" pInputText formControlName="newTag"/>
+                <label>Tiêu Đề Bài Viết</label>
+                <input class="hover:tw-border-gray-900" pInputText formControlName="title"/>
+                <ng-container *ngIf="createPostForm.controls?.['title']?.touched && createPostForm.controls?.['title']?.dirty">
+                    <small *ngIf="createPostForm.controls?.['title']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Tiêu đề không được để trống</small>
+                    <small *ngIf="createPostForm.controls?.['title']?.errors?.['minlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối thiểu là 1</small>
+                    <small *ngIf="createPostForm.controls?.['title']?.errors?.['maxlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối đa là 60</small>
+                    <small *ngIf="createPostForm.controls?.['title']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
+                </ng-container>
             </div>
-        </div>
-        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
-            <label>Series</label>
-            <p-dropdown [options]="listSeries" formControlName="series" optionLabel="title" placeholder="Chọn series cho bài viết"></p-dropdown>
+            <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+                <label>Tóm Lược</label>
+                <div class="card">
+                    <p-editor formControlName="summary" [style]="{ height: '320px' ,width: '100%'}"></p-editor>
+                </div>
+                <ng-container *ngIf="createPostForm.controls?.['summary']?.touched && createPostForm.controls?.['summary']?.dirty">
+                    <small *ngIf="createPostForm.controls?.['summary']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Tóm lược không được để trống</small>
+                </ng-container>
+            </div>
+            <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+                <label>Nội Dung</label>
+                <div class="card">
 
-        </div>
-        <div class="tw-text-right">
-            <p-button label="Tạo Mới" type="submit" (click)="onCreatePost()" [disabled]=this.createPostForm.invalid [loading]="isLoading"></p-button>
-        </div>
-    </form>
-</div>
+                    <p-editor  formControlName="content" [style]="{ height: '320px' ,width: '100%'}"></p-editor>
+                </div>
+                <ng-container *ngIf="createPostForm.controls?.['content']?.touched && createPostForm.controls?.['content']?.dirty">
+                    <small *ngIf="createPostForm.controls?.['content']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Nội dung không được để trống</small>
+                </ng-container>
+            </div>
+            <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+                <label>Hình Ảnh</label>
+                <div class="tw-flex tw-space-x-[1rem]">
+                    <p-fileUpload #fileUpload mode="basic" chooseLabel="Chọn Ảnh" accept="image/*" (onSelect)="onSelectImage($event)" [maxFileSize]="3145728">
+
+                    </p-fileUpload>
+                    <p-button styleClass="p-button-secondary" label="Hủy" (click)="onClearUpload()"></p-button>
+                </div>
+                <div style="border: 1px solid #dee2e6" class="tw-w-full tw-h-[25rem]">
+                    <img alt="PreviewImage" class="tw-w-full tw-h-full tw-object-cover" src="{{previewImage}}">
+                </div>
+            </div>
+            <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+                <label>Các Tag</label>
+                <p-multiSelect [options]="listTag" dataKey="title" optionLabel="title" formControlName="tags" placeholder="Chọn tag cho bài viết"></p-multiSelect>
+                <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+                    <small class="tw-text-yellow-500">Nếu bạn muốn có tag mới thì vui lòng tạo dưới đây theo định dạng: Tên_Tag_1,Tên_Tag_2</small>
+                    <input class="hover:tw-border-gray-900" placeholder="Ví dụ: Tên_Tag_1,Tên_Tag_2" pInputText formControlName="newTag"/>
+                </div>
+            </div>
+            <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+                <label>Series</label>
+                <p-dropdown [options]="listSeries" formControlName="series" optionLabel="title" placeholder="Chọn series cho bài viết"></p-dropdown>
+
+            </div>
+            <div class="tw-text-right">
+                <p-button label="Tạo Mới" type="submit" (click)="onCreatePost()" [disabled]=this.createPostForm.invalid [loading]="isLoading"></p-button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
+    <main-loading></main-loading>
+</ng-template>

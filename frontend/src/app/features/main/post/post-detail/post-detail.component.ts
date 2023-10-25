@@ -1,9 +1,17 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {PostService} from "../../../../core/services/post.service";
-import {Post} from "../../../../core/types/post.type";
-import {ActivatedRoute, Router} from "@angular/router";
-import {MessageService} from "primeng/api";
-import {forkJoin} from "rxjs";
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { PostService } from "../../../../core/services/post.service";
+import { Post } from "../../../../core/types/post.type";
+import { ActivatedRoute, Router } from "@angular/router";
+import { MessageService } from "primeng/api";
+import { forkJoin, Subject, takeUntil } from "rxjs";
+import { LoadingService } from "../../../../core/services/loading.service";
+import { AuthService } from "../../../../core/services/auth.service";
+
+interface TOC {
+  title: string,
+  tag: string,
+  id: string
+}
 
 @Component({
   selector: 'main-post-detail',
@@ -11,101 +19,176 @@ import {forkJoin} from "rxjs";
   styleUrls: ['./post-detail.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class PostDetailComponent implements OnInit{
+export class PostDetailComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  isLiked:boolean = false
-  slug:string
-  post:Post
+  isLiked: boolean = false
+  slug: string
+  post: Post
   isLoading: boolean = false
+
+  content: string
+
+  toc: TOC[]
+
+  destroy$ = new Subject<void>()
+
+  timeOut: any
+
   constructor(
-      private postService:PostService,
-      private router:Router,
-      private _router:ActivatedRoute,
-      private messageService:MessageService
+    private postService: PostService,
+    private router: Router,
+    private _router: ActivatedRoute,
+    private messageService: MessageService,
+    public loadingService: LoadingService,
+    private authService: AuthService
   ) {
 
   }
 
+
+
   ngOnInit() {
-    this._router.paramMap.subscribe((params) =>{
+    this._router.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.slug = params.get("slug") as string
     })
 
-    if(!this.slug){
+    if (!this.slug) {
       this.router.navigate(["/"])
     }
-    this.isLoading = true
+
+    this.loadingService.startLoading()
     forkJoin([
       this.postService.getPostDetailBySlug(this.slug),
       this.postService.checkUserLikePost(this.slug)
-    ],(postResponse,checkLikedResponse) => {
+    ], (postResponse, checkLikedResponse) => {
       return {
-        postResponse:postResponse,
-        checkLikedResponse:checkLikedResponse
+        postResponse: postResponse,
+        checkLikedResponse: checkLikedResponse
       }
-    }).subscribe({
-      next:(response) =>{
+    }).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response) => {
         this.post = response.postResponse.data
         this.isLiked = response.checkLikedResponse.data
-        console.log(response.checkLikedResponse)
-        this.isLoading = false
+        this.toc = this.generateTOC(response.postResponse.data.content)
+        this.loadingService.stopLoading()
       },
-      error:(error) =>{
+      error: (error) => {
         this.messageService.add({
-          severity:"error",
-          detail:error,
-          summary:"Lỗi"
+          severity: "error",
+          detail: error,
+          summary: "Lỗi"
         })
         this.router.navigate(["/"])
-        this.isLoading = false
+        this.loadingService.stopLoading()
         return;
       }
     })
   }
 
-  onLikePost(postId:number){
+  addIdToHeading(content: string) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, 'text/html');
+    const headings = doc.body.querySelectorAll('h1, h2, h3');
+
+    headings.forEach((heading) => {
+      const title = heading.textContent as string;
+      const id = title.toLowerCase().replace(/\s+/g, '-') || "";
+      heading.setAttribute('id', id);
+    });
+
+    const serializer = new XMLSerializer();
+    return serializer.serializeToString(doc);
+  }
+
+  generateTOC(content: string): TOC[] {
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(content, "text/html")
+
+    const headings = doc.body.querySelectorAll("h1,h2,h3")
+    let result: TOC[] = []
+
+    headings.forEach((item) => {
+      result.push({
+        tag: item.tagName,
+        id: item.getAttribute("id") || "",
+        title: item.textContent as string
+      })
+    })
+
+    return result
+  }
+  ngAfterViewInit() {
+    this.timeOut = setTimeout(() => {
+      this.postService.plusView(this.slug)
+        .pipe(takeUntil(this.destroy$)).subscribe()
+    }, 10000)
+  }
+
+  onLikePost(postId: number) {
+    if (this.authService.getCurrentUser() === null) {
+      this.messageService.add({
+        severity: "error",
+        detail: "Vui lòng đăng nhập",
+        summary: "Lỗi"
+      })
+      return;
+    }
     this.isLoading = true
-    this.postService.likePost(postId).subscribe({
-      next:(response) =>{
+    this.postService.likePost(postId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response) => {
         this.messageService.add({
-          severity:"success",
-          detail:response.message,
-          summary:"Thành Công"
+          severity: "success",
+          detail: response.message,
+          summary: "Thành Công"
         })
         this.isLoading = false
         this.isLiked = true
       },
-      error:(error) =>{
+      error: (error) => {
         this.messageService.add({
-          severity:"error",
-          detail:error,
-          summary:"Lỗi"
+          severity: "error",
+          detail: error,
+          summary: "Lỗi"
         })
         this.isLoading = false
       }
     })
   }
 
-  onUnLikePost(postId:number){
+  onUnLikePost(postId: number) {
+    if (this.authService.getCurrentUser() === null) {
+      this.messageService.add({
+        severity: "error",
+        detail: "Vui lòng đăng nhập",
+        summary: "Lỗi"
+      })
+      return;
+    }
     this.isLoading = true
-    this.postService.unlikePost(postId).subscribe({
-      next:(response) =>{
+    this.postService.unlikePost(postId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response) => {
         this.messageService.add({
-          severity:"success",
-          detail:response.message,
-          summary:"Thành Công"
+          severity: "success",
+          detail: response.message,
+          summary: "Thành Công"
         })
         this.isLoading = false
         this.isLiked = false
       },
-      error:(error) =>{
+      error: (error) => {
         this.messageService.add({
-          severity:"error",
-          detail:error,
-          summary:"Lỗi"
+          severity: "error",
+          detail: error,
+          summary: "Lỗi"
         })
         this.isLoading = false
       }
     })
+  }
+
+  ngOnDestroy() {
+    clearTimeout(this.timeOut)
+    this.destroy$.next()
+    this.destroy$.complete()
   }
 }

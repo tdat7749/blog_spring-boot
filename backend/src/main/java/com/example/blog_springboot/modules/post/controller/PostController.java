@@ -58,8 +58,16 @@ public class PostController {
 
     @PatchMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> updateStatus(@PathVariable("id") int id, @RequestBody UpdatePostStatusDTO dto, @AuthenticationPrincipal User userPrincipal){
+    public ResponseEntity<SuccessResponse<Boolean>> updateStatus(@PathVariable("id") int id, @RequestBody UpdatePostStatusDTO dto, @AuthenticationPrincipal User userPrincipal) throws JsonProcessingException {
         var result = postService.updateStatus(id,userPrincipal,dto);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @PatchMapping("/{slug}/view")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> plusView(@PathVariable("slug") String slug){
+        var result = postService.plusView(slug);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
@@ -73,6 +81,24 @@ public class PostController {
             @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy)
     {
         var result = postService.getAllPostByTag(tagSlug,keyword,sortBy,pageIndex);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @GetMapping("/latest")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<List<PostListVm>>> getLatestPost()
+    {
+        var result = postService.getLatestPost();
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+    }
+
+    @GetMapping("/most-view")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<List<PostListVm>>> getPostMostView()
+    {
+        var result = postService.getPostMostView();
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }

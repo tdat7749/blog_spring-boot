@@ -51,22 +51,19 @@ public class CommentServiceImpl implements CommentService{
     private final NotificationService notificationService;
 
     private final UserNotificationService userNotificationService;
-    private final UserRepository userRepository;
 
     public CommentServiceImpl(
             CommentRepository commentRepository,
             PostRepository postRepository,
             NotificationService notificationService,
             UserNotificationService userNotificationService,
-            WebSocketService webSocketService,
-            UserRepository userRepository
+            WebSocketService webSocketService
     ){
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.notificationService = notificationService;
         this.userNotificationService = userNotificationService;
         this.webSocketService = webSocketService;
-        this.userRepository = userRepository;
     }
     @Override
     @Transactional
@@ -83,23 +80,55 @@ public class CommentServiceImpl implements CommentService{
         newComment.setCreatedAt(new Date());
         newComment.setUpdatedAt(new Date());
         if(dto.getParentId() != null){
-            newComment.setParentId(dto.getParentId());
             var foundComment = commentRepository.findById(dto.getParentId()).orElse(null);
             if(foundComment == null){
                 throw new CommentNotFoundException(CommentConstants.COMMENT_NOT_FOUND);
             }
+            newComment.setParentId(dto.getParentId());
 
-            // sau khi khởi tạo follow thành công thì tạo ra 1 thông báo
+            var foundUserByComment = foundComment.getUser();
+            if(foundUserByComment != user){
+                // sau khi khởi tạo follow thành công thì tạo ra 1 thông báo
+                CreateNotificationDTO notification = new CreateNotificationDTO();
+                notification.setLink("/bai-viet/" + foundPost.getSlug());
+                notification.setMessage("Người dùng @" + user.getUsername() + " vừa trả lời bình luận của bạn");
+
+                var newNotification = notificationService.createNotification(notification);
+
+                // sau đó nối thông báo với user
+                List<User> users = new ArrayList<>();
+                users.add(foundUserByComment);
+                userNotificationService.createUserNotification(users,newNotification);
+
+                // Tạo ra 1 notification view model và gửi tới client
+                NotificationVm notificationVm = new NotificationVm();
+                notificationVm.setId(newNotification.getId());
+                notificationVm.setLink(newNotification.getLink());
+                notificationVm.setMessage(newNotification.getMessage());
+                notificationVm.setRead(false);
+
+                webSocketService.sendNotificationToClient(foundUserByComment.getUsername(),notificationVm);
+            }
+        }
+
+        var save = commentRepository.save(newComment);
+
+
+        if(save == null){
+            throw new CreateCommentException(CommentConstants.CREATE_COMMENT_FAILED);
+        }
+
+        if(dto.getParentId() == null){
             CreateNotificationDTO notification = new CreateNotificationDTO();
-            notification.setLink("");
-            notification.setMessage("");
+            notification.setLink("/bai-viet/" + foundPost.getSlug());
+            notification.setMessage("Người dùng @" + user.getUsername() + " vừa bình luận trong của bạn");
 
             var newNotification = notificationService.createNotification(notification);
 
+            var foundUserByPost = foundPost.getUser();
             // sau đó nối thông báo với user
-            var foundUserByComment = foundComment.getUser();
             List<User> users = new ArrayList<>();
-            users.add(foundUserByComment);
+            users.add(foundUserByPost);
             userNotificationService.createUserNotification(users,newNotification);
 
             // Tạo ra 1 notification view model và gửi tới client
@@ -109,13 +138,9 @@ public class CommentServiceImpl implements CommentService{
             notificationVm.setMessage(newNotification.getMessage());
             notificationVm.setRead(false);
 
-            webSocketService.sendNotificationToClient(foundUserByComment.getUsername(),notificationVm);
+            webSocketService.sendNotificationToClient(foundUserByPost.getUsername(),notificationVm);
         }
 
-        var save = commentRepository.save(newComment);
-        if(save == null){
-            throw new CreateCommentException(CommentConstants.CREATE_COMMENT_FAILED);
-        }
         var commentVm = Utilities.getCommentVM(save);
         return new SuccessResponse<>(CommentConstants.CREATE_COMMENT_SUCCESS,commentVm);
     }

@@ -1,5 +1,6 @@
 package com.example.blog_springboot.modules.follow.service;
 
+import com.example.blog_springboot.commons.Constants;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.authenticate.constant.AuthConstants;
 import com.example.blog_springboot.modules.authenticate.exception.UserNotFoundException;
@@ -78,8 +79,8 @@ public class FollowServiceImpl implements FollowService {
 
         // sau khi khởi tạo follow thành công thì tạo ra 1 thông báo
         CreateNotificationDTO notification = new CreateNotificationDTO();
-        notification.setLink("");
-        notification.setMessage("");
+        notification.setLink("/tac-gia/"+ userPrincipal.getUsername());
+        notification.setMessage("Người dùng @" + userPrincipal.getUsername() + " vừa theo dõi bạn");
 
         var newNotification = notificationService.createNotification(notification);
 
@@ -123,7 +124,7 @@ public class FollowServiceImpl implements FollowService {
             throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
         }
 
-        var isFollow = followRepository.existsByFollowersAndFollowing(userFound,userPrincipal);
+        var isFollow = followRepository.existsByFollowersAndFollowing(userPrincipal,userFound);
 
         return new SuccessResponse<>("Thành Công",isFollow);
 

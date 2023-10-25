@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {AuthService} from "../../../core/services/auth.service";
 import {Login} from "../../../core/types/auth.type";
-import {concatMap} from "rxjs";
+import {concatMap, forkJoin, map, Subject, takeUntil} from "rxjs";
 import {ApiResponse} from "../../../core/types/api-response.type";
 import {Token} from "../../../core/types/token.type";
 import {User} from "../../../core/types/user.type";
@@ -11,13 +11,14 @@ import {MessageService} from "primeng/api";
 import {Router} from "@angular/router";
 import {UserService} from "../../../core/services/user.service";
 import {noWhiteSpaceValidator} from "../../../shared/validators/no-white-space.validator";
+import {LocalStorageService} from "../../../core/services/local-storage.service";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit{
+export class LoginComponent implements OnInit,OnDestroy{
 
   loginForm: FormGroup
   sendEmailForm: FormGroup
@@ -25,9 +26,11 @@ export class LoginComponent implements OnInit{
   verifyFormVisible: boolean = false
   forgotPasswordVisible: boolean = false
 
+  destroy$ = new Subject<void>()
+
   constructor(
       private authService:AuthService,
-      private cookieService:CookieService,
+      private localStorageService:LocalStorageService,
       private messageService:MessageService,
       private userService:UserService,
       private fb:FormBuilder,
@@ -79,7 +82,7 @@ export class LoginComponent implements OnInit{
       this.isLoading = true
       const email:string = this.sendEmailForm.value.email
 
-      this.authService.resendVerifyEmail(email).subscribe({
+      this.authService.resendVerifyEmail(email).pipe(takeUntil(this.destroy$)).subscribe({
           next:(response) =>{
               this.messageService.add({
                   severity: "success",
@@ -104,7 +107,7 @@ export class LoginComponent implements OnInit{
       this.isLoading = true
       const email:string = this.sendEmailForm.value.email
 
-      this.userService.getEmailForgotPassword(email).subscribe({
+      this.userService.getEmailForgotPassword(email).pipe(takeUntil(this.destroy$)).subscribe({
           next:(response) =>{
               this.messageService.add({
                   severity: "success",
@@ -129,19 +132,24 @@ export class LoginComponent implements OnInit{
         this.isLoading = true
         const login: Login = this.loginForm.value;
         this.authService.login(login).pipe(
+            takeUntil(this.destroy$),
             concatMap((response: ApiResponse<Token>) =>{
-                this.cookieService.set("refreshToken",response.data.refeshToken);
-                this.cookieService.set("accessToken",response.data.accessToken);
+                this.localStorageService.set("refreshToken",response.data.refeshToken);
+                this.localStorageService.set("accessToken",response.data.accessToken);
 
-                return this.authService.getMe()
+                return forkJoin({
+                    getMe: this.authService.getMe(),
+                    notifications: this.userService.getTop10Notification()
+                })
             })
         ).subscribe({
-            next: (response:ApiResponse<User>) =>{
-                this.authService.userState$.next(response.data)
-                this.authService.setCurrentUser(response.data)
+            next: ({getMe,notifications}) =>{
+                this.authService.userState$.next(getMe.data)
+                this.authService.setCurrentUser(getMe.data)
+                this.userService.notificationState$.next(notifications.data)
                 this.messageService.add({
                     severity: "success",
-                    detail: response.message,
+                    detail: getMe.message,
                     summary:"Thành công"
                 })
                 this.isLoading = false
@@ -157,4 +165,10 @@ export class LoginComponent implements OnInit{
             }
         })
     }
+
+    ngOnDestroy() {
+      this.destroy$.next()
+      this.destroy$.complete()
+    }
+
 }

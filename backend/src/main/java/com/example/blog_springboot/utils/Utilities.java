@@ -6,6 +6,7 @@ import com.example.blog_springboot.modules.comment.viewmodel.CommentVm;
 import com.example.blog_springboot.modules.likepost.service.LikePostService;
 import com.example.blog_springboot.modules.notification.model.UserNotification;
 import com.example.blog_springboot.modules.notification.viewmodel.NotificationVm;
+import com.example.blog_springboot.modules.notification.viewmodel.RpNotificationVm;
 import com.example.blog_springboot.modules.post.model.Post;
 import com.example.blog_springboot.modules.post.viewmodel.PostListVm;
 import com.example.blog_springboot.modules.post.viewmodel.PostVm;
@@ -50,6 +51,7 @@ public class Utilities {
         userVm.setRole(user.getRole().toString());
         userVm.setUserName(user.getUsername());
         userVm.setId(user.getId());
+        userVm.setSummary(user.getSummary());
 
         return userVm;
     }
@@ -70,7 +72,6 @@ public class Utilities {
         tagVm.setId(tag.getId());
         tagVm.setTitle(tag.getTitle());
         tagVm.setSlug(tag.getSlug());
-        tagVm.setThumbnail(tag.getThumbnail());
         tagVm.setCreatedAt(tag.getCreatedAt().toString());
         tagVm.setUpdatedAt(tag.getUpdatedAt().toString());
 
@@ -187,6 +188,13 @@ public class Utilities {
         vm.setId(un.getId());
         vm.setCreatedAt(un.getNotification().getCreatedAt().toString());
 
+        return vm;
+    }
+
+    public static RpNotificationVm getRpNotificationVm(int unRead,List<NotificationVm> list){
+        RpNotificationVm vm = new RpNotificationVm();
+        vm.setUnSeenNotification(unRead);
+        vm.setNotifications(list);
         return vm;
     }
 

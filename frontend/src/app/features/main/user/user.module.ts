@@ -26,6 +26,8 @@ import { CreateSeriesComponent } from './create-series/create-series.component';
 import { EditSeriesComponent } from './edit-series/edit-series.component';
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {KeyFilterModule} from "primeng/keyfilter";
+import {SharedModule} from "../../../shared/components/shared.module";
+import { NotificationsComponent } from './notifications/notifications.component';
 
 @NgModule({
     declarations:[
@@ -38,7 +40,8 @@ import {KeyFilterModule} from "primeng/keyfilter";
     EditPostComponent,
     SeriesManagementComponent,
     CreateSeriesComponent,
-    EditSeriesComponent
+    EditSeriesComponent,
+    NotificationsComponent
   ],
     imports: [
         CommonModule,
@@ -58,7 +61,8 @@ import {KeyFilterModule} from "primeng/keyfilter";
         PaginatorModule,
         EditorModule,
         InputTextareaModule,
-        KeyFilterModule
+        KeyFilterModule,
+        SharedModule
     ]
 })
 

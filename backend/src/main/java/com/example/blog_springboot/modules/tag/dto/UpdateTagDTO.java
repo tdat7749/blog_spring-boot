@@ -14,7 +14,6 @@ public class UpdateTagDTO {
     @NotNull(message = "Không được thiếu trường 'slug'")
     @Length(max = 120,message = "Độ dài trường 'slug' tối đa là 120 ký tự")
     private String slug;
-    private String thumbnail;
 
     public String getTitle() {
         return title;
@@ -30,13 +29,5 @@ public class UpdateTagDTO {
 
     public void setSlug(String slug) {
         this.slug = slug;
-    }
-
-    public String getThumbnail() {
-        return thumbnail;
-    }
-
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
     }
 }

@@ -6,8 +6,6 @@ public class TagVm {
 
     private String slug;
 
-    private String thumbnail;
-
     private String createdAt;
     private String updatedAt;
 
@@ -18,14 +16,6 @@ public class TagVm {
 
     public void setSlug(String slug) {
         this.slug = slug;
-    }
-
-    public String getThumbnail() {
-        return thumbnail;
-    }
-
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
     }
 
     public String getCreatedAt() {

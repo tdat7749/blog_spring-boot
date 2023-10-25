@@ -4,19 +4,39 @@ import {PostCardComponent} from "./post-card/post-card.component";
 import {TagModule} from "primeng/tag";
 import {RouterLink} from "@angular/router";
 import {CommonModule} from "@angular/common";
+import { LoadingComponent } from './loading/loading.component';
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import { ListSeriesCardComponent } from './list-series-card/list-series-card.component';
+import { SeriesCardComponent } from './series-card/series-card.component';
+import { TagCardComponent } from './tag-card/tag-card.component';
+import { ListTagCardComponent } from './list-tag-card/list-tag-card.component';
+import {AvatarModule} from "primeng/avatar";
+import { NotificationItemComponent } from './notification-item/notification-item.component';
 
 @NgModule({
     declarations:[
         ListPostCardComponent,
-        PostCardComponent
+        PostCardComponent,
+        LoadingComponent,
+        ListSeriesCardComponent,
+        SeriesCardComponent,
+        TagCardComponent,
+        ListTagCardComponent,
+        NotificationItemComponent
     ],
     imports: [
         CommonModule,
         TagModule,
-        RouterLink
+        RouterLink,
+        ProgressSpinnerModule,
+        AvatarModule
     ],
     exports: [
-        ListPostCardComponent
+        ListPostCardComponent,
+        LoadingComponent,
+        ListSeriesCardComponent,
+        ListTagCardComponent,
+        NotificationItemComponent
     ]
 })
 export class SharedModule{}

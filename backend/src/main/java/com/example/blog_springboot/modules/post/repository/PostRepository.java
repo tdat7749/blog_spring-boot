@@ -43,4 +43,10 @@ public interface PostRepository extends JpaRepository<Post,Integer> {
 
     @Query("select p from Post as p where p.user = :user AND p.title LIKE %:keyword%")
     Page<Post> getAllPostByCurrentUser(String keyword,User user, Pageable paging);
+
+    @Query("select p from Post as p where p.isPublished = true order by p.createdAt desc")
+    Page<Post> getLatestPost(Pageable paging);
+
+    @Query("select p from Post as p where p.isPublished = true order by p.totalView desc")
+    Page<Post> getPostMostView(Pageable paging);
 }

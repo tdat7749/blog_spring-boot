@@ -1,10 +1,11 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {passwordsMatch} from "../../../../shared/validators/password-smatch.validator";
 import {noWhiteSpaceValidator} from "../../../../shared/validators/no-white-space.validator";
 import {ChangePassword} from "../../../../core/types/user.type";
 import {UserService} from "../../../../core/services/user.service";
 import {MessageService} from "primeng/api";
+import {Subject, takeUntil} from "rxjs";
 
 @Component({
   selector: 'main-change-password',
@@ -12,10 +13,12 @@ import {MessageService} from "primeng/api";
   styleUrls: ['./change-password.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class ChangePasswordComponent implements OnInit{
+export class ChangePasswordComponent implements OnInit,OnDestroy{
 
   changePasswordForm:FormGroup
   isLoading:boolean = false
+
+  destroy$ = new Subject<void>()
 
   constructor(private userService:UserService,private messageService:MessageService,private fb:FormBuilder) {
 
@@ -56,7 +59,7 @@ export class ChangePasswordComponent implements OnInit{
     const data: ChangePassword = this.changePasswordForm.value
 
     this.isLoading = true
-    this.userService.changePassword(data).subscribe({
+    this.userService.changePassword(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response) =>{
         this.messageService.add({
           severity:"success",
@@ -74,5 +77,10 @@ export class ChangePasswordComponent implements OnInit{
         })
       }
     })
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next()
+    this.destroy$.complete()
   }
 }

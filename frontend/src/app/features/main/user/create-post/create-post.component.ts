@@ -1,4 +1,13 @@
-import {AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+  ViewEncapsulation
+} from '@angular/core';
 import {PostService} from "../../../../core/services/post.service";
 import {FileStorageService} from "../../../../core/services/file-storage.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -8,16 +17,16 @@ import {Editor} from "primeng/editor";
 import {FileUpload} from "primeng/fileupload";
 import {fileUploadValidator} from "../../../../shared/validators/file-upload.validator";
 import Delta from 'quill-delta';
-import {catchError, concatMap, forkJoin, mergeMap, throwError} from "rxjs";
+import {concatMap, forkJoin, Subject, takeUntil} from "rxjs";
 import {SeriesService} from "../../../../core/services/series.service";
 import {TagService} from "../../../../core/services/tag.service";
 import {Series} from "../../../../core/types/series.type";
 import {CreateTag, Tag} from "../../../../core/types/tag.type";
 import {CreatePost} from "../../../../core/types/post.type";
 import slugify from "slugify";
-import {hasSpecialCharacters} from "../../../../shared/validators/has-special-characters.validator";
 import {capitalizeFirstLetter, getNewTagByString} from "../../../../shared/commons/shared";
 import {Router} from "@angular/router";
+import {LoadingService} from "../../../../core/services/loading.service";
 
 @Component({
   selector: 'main-create-post',
@@ -25,7 +34,7 @@ import {Router} from "@angular/router";
   styleUrls: ['./create-post.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class CreatePostComponent implements OnInit,AfterViewInit{
+export class CreatePostComponent implements OnInit,AfterViewInit,OnDestroy{
 
   createPostForm : FormGroup
   previewImage:string = ""
@@ -34,6 +43,8 @@ export class CreatePostComponent implements OnInit,AfterViewInit{
   listSeries:Series[]
   listTag:Tag[]
   imageFile: File | null
+
+  destroy$ = new Subject<void>()
 
 
   @ViewChildren(Editor) editors: QueryList<Editor>;
@@ -47,28 +58,13 @@ export class CreatePostComponent implements OnInit,AfterViewInit{
       private messageService:MessageService,
       private seriesService:SeriesService,
       private tagService:TagService,
-      private router:Router
+      private router:Router,
+      public loadingService:LoadingService
   ) {
 
   }
 
   ngOnInit() {
-    forkJoin([
-            this.tagService.getAllTag(),
-            this.seriesService.getSeriesByCurrentUser()
-        ],
-        (tagResponse,seriesResponse) =>{
-          return {
-            listTag: tagResponse.data,
-            listSeries:seriesResponse.data
-          }
-        }
-    ).subscribe({
-      next:(response) =>{
-        this.listTag = response.listTag
-        this.listSeries = response.listSeries
-      }
-    })
 
     this.createPostForm = this.fb.group({
       title:[
@@ -101,8 +97,28 @@ export class CreatePostComponent implements OnInit,AfterViewInit{
       ]
     })
 
+    // this.loadingService.startLoading()
+    forkJoin([
+            this.tagService.getAllTag(),
+            this.seriesService.getSeriesByCurrentUser()
+        ],
+        (tagResponse,seriesResponse) =>{
+          return {
+            listTag: tagResponse.data,
+            listSeries:seriesResponse.data
+          }
+        }
+    ).pipe(takeUntil(this.destroy$)).subscribe({
+      next:(response) =>{
+        this.listTag = response.listTag
+        this.listSeries = response.listSeries
+        this.loadingService.stopLoading()
+      },
+      error:(error) =>{
+        this.loadingService.stopLoading()
+      }
+    })
 
-    // this.createPostForm.get("tags")?.setValue([{title:"a"},{title:"b"}])
   }
 
   ngAfterViewInit() {
@@ -129,7 +145,7 @@ export class CreatePostComponent implements OnInit,AfterViewInit{
 
           let formData = new FormData()
           formData.set("file",file)
-          this.fileStorageService.upload(formData).subscribe({
+          this.fileStorageService.upload(formData).pipe(takeUntil(this.destroy$)).subscribe({
             next:(response) =>{
               const range = quill.getSelection(true);
               quill.updateContents(
@@ -164,19 +180,17 @@ export class CreatePostComponent implements OnInit,AfterViewInit{
       })
       return;
     }
-
     const formData = new FormData()
     formData.set("file",this.imageFile)
 
     const formValue = this.createPostForm.value
-    let createListTagDTO:CreateTag[] = formValue.tags.map((tag:Tag) =>{
+    let createListTagDTO:CreateTag[] = formValue.tags?.map((tag:Tag) =>{
       let createTagDTO:CreateTag = {
-        title: tag.title,
-        thumbnail: tag.thumbnail as string,
+        title: capitalizeFirstLetter(tag.title),
         slug: tag.slug
       }
       return createTagDTO
-    })
+    }) || []
 
     const getNewTag = getNewTagByString(formValue.newTag)
     if(!getNewTag.success){
@@ -202,6 +216,7 @@ export class CreatePostComponent implements OnInit,AfterViewInit{
 
     this.isLoading = true
     this.fileStorageService.upload(formData).pipe(
+        takeUntil(this.destroy$),
         concatMap((response) => {
           const data:CreatePost = {
             title: capitalizeFirstLetter(formValue.title),
@@ -217,9 +232,8 @@ export class CreatePostComponent implements OnInit,AfterViewInit{
 
           return this.postService.createPost(data)
         })
-    ).subscribe({
+    ).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response) =>{
-        console.log(response)
         this.isLoading = false
         this.messageService.add({
           severity:"success",
@@ -260,5 +274,10 @@ export class CreatePostComponent implements OnInit,AfterViewInit{
     this.previewImage = ""
     this.imageFile = null
     this.fileUpload.clear()
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next()
+    this.destroy$.complete()
   }
 }

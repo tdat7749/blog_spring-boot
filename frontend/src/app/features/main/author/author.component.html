@@ -1,21 +1,15 @@
-<div>
-    <main-author-information [userName]="userName" [author]="author"></main-author-information>
-    <div class="tw-mt-[3rem]">
-        <h2 class="tw-mb-[2rem] tw-text-2xl tw-text-gray-900">Bài Viết</h2>
-        <div class="tw-space-y-[2rem]">
-            <div class="tw-mb-[2rem]">
-                <span class="p-input-icon-left">
-                <i class="pi pi-search"></i>
-                <input type="text" pInputText (input)="onChangeSearch($event)" />
-            </span>
+<ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
+    <main-loading></main-loading>
+</ng-template>
+
+<ng-template #loaded>
+    <div>
+        <main-author-information [userName]="userName" [author]="author"></main-author-information>
+        <div class="tw-mt-[3rem]">
+            <div class="card">
+                <p-tabMenu class="tw-text-2xl" [model]="items" [activeItem]="activeItem" (activeItemChange)="onActiveItemChange($event)"></p-tabMenu>
             </div>
-            <main-list-post-card [listPost]="listPost"></main-list-post-card>
-            <div>
-                <h2 class="tw-text-2xl tw-text-center">Không có bài viết nào</h2>
-            </div>
-           <div class="tw-mt-[2rem]">
-               <p-paginator (onPageChange)="onChangePageIndex($event)" [first]=0 [rows]=10 [totalRecords]=totalPage*10></p-paginator>
-           </div>
+            <router-outlet></router-outlet>
         </div>
     </div>
-</div>
+</ng-template>

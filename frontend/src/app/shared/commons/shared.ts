@@ -8,6 +8,10 @@ export const listNav = [
         path:"/"
     },
     {
+        title:"BÀI VIẾT",
+        path:"/bai-viet"
+    },
+    {
         title:"SERIES",
         path:"/series"
     },
@@ -27,20 +31,24 @@ export const listNav = [
 
 export const userSideBar = [
     {
-        title:"Thông tin tài khoản",
+        title:"Thông Tin Tài Khoản",
         path:"thong-tin"
     },
     {
-        title:"Đổi mật khẩu",
+        title:"Đổi Mật Khẩu",
         path:"doi-mat-khau"
     },
     {
-        title:"Quản lý bài viết",
+        title:"Quản Lý Bài Viết",
         path:"quan-ly-bai-viet"
     },
     {
-        title:"Quản lý series",
+        title:"Quản Lý Series",
         path:"quan-ly-series"
+    },
+    {
+        title:"Thông Báo",
+        path:"thong-bao"
     }
 ]
 
@@ -53,9 +61,11 @@ export const MAX_FILE:number = 3145728
 export const MIME_TYPES = ["image/png","image/jpeg","image/webp","image/gif"]
 
 export function capitalizeFirstLetter(str:string) {
-    return str.replace(/\b\w/g, function(txt:string) {
-        return txt.toUpperCase();
-    });
+    return str
+        .toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
 }
 
 export const postStatus = [
@@ -80,7 +90,6 @@ export function getNewTagByString(newTagString:string):{data:any,success:boolean
             }
             const data:CreateTag = {
                 title: capitalizeFirstLetter(value),
-                thumbnail:"a",
                 slug: slugify(value.toLowerCase())
             }
             return data

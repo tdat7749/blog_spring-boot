@@ -11,10 +11,6 @@ public class CreateTagDTO {
     @Length(max = 100,message = "Độ dài trường 'title' tối đa là 100 ký tự")
     private String title;
 
-    @NotBlank(message = "Không được bỏ trống trường 'thumbnail'")
-    @NotNull(message = "Không được thiếu trường 'thumbnail'")
-    private String thumbnail;
-
     @NotBlank(message = "Không được bỏ trống trường 'slug'")
     @NotNull(message = "Không được thiếu trường 'slug'")
     @Length(max = 120,message = "Độ dài trường 'slug' tối đa là 120 ký tự")
@@ -26,14 +22,6 @@ public class CreateTagDTO {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getThumbnail() {
-        return thumbnail;
-    }
-
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
     }
 
     public String getSlug() {

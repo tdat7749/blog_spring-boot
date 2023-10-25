@@ -1,34 +1,39 @@
-<div class="tw-p-[2rem] tw-space-y-[1rem] tw-h-auto tw-w-full">
-    <h1 class="tw-text-2xl tw-text-gray-900 tw-text-center tw-mb-4">QUẢN LÝ SERIES</h1>
-    <div><p-button icon="pi pi-plus" label="Thêm Mới Series" routerLink="tao-series"></p-button></div>
-    <div class="tw-space-y-[1rem]">
-        <h2 *ngIf="listSeries.length < 1; else hasSeries" class="tw-text-center tw-text-xl">KHÔNG CÓ SERIES NÀO</h2>
-        <ng-template #hasSeries>
-            <div class="tw-overflow-visible">
-                <p-table [value]="listSeries" [loading]="isLoading" class="tw-overflow-visible">
-                    <ng-template pTemplate="header" let-columns>
-                        <tr>
-                            <th>ID</th>
-                            <th style="width:40rem">Series</th>
-                            <th style="width:15rem">Thao Tác</th>
-                            <th style="width:15rem">Chi Tiết</th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-series let-columns="columns">
-                        <tr>
-                            <td>{{series.id}}</td>
-                            <td>{{series.title}}</td>
-                            <td class="tw-cursor-pointer" routerLink="sua-series/{{series.slug}}">SỬA</td>
-                            <td>
-                                <ul>
-                                    <li>Xem</li>
-                                    <li (click)="onDeleteSeries(series.id)">Xóa</li>
-                                </ul>
-                            </td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </div>
-            </ng-template>
+ <div class="tw-p-[2rem] tw-space-y-[1rem] tw-h-auto tw-w-full">
+        <h1 class="tw-text-2xl tw-text-gray-900 tw-text-center tw-mb-4">QUẢN LÝ SERIES</h1>
+        <div><p-button icon="pi pi-plus" label="Thêm Mới Series" routerLink="tao-series"></p-button></div>
+     <ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
+         <main-loading></main-loading>
+     </ng-template>
+     <ng-template #loaded>
+           <div class="tw-space-y-[1rem]">
+               <h2 *ngIf="listSeries.length < 1; else hasSeries" class="tw-text-center tw-text-xl">KHÔNG CÓ SERIES NÀO</h2>
+               <ng-template #hasSeries>
+                   <div class="tw-overflow-visible">
+                       <p-table [value]="listSeries" [loading]="isLoading" class="tw-overflow-visible">
+                           <ng-template pTemplate="header" let-columns>
+                               <tr>
+                                   <th>ID</th>
+                                   <th style="width:40rem">Series</th>
+                                   <th style="width:15rem">Thao Tác</th>
+                                   <th style="width:15rem">Chi Tiết</th>
+                               </tr>
+                           </ng-template>
+                           <ng-template pTemplate="body" let-series let-columns="columns">
+                               <tr>
+                                   <td>{{series.id}}</td>
+                                   <td>{{series.title}}</td>
+                                   <td class="tw-cursor-pointer" routerLink="sua-series/{{series.slug}}">SỬA</td>
+                                   <td>
+                                       <ul class="tw-list-none tw-p-0">
+                                           <li>Xem</li>
+                                           <li (click)="onDeleteSeries(series.id)">Xóa</li>
+                                       </ul>
+                                   </td>
+                               </tr>
+                           </ng-template>
+                       </p-table>
+                   </div>
+               </ng-template>
+           </div>
+       </ng-template>
     </div>
-</div>

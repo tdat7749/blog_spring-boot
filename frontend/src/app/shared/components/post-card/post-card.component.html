@@ -1,12 +1,12 @@
 <article class="post group">
-    <div  style="border: 1px solid #dee2e6" class="post-image  tw-overflow-hidden tw-rounded-[10px] tw-h-[200px] md:tw-h-auto tw-relative">
+    <div  style="border: 1px solid #dee2e6" class="post-image tw-overflow-hidden tw-rounded-[10px] tw-h-[200px] md:tw-h-[220px] tw-relative">
         <a routerLink="/bai-viet/{{cardInfo.slug}}">
-            <img src="{{cardInfo.thumbnail}}" alt="{{cardInfo.title}}" class="tw-object-cover tw-h-full tw-w-full group-hover:tw-scale-110 tw-transition-all tw-duration-500"> <!---->
+            <img src="{{cardInfo.thumbnail}}" alt="{{cardInfo.title}}" class="tw-object-cover tw-h-full tw-w-full tw-group-hover:tw-scale-110 tw-transition-all tw-duration-500"> <!---->
         </a>
     </div>
     <div class="post-info tw-pt-6">
         <div class="tw-flex tw-items-center tw-justify-between">
-            <ul class="tw-flex tw-gap-1 tw-flex-wrap">
+            <ul class="tw-p-0 tw-list-none tw-flex tw-gap-1 tw-flex-wrap">
                 <p-tag *ngFor="let tag of cardInfo.tags" class="tw-cursor-pointer" routerLink="/tags/{{tag.slug}}" severity="primary" value="{{tag.title}}"></p-tag>
             </ul>
             <div class="author tw-ml-4 md:tw-ml-6"><span class="tw-text-gray-500">By </span> <a routerLink="/tac-gia/{{cardInfo.author.userName}}" class="tw-cursor-pointer tw-text-gray-900">{{cardInfo.author.firstName}} {{cardInfo.author.lastName}}</a></div>
@@ -14,10 +14,18 @@
         <h5 class="md:tw-font-semibold  tw-truncate tw-... tw-pt-4 tw-mb-0 hover:tw-text-primary lg:tw-text-2xl">
             <a routerLink="/bai-viet/{{cardInfo.slug}}" class="tw-text-gray-900 hover:tw-opacity-90">{{cardInfo.title}}</a>
         </h5>
-        <p class="tw-mt-3">{{cardInfo.summary}}</p>
+        <p class="tw-mt-3 tw-truncate tw-... tw-w-full" >
+            <span [innerHTML]="cardInfo.summary">
+
+            </span>
+        </p>
         <div class="meta tw-flex tw-items-center tw-mt-4">
-            <div class="tw-flex tw-items-center"><i class="pi pi-calendar"></i>
-                <p class="tw-pl-2">{{cardInfo.createdAt | date:'short'}}</p>
+            <div class="tw-flex tw-items-center tw-pl-2 tw-space-x-[0.5rem]">
+                <p *ngIf="cardInfo.published" class="tw-text-gray-500"><i class="tw-text-gray-900 pi pi-calendar"></i> {{cardInfo.createdAt | date:'short'}}</p>
+                <p  *ngIf="!cardInfo.published" class="tw-text-red-500"><i class="tw-text-gray-900 pi pi-calendar"></i> Bài viết này chưa được công khai.</p>
+                <p class="tw-text-gray-500"><i class="tw-text-gray-900 pi pi-comments"></i> {{cardInfo.totalComment}}</p>
+                <p class="tw-text-gray-500"><i class="tw-text-gray-900 pi pi-heart"></i> {{cardInfo.totalLike}}</p>
+                <p class="tw-text-gray-500"><i class="tw-text-gray-900 pi pi-eye"></i> {{cardInfo.totalView}}</p>
             </div>
         </div>
     </div>

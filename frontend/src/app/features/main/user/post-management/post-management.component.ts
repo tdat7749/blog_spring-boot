@@ -1,6 +1,15 @@
-import {AfterViewInit, Component, OnInit, ViewChild, ViewChildren, ViewEncapsulation} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild, ViewChildren, ViewEncapsulation} from '@angular/core';
 import {PostService} from "../../../../core/services/post.service";
-import {BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, Observable, switchMap, tap} from "rxjs";
+import {
+  BehaviorSubject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  Observable,
+  Subject,
+  switchMap, takeUntil,
+  tap
+} from "rxjs";
 import {SortBy} from "../../../../core/types/api-response.type";
 import {MessageService} from "primeng/api";
 import {PostList} from "../../../../core/types/post.type";
@@ -10,6 +19,7 @@ import {Editor} from "primeng/editor";
 import {FileUpload} from "primeng/fileupload";
 import {MAX_FILE, MIME_TYPES} from "../../../../shared/commons/shared";
 import {PaginationService} from "../../../../core/services/pagination.service";
+import {LoadingService} from "../../../../core/services/loading.service";
 
 @Component({
   selector: 'main-post-management',
@@ -17,7 +27,7 @@ import {PaginationService} from "../../../../core/services/pagination.service";
   styleUrls: ['./post-management.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class PostManagementComponent implements OnInit{
+export class PostManagementComponent implements OnInit,OnDestroy{
 
   isLoading:boolean = false
 
@@ -29,19 +39,27 @@ export class PostManagementComponent implements OnInit{
   search$:Observable<[number,string,SortBy]>
 
 
-  constructor(private paginationService:PaginationService,private postService:PostService,private messageService:MessageService,private fb:FormBuilder) {
+  destroy$ = new Subject<void>()
+
+
+  constructor(
+      private paginationService:PaginationService,
+      private postService:PostService,
+      private messageService:MessageService,
+      public loadingService:LoadingService
+  ) {
 
   }
 
   ngOnInit() {
-    this.isLoading = true
     this.search$ = combineLatest([
         this.paginationService.pageIndex$,
         this.paginationService.keyword$,
         this.paginationService.sortBy$
     ])
     this.search$.pipe(
-        tap(() => this.isLoading = true),
+        takeUntil(this.destroy$),
+        tap(() => this.loadingService.startLoading()),
         debounceTime(700),
         distinctUntilChanged(), // chỉ gọi lại khi có giá trị thay đổi
         switchMap(([pageIndex,keyword,sortBy]) =>{
@@ -52,15 +70,15 @@ export class PostManagementComponent implements OnInit{
         this.listPost = response.data.data
         this.totalPage = response.data.totalPage
         this.totalRecord = response.data.totalRecord
-        this.isLoading = false
+        this.loadingService.stopLoading()
       },
       error:(error) =>{
-        this.isLoading = false
         this.messageService.add({
           severity:"error",
           detail:error,
           summary:"Lỗi"
         })
+        this.loadingService.stopLoading()
       }
     })
   }
@@ -76,5 +94,10 @@ export class PostManagementComponent implements OnInit{
 
   onChangeSort(sortBy:SortBy){
     this.paginationService.updateSortBy(sortBy)
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next()
+    this.destroy$.complete()
   }
 }

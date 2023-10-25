@@ -10,6 +10,7 @@ import {EditPostComponent} from "./edit-post/edit-post.component";
 import {SeriesManagementComponent} from "./series-management/series-management.component";
 import {CreateSeriesComponent} from "./create-series/create-series.component";
 import {EditSeriesComponent} from "./edit-series/edit-series.component";
+import {NotificationsComponent} from "./notifications/notifications.component";
 
 const routes:Routes = [
     {
@@ -47,6 +48,10 @@ const routes:Routes = [
             {
                 path:"quan-ly-series/sua-series/:slug",
                 component:EditSeriesComponent,
+            },
+            {
+                path:"thong-bao",
+                component:NotificationsComponent
             }
         ]
     }

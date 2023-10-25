@@ -29,7 +29,7 @@ public class SeriesController {
 
     @GetMapping("/slug/{slug}/user")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<SeriesListPostVm>> getSeriesDetail(@PathVariable String slug,@AuthenticationPrincipal User user){
+    public ResponseEntity<SuccessResponse<SeriesListPostVm>> getSeriesDetail(@PathVariable("slug") String slug,@AuthenticationPrincipal User user){
         var result = seriesService.getSeriesDetail(slug,user);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
@@ -37,7 +37,7 @@ public class SeriesController {
 
     @GetMapping("/slug/{slug}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<SeriesListPostVm>> getSeriesDetail(@PathVariable String slug){
+    public ResponseEntity<SuccessResponse<SeriesListPostVm>> getSeriesDetail(@PathVariable("slug") String slug){
         var result = seriesService.getSeriesDetail(slug);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
@@ -83,7 +83,7 @@ public class SeriesController {
 
     @DeleteMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> deleteSeries(@PathVariable int id, @AuthenticationPrincipal User userPrincipal){
+    public ResponseEntity<SuccessResponse<Boolean>> deleteSeries(@PathVariable("id") int id, @AuthenticationPrincipal User userPrincipal){
         var result = seriesService.deleteSeries(id,userPrincipal);
 
         return new ResponseEntity<>(result,HttpStatus.OK);

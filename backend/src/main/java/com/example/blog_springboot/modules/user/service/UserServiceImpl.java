@@ -77,6 +77,7 @@ public class UserServiceImpl implements UserService{
     public SuccessResponse<UserDetailVm> changeInformation(ChangeInformationDTO dto, User userPrincipal) {
         userPrincipal.setFirstName(dto.getFirstName());
         userPrincipal.setLastName(dto.getLastName());
+        userPrincipal.setSummary(dto.getSummary());
 
         // Nếu còn nhiều thng tin muốn sửa thì add ở trên;
 
@@ -164,10 +165,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowing(String sortBy, int pageIndex, int userId){
+    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowing(String sortBy, int pageIndex, String userName){
         Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(sortBy));
 
-        Page<User> pagingResult = userRepository.getAllUserFollowing(userId,paging);
+        Page<User> pagingResult = userRepository.getAllUserFollowing(userName,paging);
 
         List<UserDetailVm> listUserVm = pagingResult.getContent().stream().map(Utilities::getUserDetailVm).toList();
 
@@ -177,10 +178,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowers(String sortBy, int pageIndex, int userId){
+    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowers(String sortBy, int pageIndex, String userName){
         Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(sortBy));
 
-        Page<User> pagingResult = userRepository.getAllUserFollower(userId,paging);
+        Page<User> pagingResult = userRepository.getAllUserFollower(userName,paging);
 
         List<UserDetailVm> listUserVm = pagingResult.getContent().stream().map(Utilities::getUserDetailVm).toList();
 
@@ -191,7 +192,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public SuccessResponse<UserDetailVm> getAuthor(String userName) {
-        var foundUser = userRepository.findByUserName(userName).orElse(null);
+        var foundUser = userRepository.findAuthorByUserName(userName).orElse(null);
         if(foundUser == null){
             throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
         }

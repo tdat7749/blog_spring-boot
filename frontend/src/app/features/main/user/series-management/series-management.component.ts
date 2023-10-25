@@ -1,7 +1,9 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {SeriesService} from "../../../../core/services/series.service";
 import {MessageService} from "primeng/api";
 import {Series} from "../../../../core/types/series.type";
+import {LoadingService} from "../../../../core/services/loading.service";
+import {Subject, takeUntil} from "rxjs";
 
 @Component({
   selector: 'main-series-management',
@@ -9,46 +11,46 @@ import {Series} from "../../../../core/types/series.type";
   styleUrls: ['./series-management.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class SeriesManagementComponent implements OnInit{
+export class SeriesManagementComponent implements OnInit,OnDestroy{
 
   isLoading:boolean = false
 
-
+  destroy$  = new Subject<void>()
 
   listSeries:Series[] = []
 
-  constructor(private seriesService:SeriesService,private messageService:MessageService) {
+  constructor(
+      private seriesService:SeriesService,
+      private messageService:MessageService,
+      public loadingService:LoadingService
+  ) {
 
   }
 
   ngOnInit() {
-    this.isLoading = true
-    this.seriesService.getSeriesByCurrentUser().subscribe({
+    this.loadingService.startLoading()
+    this.seriesService.getSeriesByCurrentUser().pipe(takeUntil(this.destroy$)).subscribe({
       next:(response) =>{
-        this.isLoading = false
         this.listSeries = response.data
+        this.loadingService.stopLoading()
       },
       error:(error) =>{
-        this.isLoading = false
         this.messageService.add({
           severity:"error",
           detail:error,
           summary:"Lỗi"
         })
+
+        this.loadingService.stopLoading()
       }
     })
   }
-
-  onChangeSearch(event:any){
-
-  }
-
   onChangePageIndex(event:any){
 
   }
 
   onDeleteSeries(id:number){
-    this.seriesService.deleteSeries(id).subscribe({
+    this.seriesService.deleteSeries(id).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response) =>{
         this.messageService.add({
           severity:"success",
@@ -65,5 +67,10 @@ export class SeriesManagementComponent implements OnInit{
         })
       }
     })
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next()
+    this.destroy$.complete()
   }
 }

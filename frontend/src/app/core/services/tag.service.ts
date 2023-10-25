@@ -18,6 +18,12 @@ export class TagService{
         )
     }
 
+    getTagBySlug(slug:string):Observable<ApiResponse<Tag>>{
+        return this.http.get<ApiResponse<Tag>>(`${environment.apiUrl}/tags/${slug}`).pipe(
+            catchError(handleError)
+        )
+    }
+
     createTag(data:CreateTag):Observable<ApiResponse<Tag>>{
         return this.http.post<ApiResponse<Tag>>(`${environment.apiUrl}/tags/`,data).pipe(
             catchError(handleError)

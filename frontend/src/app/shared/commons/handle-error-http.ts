@@ -1,14 +1,17 @@
 import {HttpErrorResponse} from "@angular/common/http";
 import {throwError} from "rxjs";
 
-export function handleError(error: HttpErrorResponse){
-    if(error.status === 0){
-        console.error("An error occurred: ",error)
-    }else{
-        console.error(
-            `Backend returned code ${error}, body was: `, error);
+export function handleError(error: any){
+    console.log(typeof error)
+    console.log(error)
+    if(error?.status === 0){
+        return throwError(() => "Có lỗi xảy ra, vui lòng thử lại sau")
     }
+
     return throwError(() => {
+        if(error?.error?.message){
+            return error.error.message
+        }
         if(error?.message){
             return error.message
         }

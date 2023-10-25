@@ -117,4 +117,22 @@ export class PostService{
             catchError(handleError)
         )
     }
+
+    getListPostLatest():Observable<ApiResponse<PostList[]>>{
+        return this.http.get<ApiResponse<PostList[]>>(`${environment.apiUrl}/posts/latest`).pipe(
+            catchError(handleError)
+        )
+    }
+
+    getListPostMostView():Observable<ApiResponse<PostList[]>>{
+        return this.http.get<ApiResponse<PostList[]>>(`${environment.apiUrl}/posts/most-view`).pipe(
+            catchError(handleError)
+        )
+    }
+
+    plusView(slug:string):Observable<ApiResponse<PostList[]>>{
+        return this.http.patch<ApiResponse<PostList[]>>(`${environment.apiUrl}/posts/${slug}/view`,{}).pipe(
+            catchError(handleError)
+        )
+    }
 }

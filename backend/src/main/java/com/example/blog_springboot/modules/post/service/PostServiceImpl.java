@@ -134,7 +134,7 @@ public class PostServiceImpl implements PostService {
         // sau khi khởi tạo post thành công thì tạo ra 1 thông báo
         CreateNotificationDTO notification = new CreateNotificationDTO();
         notification.setLink("");
-        notification.setMessage("");
+        notification.setMessage("Người dùng @" + userPrincipal.getUsername() + " mà bạn đang theo dõi chuẩn bị đăng bài viết có tựa đề là: "+savePost.getTitle());
 
         var newNotification = notificationService.createNotification(notification);
 
@@ -185,7 +185,6 @@ public class PostServiceImpl implements PostService {
         foundPost.setSlug(dto.getSlug());
         foundPost.setSummary(dto.getSummary());
         foundPost.setUpdatedAt(new Date());
-        foundPost.setPublished(dto.isPublished());
 
         if(dto.getThumbnail() != null){
             foundPost.setThumbnail(dto.getThumbnail());
@@ -303,26 +302,80 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public SuccessResponse<Boolean> updateStatus(int id, User userPrincipal, UpdatePostStatusDTO dto) {
-        if(!(userPrincipal.getRole() == Role.ADMIN)){
-            var isAuthor = postRepository.existsByUserAndId(userPrincipal,id);
-            if(!isAuthor){
+    public SuccessResponse<List<PostListVm>> getLatestPost() {
+        Pageable paging = PageRequest.of(0,8);
+
+        Page<Post> pagingResult = postRepository.getLatestPost(paging);
+
+        var listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
+
+        return new SuccessResponse<>("Thành công",listPostVm);
+    }
+
+    @Override
+    public SuccessResponse<List<PostListVm>> getPostMostView() {
+        Pageable paging = PageRequest.of(0,5);
+
+        Page<Post> pagingResult = postRepository.getPostMostView(paging);
+
+        var listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
+
+        return new SuccessResponse<>("Thành công",listPostVm);
+    }
+
+    @Override
+    public SuccessResponse<Boolean> plusView(String postSlug) {
+        var foundPost = postRepository.findBySlug(postSlug).orElse(null);
+        if(foundPost == null){
+            throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
+        }
+
+        foundPost.setTotalView(foundPost.getTotalView() + 1);
+        postRepository.save(foundPost);
+        return new SuccessResponse<>("Thành công",true);
+    }
+
+    @Transactional
+    @Override
+    public SuccessResponse<Boolean> updateStatus(int id, User userPrincipal, UpdatePostStatusDTO dto) throws JsonProcessingException {
+        if(userPrincipal.getRole() == Role.ADMIN){
+            var foundPost = postRepository.findById(id).orElse(null);
+            if(foundPost == null){
                 throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
             }
-        }
 
-        var foundPost = postRepository.findById(id).orElse(null);
-        if(foundPost == null){
-            throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
-        }
+            foundPost.setPublished(dto.isStatus());
+            var savePost = postRepository.save(foundPost);
 
-        foundPost.setPublished(dto.isStatus());
-        var savePost = postRepository.save(foundPost);
-        if(savePost == null){
-            throw new UpdatePostException(PostConstants.CHANGE_POST_STATUS_FAILED);
-        }
+            if(savePost == null){
+                throw new UpdatePostException(PostConstants.CHANGE_POST_STATUS_FAILED);
+            }
 
-        return new SuccessResponse<>(PostConstants.CHANGE_POST_STATUS_SUCCESS,true);
+            var postAuthor = savePost.getUser();
+
+            CreateNotificationDTO notification = new CreateNotificationDTO();
+            notification.setLink("/bai-viet/" + savePost.getSlug());
+            notification.setMessage("Người dùng @" + postAuthor.getUsername() + " mà bạn đang theo dõi vừa đăng bài viết có tựa đề là: "+savePost.getTitle());
+
+            var newNotification = notificationService.createNotification(notification);
+
+            // sau đó nối thông báo với user
+            List<User> users = followRepository.getListFollowersByUser(postAuthor);
+
+            userNotificationService.createUserNotification(users,newNotification);
+
+            // Tạo ra 1 notification view model và gửi tới client
+            NotificationVm notificationVm = new NotificationVm();
+            notificationVm.setId(newNotification.getId());
+            notificationVm.setLink(newNotification.getLink());
+            notificationVm.setMessage(newNotification.getMessage());
+            notificationVm.setRead(false);
+
+            webSocketService.sendNotificationToClient(users,notificationVm);
+
+            return new SuccessResponse<>(PostConstants.CHANGE_POST_STATUS_SUCCESS,true);
+        }
+        throw new NotAuthorPostException(PostConstants.NOT_AUTHOR_POST);
     }
 
     @Override

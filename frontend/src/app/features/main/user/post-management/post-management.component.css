@@ -3,3 +3,8 @@ main-post-management{
     min-height: 100vh;
     height:auto;
 }
+
+.p-table {
+    width: 100%;
+    overflow-x: auto;
+}

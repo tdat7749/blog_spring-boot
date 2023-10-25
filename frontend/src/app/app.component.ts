@@ -2,6 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from "./core/services/auth.service";
 import {CookieService} from "ngx-cookie-service";
 import {MessageService} from "primeng/api";
+import {concatMap, map, switchMap} from "rxjs";
+import {UserService} from "./core/services/user.service";
+import {LocalStorageService} from "./core/services/local-storage.service";
 
 @Component({
   selector: 'app-root',
@@ -9,17 +12,27 @@ import {MessageService} from "primeng/api";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{
-  constructor(private authService: AuthService,private cookieService:CookieService,private messageService:MessageService) {
+  constructor(private authService: AuthService,private userService:UserService,private localStorageService:LocalStorageService,private messageService:MessageService) {
 
   }
   title = 'bố thăng docker rách';
 
   ngOnInit() {
-    if(this.cookieService.get("accessToken") !== null &&  this.cookieService.get("refreshToken") !== "" && this.authService.getCurrentUser() === null){
-      this.authService.getMe().subscribe({
+    if(this.localStorageService.get("accessToken") !== null &&  this.localStorageService.get("refreshToken") !== "" && this.authService.getCurrentUser() === null){
+      this.authService.getMe().pipe(
+          switchMap((getMeResponse) => {
+              return this.userService.getTop10Notification().pipe(
+                  map(notificationResponse => {
+                    return {getMeResponse,notificationResponse}
+                  })
+              )
+          })
+      ).subscribe({
       next:(response) => {
-            this.authService.setCurrentUser(response.data)
-            this.authService.userState$.next(response.data)
+            this.authService.setCurrentUser(response.getMeResponse.data)
+            this.authService.userState$.next(response.getMeResponse.data)
+
+            this.userService.notificationState$.next(response.notificationResponse.data)
       },
           error: (error) =>{
               this.messageService.add({

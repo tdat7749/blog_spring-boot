@@ -27,9 +27,9 @@ public interface UserService {
 
     public SuccessResponse<Boolean> sendCodeForgotPassword(String email);
 
-    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowing(String sortBy, int pageIndex, int userId);
+    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowing(String sortBy, int pageIndex, String userName);
 
-    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowers(String sortBy, int pageIndex, int userId);
+    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowers(String sortBy, int pageIndex, String userName);
 
     public SuccessResponse<UserDetailVm> getAuthor(String userName);
 

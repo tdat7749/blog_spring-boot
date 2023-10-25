@@ -65,7 +65,6 @@ export interface UpdatePost{
     thumbnail?:string,
     seriesId?:number,
     listTags:CreateTag[],
-    published:boolean,
 }
 
 export interface UpdatePostStatus{

@@ -15,6 +15,14 @@ public class ChangeInformationDTO {
     @Length(max = 70,message = "Họ có độ dài tối đa là 70 ký tự")
     private String lastName;
 
+
+    @NotBlank(message = "Không được bỏ trống trường 'summary'")
+    @NotNull(message = "Không được thiếu trường 'summary'")
+    @Length(max = 70,message = "Họ có độ dài tối đa là 700 ký tự")
+    private String summary;
+
+
+
     public String getFirstName() {
         return firstName;
     }
@@ -29,5 +37,13 @@ public class ChangeInformationDTO {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getSummary() {
+        return summary;
     }
 }

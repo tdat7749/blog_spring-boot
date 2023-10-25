@@ -10,14 +10,15 @@ import {inject} from "@angular/core";
 import {CookieService} from "ngx-cookie-service";
 import {AuthService} from "../services/auth.service";
 import {map, tap} from "rxjs";
+import {LocalStorageService} from "../services/local-storage.service";
 
 
 export const authGuard:CanActivateFn = (route:ActivatedRouteSnapshot, state:RouterStateSnapshot) => {
     const router = inject(Router)
-    const cookieService = inject(CookieService)
+    const localStorageService = inject(LocalStorageService)
     const authService = inject(AuthService)
     let flag:boolean = false
-    const accessToken = cookieService.get("accessToken")
+    const accessToken = localStorageService.get("accessToken")
     if(!accessToken){
         router.navigate(["/"])
         return false

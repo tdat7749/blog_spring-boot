@@ -15,6 +15,7 @@ import {CookieService} from "ngx-cookie-service";
 import {Injectable} from "@angular/core";
 import {AuthService} from "../services/auth.service";
 import {environment} from "../../../environments/environment";
+import {LocalStorageService} from "../services/local-storage.service";
 
 
 @Injectable({
@@ -24,16 +25,23 @@ export class AuthInterceptor implements HttpInterceptor{
 
   private allowRoute = [
     `${environment.apiUrl}/auth/login`,
-    `${environment.apiUrl}/auth/refresh`
+    `${environment.apiUrl}/auth/refresh`,
+      `${environment.apiUrl}/auth/register`,
+      `${environment.apiUrl}/auth/resend`,
+      `${environment.apiUrl}/posts/latest`,
+      `${environment.apiUrl}/posts/most-view`,
+      `${environment.apiUrl}/tags/`
+
   ]
 
   private isRetry: boolean = false;
-  constructor(private cookieService: CookieService,private authService: AuthService) {
+  constructor(private localStorageService: LocalStorageService,private authService: AuthService) {
   }
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let request = req;
-    const token = this.cookieService.get("accessToken")
-    const rfToken = this.cookieService.get("refreshToken")
+    const token = this.localStorageService.get("accessToken")
+    const rfToken = this.localStorageService.get("refreshToken")
+
 
     if(rfToken !== null){
       request =  request.clone({
@@ -60,7 +68,7 @@ export class AuthInterceptor implements HttpInterceptor{
   }
 
   private handleRefreshToken(request: HttpRequest<any>,next: HttpHandler){
-    const refreshToken = this.cookieService.get("refreshToken")
+    const refreshToken = this.localStorageService.get("refreshToken")
     if(!this.isRetry){
       this.isRetry = true
 
@@ -69,13 +77,13 @@ export class AuthInterceptor implements HttpInterceptor{
         return this.authService.getAccessToken().pipe(
           concatMap((response:any) =>{
             this.isRetry = false
-            this.cookieService.set("accessToken",response.data)
+            this.localStorageService.set("accessToken",response.data)
             return next.handle(this.addTokenToHeader(request,response.data))
           }),
           catchError((error:any) =>{
             this.isRetry = false
-            this.cookieService.delete("accessToken")
-            this.cookieService.delete("refreshToken")
+            this.localStorageService.remove("accessToken")
+            this.localStorageService.remove("refreshToken")
             return throwError(() => error);
           })
         )

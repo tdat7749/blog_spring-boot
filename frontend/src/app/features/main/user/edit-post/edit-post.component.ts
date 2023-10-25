@@ -26,6 +26,7 @@ import Delta from "quill-delta";
 import {Post, UpdatePost} from "../../../../core/types/post.type";
 import {capitalizeFirstLetter, getNewTagByString, postStatus} from "../../../../shared/commons/shared";
 import slugify from "slugify";
+import {LoadingService} from "../../../../core/services/loading.service";
 
 @Component({
   selector: 'main-edit-post',
@@ -33,7 +34,7 @@ import slugify from "slugify";
   styleUrls: ['./edit-post.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class EditPostComponent implements OnInit,AfterViewInit{
+export class EditPostComponent implements OnInit,AfterViewInit,OnDestroy{
 
   editPostForm : FormGroup
   previewImage:string = ""
@@ -43,6 +44,8 @@ export class EditPostComponent implements OnInit,AfterViewInit{
   listSeries:Series[]
   listTag:Tag[]
   imageFile: File | null
+
+  destroy$ = new Subject<void>()
 
   postStatus = postStatus
 
@@ -59,7 +62,8 @@ export class EditPostComponent implements OnInit,AfterViewInit{
       private seriesService:SeriesService,
       private tagService:TagService,
       private router:Router,
-      private _router:ActivatedRoute
+      private _router:ActivatedRoute,
+      public loadingService:LoadingService
   ) {}
 
   ngOnInit() {
@@ -92,16 +96,15 @@ export class EditPostComponent implements OnInit,AfterViewInit{
       ],
       newTag:[
         ''
-      ],
-      isPublished:[
       ]
     })
 
 
-    this._router.paramMap.subscribe((params) =>{
+    this._router.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) =>{
       this.slug = params.get("slug") as string;
     })
 
+    // this.loadingService.startLoading()
     forkJoin([
           this.tagService.getAllTag(),
           this.seriesService.getSeriesByCurrentUser(),
@@ -114,7 +117,7 @@ export class EditPostComponent implements OnInit,AfterViewInit{
             post:postResponse.data
           }
         }
-    ).subscribe({
+    ).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response) =>{
         this.listTag = response.listTag
         this.listSeries = response.listSeries
@@ -133,7 +136,7 @@ export class EditPostComponent implements OnInit,AfterViewInit{
         }
         this.editPostForm.get("isPublished")?.setValue({status:this.post.isPublished})
         this.editPostForm.get("tags")?.setValue(this.post.tags)
-
+        this.loadingService.stopLoading()
       },
       error:(error) =>{
         this.messageService.add({
@@ -142,6 +145,8 @@ export class EditPostComponent implements OnInit,AfterViewInit{
           summary:"Lỗi"
         })
         this.router.navigate(["/"])
+        this.loadingService.stopLoading()
+        return;
       }
     })
   }
@@ -200,8 +205,7 @@ export class EditPostComponent implements OnInit,AfterViewInit{
     const formValue = this.editPostForm.value
     let createListTagDTO:CreateTag[] = formValue.tags.map((tag:Tag) =>{
       let createTagDTO:CreateTag = {
-        title: tag.title,
-        thumbnail: tag.thumbnail as string,
+        title: capitalizeFirstLetter(tag.title),
         slug: tag.slug
       }
       return createTagDTO
@@ -220,8 +224,6 @@ export class EditPostComponent implements OnInit,AfterViewInit{
       createListTagDTO = [...createListTagDTO,...getNewTag.data]
     }
 
-    console.log(createListTagDTO)
-
     if(createListTagDTO?.length > 3 || createListTagDTO.length < 1){
       this.messageService.add({
         severity:"error",
@@ -236,8 +238,7 @@ export class EditPostComponent implements OnInit,AfterViewInit{
       content: formValue.content,
       summary:formValue.summary,
       slug: slugify(formValue.title.toLowerCase()),
-      listTags:createListTagDTO,
-      published: formValue.isPublished.status
+      listTags:createListTagDTO
     }
 
     if(formValue.series !== null){
@@ -250,7 +251,7 @@ export class EditPostComponent implements OnInit,AfterViewInit{
       const formData = new FormData()
       formData.set("file",this.imageFile)
       this.isLoading = true
-      this.fileStorageService.upload(formData).subscribe({
+      this.fileStorageService.upload(formData).pipe(takeUntil(this.destroy$)).subscribe({
         next:(response) =>{
           this.isLoading = false
           data.thumbnail = response.data
@@ -268,7 +269,7 @@ export class EditPostComponent implements OnInit,AfterViewInit{
     this.isLoading = true
 
 
-    this.postService.updatePost(data,this.post.id).subscribe({
+    this.postService.updatePost(data,this.post.id).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response) =>{
         this.isLoading = false
         this.messageService.add({
@@ -312,5 +313,9 @@ export class EditPostComponent implements OnInit,AfterViewInit{
     this.fileUpload.clear()
   }
 
+  ngOnDestroy() {
+    this.destroy$.next()
+    this.destroy$.complete()
+  }
 
 }

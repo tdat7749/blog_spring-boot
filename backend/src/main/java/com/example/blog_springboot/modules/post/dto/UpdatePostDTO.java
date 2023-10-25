@@ -27,9 +27,6 @@ public class UpdatePostDTO {
     @NotNull(message = "Không được thiếu trường 'summary'")
     private String summary;
 
-    @NotNull(message = "Không được thiếu trường 'isPublished'")
-    private boolean isPublished;
-
     private String thumbnail;
 
     @Digits(integer = 10,fraction = 0,message = "Trường 'seriesID' phải là số nguyên") // Kiểm tra là số nguyên và ít hơn 10 chữ số
@@ -69,14 +66,6 @@ public class UpdatePostDTO {
 
     public void setSummary(String summary) {
         this.summary = summary;
-    }
-
-    public boolean isPublished() {
-        return isPublished;
-    }
-
-    public void setPublished(boolean published) {
-        isPublished = published;
     }
 
     public String getThumbnail() {

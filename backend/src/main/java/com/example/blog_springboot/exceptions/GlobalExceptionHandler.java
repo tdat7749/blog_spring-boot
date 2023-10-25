@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -49,6 +51,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(JsonProcessingException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse jsonProcessingExceptionHandler(JsonProcessingException ex){
-        return new ErrorResponse(HttpStatus.BAD_REQUEST,500,"Lỗi xảy ra, vui lòng thử lại sau");
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,500,"Lỗi xảy ra, vui lòng thử lại sau");
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse sqlIntegrityConstraintViolationHandler(SQLIntegrityConstraintViolationException ex){
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,500,"Lỗi xảy ra, vui lòng thử lại sau");
     }
 }
