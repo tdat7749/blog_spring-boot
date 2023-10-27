@@ -21,10 +21,10 @@ public class TagController {
         this.tagService = tagService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{slug}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<TagVm>> getTagById(@PathVariable("id") int id){
-        var result = tagService.getTagById(id);
+    public ResponseEntity<SuccessResponse<TagVm>> getTagBySlug(@PathVariable("slug") String slug){
+        var result = tagService.getTagBySlug(slug);
 
         return new ResponseEntity<>(result,HttpStatus.OK);
     }

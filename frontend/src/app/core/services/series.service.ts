@@ -32,8 +32,8 @@ export class SeriesService{
         )
     }
 
-    getAllSeries(pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<Series[]>>>{
-        return this.http.get<ApiResponse<PagingResponse<Series[]>>>(`${environment.apiUrl}/series?pageIndex=${pageIndex}&sortBy=${sortBy}`).pipe(
+    getAllSeries(pageIndex:number,keyword:string,sortBy:SortBy):Observable<ApiResponse<PagingResponse<Series[]>>>{
+        return this.http.get<ApiResponse<PagingResponse<Series[]>>>(`${environment.apiUrl}/series/?pageIndex=${pageIndex}&keyword=${keyword}&sortBy=${sortBy}`).pipe(
             catchError(handleError)
         )
     }

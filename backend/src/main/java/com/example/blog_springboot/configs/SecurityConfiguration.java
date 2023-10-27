@@ -74,11 +74,13 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.PATCH,"/api/users/permission").hasAnyRole("ADMIN")
 
                         //follow
+                        .requestMatchers(HttpMethod.GET,"/api/follows/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/follows/{id}").hasAnyRole("USER","ADMIN")
                         .requestMatchers(HttpMethod.DELETE,"/api/follows/{id}").hasAnyRole("USER","ADMIN")
 
                         //post
                         .requestMatchers(HttpMethod.GET,"/api/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH,"/api/posts/{slug}/view").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/posts/**").hasAnyRole("USER","ADMIN")
                         .requestMatchers(HttpMethod.PATCH,"/api/posts/**").hasAnyRole("USER","ADMIN")
                         .requestMatchers(HttpMethod.PUT,"/api/posts/**").hasAnyRole("USER","ADMIN")

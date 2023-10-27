@@ -7,6 +7,7 @@ export interface User {
   avatar: string | unknown,
   id: number | unknown
   notLocked: boolean | unknown
+  summary: string | unknown
 }
 
 export interface UserAbs{
@@ -34,4 +35,5 @@ export interface ChangePassword {
 export interface ChangeInformation {
   firstName:string
   lastName:string
+  summary: string
 }

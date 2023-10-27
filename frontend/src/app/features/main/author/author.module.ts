@@ -8,11 +8,18 @@ import {SharedModule} from "../../../shared/components/shared.module";
 import {ButtonModule} from "primeng/button";
 import {PaginatorModule} from "primeng/paginator";
 import {InputTextModule} from "primeng/inputtext";
+import { AuthorPostComponent } from './author-post/author-post.component';
+import { AuthorFollowerComponent } from './author-follower/author-follower.component';
+import { AuthorFollowingComponent } from './author-following/author-following.component';
+import {TabMenuModule} from "primeng/tabmenu";
 
 @NgModule({
     declarations:[
         AuthorComponent,
-        AuthorInformationComponent
+        AuthorInformationComponent,
+        AuthorPostComponent,
+        AuthorFollowerComponent,
+        AuthorFollowingComponent
     ],
     imports: [
         CommonModule,
@@ -21,7 +28,8 @@ import {InputTextModule} from "primeng/inputtext";
         SharedModule,
         ButtonModule,
         PaginatorModule,
-        InputTextModule
+        InputTextModule,
+        TabMenuModule
     ],
     exports:[],
 })

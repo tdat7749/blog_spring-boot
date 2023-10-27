@@ -1,17 +1,16 @@
-import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree} from "@angular/router";
+import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot} from "@angular/router";
 import {inject} from "@angular/core";
-import {CookieService} from "ngx-cookie-service";
 import {AuthService} from "../services/auth.service";
-import {map} from "rxjs";
+import {catchError, from, of, switchMap} from "rxjs";
+import {LocalStorageService} from "../services/local-storage.service";
 
 
 export const adminGuard:CanActivateFn = (route:ActivatedRouteSnapshot, state:RouterStateSnapshot) => {
     const router = inject(Router)
-    const cookieService = inject(CookieService)
+    const localStorageService = inject(LocalStorageService)
     const authService = inject(AuthService)
-    let flag:boolean = false
 
-    const accessToken = cookieService.get("accessToken")
+    const accessToken = localStorageService.get("accessToken")
     if(!accessToken){
         router.navigate(["/"])
         return false
@@ -21,22 +20,17 @@ export const adminGuard:CanActivateFn = (route:ActivatedRouteSnapshot, state:Rou
         return true
     }
 
-    const subscription =  authService.getMe().pipe(
-        map(response => response.data),
-    ).subscribe({
-        next:(response) =>{
-            authService.setCurrentUser(response)
-            if(response && response.role === "ADMIN"){
-                flag = true
+    return from(authService.getMe()).pipe(
+        switchMap((response) => {
+            authService.setCurrentUser(response.data)
+            if(response.data && response.data.role === "ADMIN"){
+                return of(true)
+            }else{
+                return of(false)
             }
-        }
-    })
-
-    if(!flag){
-        router.navigate(["/"])
-        subscription.unsubscribe()
-        return false
-    }
-    subscription.unsubscribe()
-    return true
+        }),
+        catchError(() => {
+            return of(false)
+        })
+    )
 }

@@ -32,7 +32,7 @@ public class Post {
     @Column(columnDefinition = "MEDIUMTEXT",nullable = false)
     private String content;
 
-    @Column(length = 255, nullable = false)
+    @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
     private String summary;
 
     @Column(name = "is_published",nullable = false)

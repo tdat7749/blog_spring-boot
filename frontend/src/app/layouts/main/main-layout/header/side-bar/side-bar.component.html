@@ -1,6 +1,6 @@
 <p-sidebar class="md:tw-hidden" [(visible)]="isOpen" [fullScreen]="true">
     <div class="tw-pl-6">
-        <ul class="tw-space-y-[1rem]">
+        <ul class="tw-space-y-[1rem] tw-list-none tw-p-0">
             <li class="tw-p-2 tw-text-gray-500 hover:tw-text-gray-900 tw-cursor-pointer" routerLink="{{nav.path}}" *ngFor="let nav of listNav">{{nav.title}}</li>
         </ul>
 

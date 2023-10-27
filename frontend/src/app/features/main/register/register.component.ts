@@ -1,21 +1,25 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from "../../../core/services/auth.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Register} from "../../../core/types/auth.type";
 import {MessageService} from "primeng/api";
 import {noWhiteSpaceValidator} from "../../../shared/validators/no-white-space.validator";
 import {passwordsMatch} from "../../../shared/validators/password-smatch.validator";
+import {Subject, takeUntil} from "rxjs";
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent implements OnInit{
+export class RegisterComponent implements OnInit,OnDestroy{
 
   registerForm:FormGroup
 
   isLoading:boolean = false
+
+  destroy$ = new Subject<void>()
+
   constructor(private authService:AuthService,private messageService:MessageService,private fb:FormBuilder) {
   }
 
@@ -82,7 +86,7 @@ export class RegisterComponent implements OnInit{
   onRegister(){
     this.isLoading = true
     const data:Register = this.registerForm.value
-    this.authService.register(data).subscribe({
+    this.authService.register(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response) =>{
         this.messageService.add({
           severity: "success",
@@ -103,5 +107,10 @@ export class RegisterComponent implements OnInit{
 
       }
     })
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next()
+    this.destroy$.complete()
   }
 }

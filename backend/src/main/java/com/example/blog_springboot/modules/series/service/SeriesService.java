@@ -8,6 +8,8 @@ import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesListPostVm;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.user.model.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,15 +17,18 @@ import java.util.List;
 @Service
 public interface SeriesService {
 
-    public SuccessResponse<SeriesVm> createSeries(CreateSeriesDTO dto,User userPrincipal);
-    public SuccessResponse<Boolean> deleteSeries(int id,User userPrincipal);
-    public SuccessResponse<SeriesVm> updateSeries(UpdateSeriesDTO dto,int seriesId,User userPrincipal);
+    public SuccessResponse<SeriesVm> createSeries(CreateSeriesDTO dto, User userPrincipal)
+            throws JsonProcessingException;
+
+    public SuccessResponse<Boolean> deleteSeries(int id, User userPrincipal);
+
+    public SuccessResponse<SeriesVm> updateSeries(UpdateSeriesDTO dto, int seriesId, User userPrincipal);
 
     public SuccessResponse<SeriesListPostVm> getSeriesDetail(String slug); // for view
 
-    public SuccessResponse<SeriesListPostVm> getSeriesDetail(String slug,User user);
-    
-    public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(String keyword,String sortBy,int pageIndex);
+    public SuccessResponse<SeriesListPostVm> getSeriesDetail(String slug, User user);
+
+    public SuccessResponse<PagingResponse<List<SeriesVm>>> getAllSeries(String keyword, String sortBy, int pageIndex);
 
     public SuccessResponse<List<SeriesVm>> getListSeriesByUserPrincipal(User userPrincipal); // for create post
 

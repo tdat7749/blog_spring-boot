@@ -2,4 +2,10 @@ main-post-management{
     width:100%;
     min-height: 100vh;
     height:auto;
+    overflow-x:auto;
+}
+
+.p-table {
+    width: 100%;
+    overflow-x: auto;
 }

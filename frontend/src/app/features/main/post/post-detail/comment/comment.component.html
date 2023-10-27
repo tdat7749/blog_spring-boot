@@ -4,29 +4,39 @@
         <div class="tw-space-y-[0.5rem]">
             <div class="tw-flex tw-gap-3 tw-items-center">
                 <ng-container *ngIf="currentUser !== null;else noUser">
-                    <p-avatar shape="circle" image="{{currentUser.avatar ? currentUser.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}" size="normal"></p-avatar>
+                    <p-avatar shape="circle"
+                        image="{{currentUser.avatar ? currentUser.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}"
+                        size="normal"></p-avatar>
                     <h3 class="tw-font-bold">
                         {{currentUser.firstName}} {{currentUser.lastName}}
                     </h3>
                 </ng-container>
                 <ng-template #noUser>
-                    <p-avatar shape="circle" image="https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png" size="normal"></p-avatar>
+                    <p-avatar shape="circle"
+                        image="https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png"
+                        size="normal"></p-avatar>
                     <h3 class="tw-font-bold">
                         Vui lòng đăng nhập để bình luận
                     </h3>
                 </ng-template>
             </div>
             <div>
-                <input formControlName="content" placeholder="Nhập nội dung bình luận của bạn" class="hover:tw-border-gray-900" pInputText class="tw-w-full" />
-                <ng-container *ngIf="createCommentForm.controls?.['content']?.touched && createCommentForm.controls?.['content']?.dirty">
-                    <small *ngIf="createCommentForm.controls?.['content']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Nội dung bình luận không được để trống</small>
-                    <small *ngIf="createCommentForm.controls?.['content']?.errors?.['maxlength']" class="tw-ml-2 tw-text-red-600">Độ dài tối đa là 300</small>
-                    <small *ngIf="createCommentForm.controls?.['content']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
+                <input formControlName="content" placeholder="Nhập nội dung bình luận của bạn"
+                    class="hover:tw-border-gray-900" pInputText class="tw-w-full" />
+                <ng-container
+                    *ngIf="createCommentForm.controls?.['content']?.touched && createCommentForm.controls?.['content']?.dirty">
+                    <small *ngIf="createCommentForm.controls?.['content']?.errors?.['required']"
+                        class="tw-ml-2 tw-text-red-600">Nội dung bình luận không được để trống</small>
+                    <small *ngIf="createCommentForm.controls?.['content']?.errors?.['maxlength']"
+                        class="tw-ml-2 tw-text-red-600">Độ dài tối đa là 300</small>
+                    <small *ngIf="createCommentForm.controls?.['content']?.errors?.['whitespace']"
+                        class="tw-ml-2 tw-text-red-600">Không được sử dụng dấu khoảng trắng</small>
                 </ng-container>
             </div>
 
             <div class="tw-text-right">
-                <p-button label="Đăng Bình Luận" (click)="onCreateComment()" [loading]="isLoading" [disabled]="createCommentForm.invalid"></p-button>
+                <p-button label="Đăng Bình Luận" (click)="onCreateComment()" [loading]="isLoading"
+                    [disabled]="createCommentForm.invalid"></p-button>
             </div>
         </div>
     </form>
@@ -36,30 +46,45 @@
             <div class="tw-w-full  tw-border tw-rounded-md">
                 <div class="tw-p-3">
                     <div class="tw-flex tw-gap-3 tw-items-center">
-                        <p-avatar shape="circle" image="{{comment.user.avatar ? comment.user.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}"  size="normal"></p-avatar>
+                        <p-avatar shape="circle"
+                            image="{{comment.user.avatar ? comment.user.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}"
+                            size="normal"></p-avatar>
                         <h3 class="tw-font-bold">
-                            {{comment.user.firstName}} {{comment.user.lastName}}
+                            {{comment.user.firstName}} {{comment.user.lastName}} <span
+                                class="tw-font-light">@{{comment.user.userName}}</span>
                         </h3>
                     </div>
                     <ng-container *ngIf="comment.showEditForm;else isAuthor">
-                            <form #editForm="ngForm" (ngSubmit)="onEditComment(comment,editForm)" class="tw-space-y-[1rem]">
-                                <input name="content" ngModel placeholder="Nhập nội dung bình luận của bạn" class="tw-w-full hover:tw-border-gray-900" pInputText [ngModel]="comment.content" />
-                                <div class="tw-text-right">
-                                    <p-button styleClass="p-button-primary" type="submit" label="Sửa" icon="pi pi-pencil" [loading]="isLoading" ></p-button>
-                                </div>
-                            </form>
+                        <form #editForm="ngForm" (ngSubmit)="onEditComment(comment,editForm)" class="tw-space-y-[1rem]">
+                            <input name="content" ngModel placeholder="Nhập nội dung bình luận của bạn"
+                                class="tw-w-full hover:tw-border-gray-900" pInputText [ngModel]="comment.content" />
+                            <div class="tw-text-right">
+                                <p-button styleClass="p-button-primary" type="submit" label="Sửa" icon="pi pi-pencil"
+                                    [loading]="isLoading"></p-button>
+                            </div>
+                        </form>
                     </ng-container>
                     <ng-template #isAuthor>
                         <div class="tw-flex tw-items-center tw-justify-between">
-                            <p class="tw-text-gray-600 tw-mt-2">
-                                {{comment.content}}
-                            </p>
-                            <p-button styleClass="p-button-danger" *ngIf="currentUser?.id === comment.user.id" label="Xóa" icon="pi pi-times" [loading]="isLoading" [disabled]="currentUser?.id !== comment.user.id" (click)="onDeleteComment(comment.id)"></p-button>
+                            <div class="tw-space-y-[0.5rem]">
+                                <p class="tw-text-gray-600 tw-mt-2">
+                                    {{comment.content}}
+                                </p>
+                                <p class="tw-text-sm">Thời gian: <span class="tw-font-semibold">{{comment.createdAt |
+                                        date:"short"}}</span>
+                                </p>
+                            </div>
+                            <p-button styleClass="p-button-danger" *ngIf="currentUser?.id === comment.user.id"
+                                label="Xóa" icon="pi pi-times" [loading]="isLoading"
+                                [disabled]="currentUser?.id !== comment.user.id"
+                                (click)="onDeleteComment(comment.id)"></p-button>
                         </div>
                     </ng-template>
                     <div class="tw-flex items-center tw-space-x-[0.5rem]">
-                        <p class="text-gray-500 tw-cursor-pointer tw-underline" (click)="onShowReply(comment)">Trả Lời</p>
-                        <p *ngIf="currentUser?.id === comment.user.id" class="text-gray-500 tw-cursor-pointer tw-underline" (click)="onShowEdit(comment)">Sửa</p>
+                        <p class="text-gray-500 tw-cursor-pointer tw-underline" (click)="onShowReply(comment)">Trả Lời
+                        </p>
+                        <p *ngIf="currentUser?.id === comment.user.id"
+                            class="text-gray-500 tw-cursor-pointer tw-underline" (click)="onShowEdit(comment)">Sửa</p>
                     </div>
                 </div>
             </div>
@@ -70,64 +95,90 @@
                     <div class="tw-border tw-ml-5  tw-rounded-md">
                         <div class="tw-p-3">
                             <div class="tw-flex tw-gap-3 tw-items-center">
-                                <p-avatar shape="circle"  image="{{child.user.avatar ? child.user.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}" size="normal"></p-avatar>
+                                <p-avatar shape="circle"
+                                    image="{{child.user.avatar ? child.user.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}"
+                                    size="normal"></p-avatar>
                                 <h3 class="tw-font-bold">
-                                    {{child.user.firstName}} {{child.user.lastName}}
+                                    {{child.user.firstName}} {{child.user.lastName}} <span
+                                        class="tw-font-light">@{{child.user.userName}}</span>
                                 </h3>
                             </div>
                             <ng-container *ngIf="child.showEditForm;else isAuthor">
-                                <form #editForm="ngForm" (ngSubmit)="onEditComment(child,editForm,comment.id)" class="tw-space-y-[1rem]">
-                                    <input name="content" ngModel placeholder="Nhập nội dung bình luận của bạn" class="tw-w-full hover:tw-border-gray-900" pInputText [ngModel]="child.content" />
+                                <form #editForm="ngForm" (ngSubmit)="onEditComment(child,editForm,comment.id)"
+                                    class="tw-space-y-[1rem]">
+                                    <input name="content" ngModel placeholder="Nhập nội dung bình luận của bạn"
+                                        class="tw-w-full hover:tw-border-gray-900" pInputText
+                                        [ngModel]="child.content" />
                                     <div class="tw-text-right">
-                                        <p-button styleClass="p-button-primary" type="submit" label="Sửa" icon="pi pi-pencil" [loading]="isLoading" [disabled]="currentUser?.id !== child.user.id" ></p-button>
+                                        <p-button styleClass="p-button-primary" type="submit" label="Sửa"
+                                            icon="pi pi-pencil" [loading]="isLoading"
+                                            [disabled]="currentUser?.id !== child.user.id"></p-button>
                                     </div>
                                 </form>
                             </ng-container>
                             <ng-template #isAuthor>
                                 <div class="tw-flex tw-items-center tw-justify-between">
-                                    <p class="tw-text-gray-600 tw-mt-2">
-                                        {{child.content}}
-                                    </p>
-                                    <p-button styleClass="p-button-danger" *ngIf="currentUser?.id === child.user.id" label="Xóa" icon="pi pi-times" [loading]="isLoading" [disabled]="currentUser?.id !== child.user.id" (click)="onDeleteComment(comment.id)"></p-button>
+                                    <div class="tw-space-y-[0.5rem]">
+                                        <p class="tw-text-gray-600 tw-mt-2">
+                                            {{child.content}}
+                                        </p>
+                                        <p class="tw-text-sm">Thời gian: <span
+                                                class="tw-font-semibold">{{child.createdAt |
+                                                date:"short"}}</span></p>
+                                    </div>
+                                    <p-button styleClass="p-button-danger" *ngIf="currentUser?.id === child.user.id"
+                                        label="Xóa" icon="pi pi-times" [loading]="isLoading"
+                                        [disabled]="currentUser?.id !== child.user.id"
+                                        (click)="onDeleteComment(child.id,comment.id)"></p-button>
                                 </div>
                             </ng-template>
                             <div class="tw-flex items-center tw-space-x-[0.5rem]">
-                                <p *ngIf="currentUser?.id === child.user.id" class="text-gray-500 tw-cursor-pointer tw-underline" (click)="onShowEdit(child)">Sửa</p>
+                                <p *ngIf="currentUser?.id === child.user.id"
+                                    class="text-gray-500 tw-cursor-pointer tw-underline" (click)="onShowEdit(child)">Sửa
+                                </p>
                             </div>
                         </div>
                     </div>
                 </ng-container>
             </ng-container>
-            <form #createChildForm="ngForm" (ngSubmit)="onCreateChildComment(comment.id,createChildForm)"  class="tw-ml-5" *ngIf="comment.showReplyForm">
+            <form #createChildForm="ngForm" (ngSubmit)="onCreateChildComment(comment.id,createChildForm)"
+                class="tw-ml-5" *ngIf="comment.showReplyForm">
                 <div class="tw-text-gray-300 tw-font-bold tw-pl-9">|</div>
-                    <div class="tw-flex tw-justify-between tw-border   tw-rounded-md">
-                       <div class="tw-p-3">
-                           <div class="tw-flex tw-gap-3 tw-items-center">
-                               <ng-container *ngIf="currentUser !== null;else noUser">
-                                   <p-avatar shape="circle" image="{{currentUser.avatar ? currentUser.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}" size="normal"></p-avatar>
-                                   <h3 class="tw-font-bold">
-                                       {{currentUser.firstName}} {{currentUser.lastName}}
-                                   </h3>
-                               </ng-container>
-                               <ng-template #noUser>
-                                   <p-avatar shape="circle" image="https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png" size="normal"></p-avatar>
-                                   <h3 class="tw-font-bold">
-                                       Vui lòng đăng nhập để bình luận
-                                   </h3>
-                               </ng-template>
-                           </div>
-                       </div>
+                <div class="tw-flex tw-justify-between tw-border   tw-rounded-md">
+                    <div class="tw-p-3">
+                        <div class="tw-flex tw-gap-3 tw-items-center">
+                            <ng-container *ngIf="currentUser !== null;else noUser">
+                                <p-avatar shape="circle"
+                                    image="{{currentUser.avatar ? currentUser.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}"
+                                    size="normal"></p-avatar>
+                                <h3 class="tw-font-bold">
+                                    {{currentUser.firstName}} {{currentUser.lastName}} <span
+                                        class="tw-font-light">@{{currentUser.userName}}</span>
+                                </h3>
+                            </ng-container>
+                            <ng-template #noUser>
+                                <p-avatar shape="circle"
+                                    image="https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png"
+                                    size="normal"></p-avatar>
+                                <h3 class="tw-font-bold">
+                                    Vui lòng đăng nhập để bình luận
+                                </h3>
+                            </ng-template>
+                        </div>
                     </div>
-                    <div>
-                        <input name="content" ngModel placeholder="Nhập nội dung bình luận của bạn" class="hover:tw-border-gray-900" pInputText class="tw-w-full" />
-                    </div>
+                </div>
+                <div>
+                    <input name="content" ngModel placeholder="Nhập nội dung bình luận của bạn"
+                        class="hover:tw-border-gray-900" pInputText class="tw-w-full" />
+                </div>
 
-                    <div class="tw-text-right">
-                        <p-button label="Trả lời bình luận" type="submit" [loading]="isLoading"></p-button>
-                    </div>
+                <div class="tw-text-right">
+                    <p-button label="Trả lời bình luận" type="submit" [loading]="isLoading"></p-button>
+                </div>
             </form>
             <!-- END Reply Container  -->
         </div>
     </div>
-    <p-paginator (onPageChange)="onChangePageIndex($event)" [first]=0 [rows]=10 [totalRecords]=totalPage*10></p-paginator>
+    <p-paginator (onPageChange)="onChangePageIndex($event)" [first]=0 [rows]=10
+        [totalRecords]=totalPage*10></p-paginator>
 </div>

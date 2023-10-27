@@ -1,0 +1,24 @@
+<div class="tw-space-y-[2.5rem]">
+    <h1 class="tw-text-4xl tw-text-gray-900 tw-text-center">TẤT CẢ SERIES</h1>
+    <div class="tw-space-y-[1rem]">
+        <div>
+            <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input type="text" pInputText (input)="onChangeSearch($event)" />
+            </span>
+        </div>
+        <ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
+            <main-loading></main-loading>
+        </ng-template>
+        <ng-template #loaded>
+            <div class="tw-mb-[2rem]">
+                <div *ngIf="listSeries.length < 1">
+                    <h2 class="tw-text-2xl tw-text-center tw-text-gray-900">Không có series nào</h2>
+                </div>
+                <main-list-series-card *ngIf="listSeries.length > 0" [listSeries]="listSeries"></main-list-series-card>
+            </div>
+        </ng-template>
+        <p-paginator (onPageChange)="onChangePageIndex($event)" [first]=0 [rows]=10
+            [totalRecords]=totalPage*10></p-paginator>
+    </div>
+</div>

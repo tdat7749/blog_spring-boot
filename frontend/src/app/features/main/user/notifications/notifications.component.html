@@ -1,0 +1,21 @@
+<div class="tw-p-[2rem] tw-h-auto tw-w-full">
+    <h1 class="tw-text-2xl tw-text-gray-900 tw-text-center tw-mb-4">THÔNG BÁO</h1>
+    <ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
+        <main-loading></main-loading>
+    </ng-template>
+    <ng-template #loaded>
+        <div class="tw-space-y-[1.5rem]">
+            <div class="tw-flex tw-justify-between">
+                <p class="tw-text-xl">Số thông báo chưa đọc: <span class="tw-text-[#3B82F6]">{{unRead}}</span></p>
+                <p-button label="Đọc Tất Cả" icon="pi pi-check" [loading]="isLoading" (click)="onReadAll()"></p-button>
+            </div>
+            <div class="tw-flex tw-flex-col tw-space-y-[1rem]">
+                <main-notification-item style="border:1px solid #dee2e6" *ngFor="let noti of notifications"
+                    class="{{noti.read ? 'tw-bg-[#dee2e6]': ''}} hover:tw-text-[#3B82F6] tw-cursor-pointer tw-rounded-sm hover:tw-opacity-90"
+                    [item]="noti"></main-notification-item>
+            </div>
+        </div>
+    </ng-template>
+    <p-paginator (onPageChange)="onChangePageIndex($event)" [first]=0 [rows]=10
+        [totalRecords]=totalPage*10></p-paginator>
+</div>

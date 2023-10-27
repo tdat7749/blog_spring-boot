@@ -1,13 +1,43 @@
-main-create-post{
-    width:100%;
+main-create-post {
+    width: 100%;
     min-height: 100vh;
-    height:auto;
+    height: auto;
 }
 
-.p-multiselect{
-    width:100%
+.p-multiselect {
+    width: 100%
 }
 
-.p-dropdown{
-    width:100%
+.p-dropdown {
+    width: 100%
+}
+
+#main>p>img {
+    width: 100%
+}
+
+#main>img {
+    width: 100%
+}
+
+#main>h1 {
+    font-size: 30px
+}
+
+#main>h2 {
+    font-size: 25px
+}
+
+#main>.ql-align-right {
+    text-align: right;
+}
+
+#main>.ql-align-center {
+    text-align: center;
+}
+
+#main>.ql-syntax {
+    background-color: #23241f;
+    color: #f8f8f2;
+    overflow: visible;
 }

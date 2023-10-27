@@ -13,12 +13,14 @@ import {InputTextModule} from "primeng/inputtext";
 import {ReactiveFormsModule} from "@angular/forms";
 import {PaginatorModule} from "primeng/paginator";
 import {PostComponent} from "./post-component";
+import {SharedModule} from "../../../shared/components/shared.module";
+import {DividerModule} from "primeng/divider";
 
 @NgModule({
     declarations: [
         PostDetailComponent,
         CommentComponent,
-        PostComponent
+        PostComponent,
     ],
     imports: [
         CommonModule,
@@ -29,7 +31,9 @@ import {PostComponent} from "./post-component";
         InputTextModule,
         ReactiveFormsModule,
         PaginatorModule,
-        PostRoutingModule
+        PostRoutingModule,
+        SharedModule,
+        DividerModule
     ]
 })
 

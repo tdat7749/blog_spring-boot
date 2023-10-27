@@ -53,6 +53,9 @@ public class User implements UserDetails {
     @Column(name = "user_name",nullable = false,length = 50,unique = true)
     private String userName;
 
+    @Column(name = "summary",length = 1000,nullable = true)
+    private String summary;
+
     @Column(name = "created_at",nullable = false)
     private Date createdAt;
 
@@ -99,7 +102,7 @@ public class User implements UserDetails {
     public User(){
 
     }
-    public User(int id, String firstName, String lastName, String email, boolean isVerify, String password, boolean isNotLocked, String avatar, String userName, Date createdAt, Date updatedAt,Role role,String code) {
+    public User(int id, String firstName,String summary ,String lastName, String email, boolean isVerify, String password, boolean isNotLocked, String avatar, String userName, Date createdAt, Date updatedAt,Role role,String code) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -113,6 +116,7 @@ public class User implements UserDetails {
         this.updatedAt = updatedAt;
         this.role = role;
         this.code = code;
+        this.summary = summary;
     }
 
     public String getCode() {
@@ -288,5 +292,13 @@ public class User implements UserDetails {
 
     public Role getRole() {
         return role;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 }

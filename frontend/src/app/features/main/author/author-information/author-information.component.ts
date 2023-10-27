@@ -1,8 +1,11 @@
-import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {User} from "../../../../core/types/user.type";
 import {FollowService} from "../../../../core/services/follow.service";
 import {MessageService} from "primeng/api";
 import {ActivatedRoute} from "@angular/router";
+import {UserService} from "../../../../core/services/user.service";
+import {AuthService} from "../../../../core/services/auth.service";
+import {Subject, takeUntil} from "rxjs";
 
 @Component({
   selector: 'main-author-information',
@@ -10,37 +13,49 @@ import {ActivatedRoute} from "@angular/router";
   styleUrls: ['./author-information.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class AuthorInformationComponent implements OnInit{
+export class AuthorInformationComponent implements OnInit,OnDestroy{
   @Input("author") author:User
   @Input("userName") userName:string
   isFollow:boolean = false
-  currentUser:User | null
-
   isLoading:boolean = false
 
   protected readonly Number = Number;
-  constructor(private _router:ActivatedRoute,private followService:FollowService,private messageService:MessageService) {
+
+  destroy$ = new Subject<void>()
+  constructor(
+      private _router:ActivatedRoute,
+      private followService:FollowService,
+      private messageService:MessageService,
+      private authService:AuthService
+  ) {
 
   }
 
   ngOnInit() {
-    this.followService.checkFollowed(this.userName).subscribe({
+    this.followService.checkFollowed(this.userName)
+        .pipe(
+            takeUntil(this.destroy$)
+        ).subscribe({
       next:(response) =>{
         this.isFollow = response.data
       },
       error:(error) =>{
-        this.messageService.add({
-          severity:"error",
-          detail:error,
-          summary:"Lỗi"
-        })
+        this.isFollow = false
       }
     })
   }
 
   onFollow(id:number){
+    if(this.authService.getCurrentUser() === null){
+      this.messageService.add({
+        severity:"error",
+        detail:"Vui lòng đăng nhập",
+        summary:"Lỗi"
+      })
+      return;
+    }
     this.isLoading = true
-    this.followService.follow(id).subscribe({
+    this.followService.follow(id).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response) =>{
         this.messageService.add({
           severity:"success",
@@ -51,7 +66,6 @@ export class AuthorInformationComponent implements OnInit{
         this.isLoading = false
       },
       error:(error) =>{
-        console.log(error)
         this.messageService.add({
           severity:"error",
           detail:error,
@@ -63,8 +77,16 @@ export class AuthorInformationComponent implements OnInit{
   }
 
   onUnFollow(id:number){
+    if(this.authService.getCurrentUser() === null){
+      this.messageService.add({
+        severity:"error",
+        detail:"Vui lòng đăng nhập",
+        summary:"Lỗi"
+      })
+      return;
+    }
      this.isLoading = true
-    this.followService.unFollow(id).subscribe({
+    this.followService.unFollow(id).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response) =>{
         this.messageService.add({
           severity:"success",
@@ -84,5 +106,10 @@ export class AuthorInformationComponent implements OnInit{
         this.isLoading = false
       }
     })
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next()
+    this.destroy$.complete()
   }
 }

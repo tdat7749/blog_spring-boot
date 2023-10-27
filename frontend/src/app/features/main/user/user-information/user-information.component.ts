@@ -1,27 +1,25 @@
 import {
-  AfterViewInit,
   Component,
-  EventEmitter,
+  EventEmitter, OnDestroy,
   OnInit,
   Output,
   ViewChild,
   ViewEncapsulation,
-  ViewRef
 } from '@angular/core';
 import {AuthService} from "../../../../core/services/auth.service";
 import {FileStorageService} from "../../../../core/services/file-storage.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Avatar} from "primeng/avatar";
-import {FileBeforeUploadEvent, FileSelectEvent, FileUpload, UploadEvent} from "primeng/fileupload";
+import {FileUpload} from "primeng/fileupload";
 import {ChangeInformation, User} from "../../../../core/types/user.type";
 import {MessageService} from "primeng/api";
-import {concatMap} from "rxjs";
+import {concatMap, Subject, takeUntil} from "rxjs";
 import {UserService} from "../../../../core/services/user.service";
 import {noWhiteSpaceValidator} from "../../../../shared/validators/no-white-space.validator";
-import {HttpClient} from "@angular/common/http";
-import {ActivatedRoute} from "@angular/router";
 import {SidebarComponent} from "../sidebar/sidebar.component";
 import {MAX_FILE, MIME_TYPES} from "../../../../shared/commons/shared";
+import {LoadingService} from "../../../../core/services/loading.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'main-user-information',
@@ -29,7 +27,7 @@ import {MAX_FILE, MIME_TYPES} from "../../../../shared/commons/shared";
   styleUrls: ['./user-information.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class UserInformationComponent implements OnInit{
+export class UserInformationComponent implements OnInit,OnDestroy{
 
   isLoading:boolean = false
 
@@ -45,6 +43,8 @@ export class UserInformationComponent implements OnInit{
   @ViewChild("fileUpload") fileUpload: FileUpload
   @ViewChild("userSidebar") userSidebar: SidebarComponent
 
+  destroy$ = new Subject<void>()
+
   @Output() currentPath = new EventEmitter<string>()
 
   constructor(
@@ -52,55 +52,88 @@ export class UserInformationComponent implements OnInit{
       private fb:FormBuilder,
       private messageService:MessageService,
       private userService:UserService,
-      private authService:AuthService
+      private authService:AuthService,
+      public loadingService:LoadingService,
+      private router:Router
   ) {
 
   }
   ngOnInit() {
-
-
-    this.currentUser = this.authService.getCurrentUser() as User
-    this.avatarValueChange = this.currentUser.avatar
-
     this.changeInformationForm = this.fb.group({
       firstName:[
-          this.currentUser.firstName,
-          Validators.compose([
-              Validators.required,
-            Validators.minLength(1),
-            Validators.maxLength(60),
-              noWhiteSpaceValidator()
-          ])
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(60),
+          noWhiteSpaceValidator()
+        ])
       ],
       lastName:[
-          this.currentUser.lastName,
-          Validators.compose([
-            Validators.required,
-            Validators.minLength(1),
-            Validators.maxLength(70),
-            noWhiteSpaceValidator()
-          ])
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(70),
+          noWhiteSpaceValidator()
+        ])
+      ],
+      summary:[
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(700),
+          noWhiteSpaceValidator()
+        ])
       ],
       email:[
         {
-          value: this.currentUser.email,
+          value: '',
           disabled: true
         }
       ],
       role:[
         {
-          value: this.currentUser.role,
+          value: '',
           disabled: true
         }
       ],
       userName:[
         {
-          value: this.currentUser.userName,
+          value: '',
           disabled: true
         }
       ]
     })
 
+    this.loadingService.startLoading()
+
+    this.authService.getMe()
+        .pipe(
+            takeUntil(this.destroy$)
+        ).subscribe({
+      next:(response) => {
+        this.currentUser = response.data
+        this.loadingService.stopLoading()
+        this.avatarValueChange = this.currentUser.avatar
+
+        this.changeInformationForm.get("summary")?.setValue(response.data.summary)
+        this.changeInformationForm.get("firstName")?.setValue(response.data.firstName)
+        this.changeInformationForm.get("lastName")?.setValue(response.data.lastName)
+        this.changeInformationForm.get("email")?.setValue(response.data.email)
+        this.changeInformationForm.get("role")?.setValue(response.data.role)
+        this.changeInformationForm.get("userName")?.setValue(response.data.userName)
+      },
+      error:(error) =>{
+        this.loadingService.stopLoading()
+        this.messageService.add({
+          severity:"error",
+          detail:error,
+          summary:"Lỗi"
+        })
+        this.router.navigate(["/"])
+      }
+    })
   }
 
   onChangeAvatarFormVisible(){
@@ -125,7 +158,6 @@ export class UserInformationComponent implements OnInit{
       })
       return;
     }
-    console.log(file)
     this.avatarValueChange = file?.objectURL.changingThisBreaksApplicationSecurity
     this.fileUploadValue = file
   }
@@ -147,7 +179,7 @@ export class UserInformationComponent implements OnInit{
         concatMap(response =>{
           return this.userService.changeAvatar(response.data);
         })
-    ).subscribe({
+    ).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response) =>{
         this.messageService.add({
           severity: "success",
@@ -176,11 +208,11 @@ export class UserInformationComponent implements OnInit{
     if(this.changeInformationForm.valid){
       const data:ChangeInformation = {
         firstName: this.changeInformationForm.get("firstName")?.value,
-        lastName: this.changeInformationForm.get("lastName")?.value
+        lastName: this.changeInformationForm.get("lastName")?.value,
+        summary:this.changeInformationForm.get("summary")?.value
       }
-      console.log(data)
       this.isLoading = true
-      this.userService.changeInformation(data).subscribe({
+      this.userService.changeInformation(data).pipe(takeUntil(this.destroy$)).subscribe({
         next:(response) =>{
           this.messageService.add({
             severity: "success",
@@ -206,5 +238,10 @@ export class UserInformationComponent implements OnInit{
         summary:"Lỗi"
       })
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next()
+    this.destroy$.complete()
   }
 }

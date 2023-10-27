@@ -1,8 +1,8 @@
-import {Component, OnInit, ViewEncapsulation} from "@angular/core";
+import {Component, OnDestroy, OnInit, ViewEncapsulation} from "@angular/core";
 import {AuthService} from "../../../core/services/auth.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {VerifyEmail} from "../../../core/types/auth.type";
-import {map} from "rxjs";
+import {map, Subject, takeUntil} from "rxjs";
 
 @Component({
     selector:"main-verify-account",
@@ -10,7 +10,9 @@ import {map} from "rxjs";
     encapsulation: ViewEncapsulation.None
 })
 
-export class VerifyEmailComponent implements OnInit{
+export class VerifyEmailComponent implements OnInit,OnDestroy{
+
+    destroy$ = new Subject<void>()
 
     email:string
     code:string
@@ -24,10 +26,10 @@ export class VerifyEmailComponent implements OnInit{
     ngOnInit() {
         this.errorMessage = null
         this.successMessage = null
-        this._router.queryParams.subscribe(params =>{
+        this._router.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params =>{
             this.email = params?.['email']
             this.code = params?.['code']
-        }).unsubscribe()
+        })
 
         if(this.email === undefined || this.code === undefined){
             this.router.navigate(['/'])
@@ -38,7 +40,7 @@ export class VerifyEmailComponent implements OnInit{
             code: this.code
         }
         this.isLoading = true
-        this.authService.verifyEmail(dataVerify).subscribe({
+        this.authService.verifyEmail(dataVerify).pipe(takeUntil(this.destroy$)).subscribe({
             next:(response) =>{
                 this.isLoading = false
                 this.successMessage = response.message
@@ -48,5 +50,10 @@ export class VerifyEmailComponent implements OnInit{
                 this.errorMessage = response
             })
         })
+    }
+
+    ngOnDestroy() {
+        this.destroy$.next()
+        this.destroy$.complete()
     }
 }

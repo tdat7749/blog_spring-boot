@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {SeriesService} from "../../../../core/services/series.service";
 import {noWhiteSpaceValidator} from "../../../../shared/validators/no-white-space.validator";
@@ -6,6 +6,8 @@ import {CreateSeries} from "../../../../core/types/series.type";
 import slugify from "slugify";
 import {MessageService} from "primeng/api";
 import {Router} from "@angular/router";
+import {Subject, takeUntil} from "rxjs";
+import {capitalizeFirstLetter} from "../../../../shared/commons/shared";
 
 @Component({
   selector: 'main-create-series',
@@ -13,11 +15,14 @@ import {Router} from "@angular/router";
   styleUrls: ['./create-series.component.css'],
   encapsulation:ViewEncapsulation.None
 })
-export class CreateSeriesComponent implements OnInit{
+export class CreateSeriesComponent implements OnInit,OnDestroy{
 
   isLoading:boolean = false
 
   createSeriesForm:FormGroup
+
+  destroy$ = new Subject<void>()
+
   constructor(private router:Router,private fb:FormBuilder,private seriesService:SeriesService,private message:MessageService) {
   }
 
@@ -46,11 +51,11 @@ export class CreateSeriesComponent implements OnInit{
 
     const data:CreateSeries = {
       content: formValue.content,
-      title: formValue.title,
+      title: capitalizeFirstLetter(formValue.title),
       slug: slugify(formValue.title.toLowerCase())
     }
     this.isLoading = true
-    this.seriesService.createSeries(data).subscribe({
+    this.seriesService.createSeries(data).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response) =>{
         this.message.add({
           severity:"success",
@@ -69,5 +74,10 @@ export class CreateSeriesComponent implements OnInit{
         this.isLoading = false
       }
     })
+  }
+
+  ngOnDestroy() {
+      this.destroy$.next()
+      this.destroy$.complete()
   }
 }

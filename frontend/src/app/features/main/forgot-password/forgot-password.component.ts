@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import {UserService} from "../../../core/services/user.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ForgotPassword} from "../../../core/types/user.type";
@@ -6,19 +6,22 @@ import {MessageService} from "primeng/api";
 import {ActivatedRoute, Router} from "@angular/router";
 import {passwordsMatch} from "../../../shared/validators/password-smatch.validator";
 import {noWhiteSpaceValidator} from "../../../shared/validators/no-white-space.validator";
+import {Subject, takeUntil} from "rxjs";
 
 @Component({
     selector:"main-forgot-password",
     templateUrl:"./forgot-password.component.html"
 })
 
-export class ForgotPasswordComponent implements OnInit{
+export class ForgotPasswordComponent implements OnInit,OnDestroy{
 
     forgotPasswordForm: FormGroup
     isLoading: boolean = false
 
     email:string | undefined
     code:string | undefined
+
+    destroy$ = new Subject<void>()
 
     constructor(
         private userService:UserService,
@@ -31,7 +34,7 @@ export class ForgotPasswordComponent implements OnInit{
     }
 
     ngOnInit() {
-        this._router.queryParams.subscribe(params =>{
+        this._router.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params =>{
             this.email = params?.["email"]
             this.code = params?.["code"]
         })
@@ -73,7 +76,7 @@ export class ForgotPasswordComponent implements OnInit{
             code: this.code,
             email: this.email
         }
-        this.userService.forgotPassword(data).subscribe({
+        this.userService.forgotPassword(data).pipe(takeUntil(this.destroy$)).subscribe({
             next:(response) =>{
                 this.messageService.add({
                     severity: "success",
@@ -92,5 +95,10 @@ export class ForgotPasswordComponent implements OnInit{
                 this.isLoading = false
             })
         })
+    }
+
+    ngOnDestroy() {
+        this.destroy$.next()
+        this.destroy$.complete()
     }
 }
