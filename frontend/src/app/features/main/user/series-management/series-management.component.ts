@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {SeriesService} from "../../../../core/services/series.service";
-import {MessageService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 import {Series} from "../../../../core/types/series.type";
 import {LoadingService} from "../../../../core/services/loading.service";
 import {Subject, takeUntil} from "rxjs";
@@ -22,7 +22,8 @@ export class SeriesManagementComponent implements OnInit,OnDestroy{
   constructor(
       private seriesService:SeriesService,
       private messageService:MessageService,
-      public loadingService:LoadingService
+      public loadingService:LoadingService,
+      public confirmService:ConfirmationService
   ) {
 
   }
@@ -49,22 +50,34 @@ export class SeriesManagementComponent implements OnInit,OnDestroy{
 
   }
 
-  onDeleteSeries(id:number){
-    this.seriesService.deleteSeries(id).pipe(takeUntil(this.destroy$)).subscribe({
-      next:(response) =>{
-        this.messageService.add({
-          severity:"success",
-          detail:response.message,
-          summary:"Thành Công"
+  onDeleteSeries(id:number,event:Event){
+    this.confirmService.confirm({
+      target:event.target as EventTarget,
+      message:"Bạn có chắc chắn muốn xóa series này ?",
+      header:"Xóa Series",
+      icon:"pi pi-exclamation-triangle",
+      accept:() => {
+        this.isLoading = true
+        this.seriesService.deleteSeries(id).pipe(takeUntil(this.destroy$)).subscribe({
+          next:(response) =>{
+            this.messageService.add({
+              severity:"success",
+              detail:response.message,
+              summary:"Thành Công"
+            })
+            this.listSeries = this.listSeries.filter((item:Series) => item.id !== id)
+          },
+          error:(error) => {
+            this.messageService.add({
+              severity:"error",
+              detail:error,
+              summary:"Lỗi"
+            })
+          }
         })
-        this.listSeries = this.listSeries.filter((item:Series) => item.id !== id)
       },
-      error:(error) => {
-        this.messageService.add({
-          severity:"error",
-          detail:error,
-          summary:"Lỗi"
-        })
+      reject:() => {
+        this.messageService.add({ severity: 'info', summary: 'Thông Báo', detail: 'Bạn đã hủy việc xóa series' });
       }
     })
   }

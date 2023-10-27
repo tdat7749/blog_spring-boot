@@ -1,52 +1,78 @@
-<div class="tw-p-[2rem] tw-space-y-[1rem] tw-h-auto tw-w-full">
-        <h1 class="tw-text-2xl tw-text-gray-900 tw-text-center tw-mb-4">QUẢN LÝ BÀI VIẾT</h1>
-        <div class="tw-flex-col tw-space-y-[2rem] md:tw-flex lg:tw-justify-between">
-            <span class="p-input-icon-left">
-                <i class="pi pi-search"></i>
-                <input type="text" pInputText (input)="onChangeSearch($event)" />
-            </span>
-            <div><p-button icon="pi pi-plus" label="Thêm Mới Bài Viết" routerLink="tao-bai-viet"></p-button></div>
-        </div>
+<div class="tw-p-[2rem] tw-space-y-[1rem] tw-h-auto tw-max-w-full">
+    <h1 class="tw-text-2xl tw-text-gray-900 tw-text-center tw-mb-4">QUẢN LÝ BÀI VIẾT</h1>
+    <div class="tw-flex-col tw-space-y-[2rem] md:tw-flex lg:tw-justify-between">
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input type="text" pInputText (input)="onChangeSearch($event)" />
+        </span>
+        <div><p-button icon="pi pi-plus" label="Thêm Mới Bài Viết" routerLink="tao-bai-viet"></p-button></div>
+    </div>
 
-        <ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
-            <main-loading></main-loading>
-        </ng-template>
-        <ng-template #loaded>
-            <div class="tw-space-y-[1rem]">
-                <h2 *ngIf="listPost.length < 1; else hasPost" class="tw-text-center tw-text-xl">KHÔNG CÓ BÀI VIẾT NÀO</h2>
-                <ng-template #hasPost>
-                        <p-table  [value]="listPost" [loading]="isLoading">
-                            <ng-template pTemplate="header" let-columns>
-                                <tr>
-                                    <th>ID</th>
-                                    <th >Bài Viết</th>
-                                    <th >Trạng Thái</th>
-                                    <th >Tag</th>
-                                    <th >Lượt Xem</th>
-                                    <th >Lượt Thích</th>
-                                    <th >Lượt Bình Luận</th>
-                                    <th >Thao Tác</th>
-                                    <th >Chi Tiết</th>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-post let-columns="columns">
-                                <tr>
-                                    <td>{{post.id}}</td>
-                                    <td>{{post.title}}</td>
-                                    <td><p-tag [rounded]="true" severity="{{post.published ? 'success' : 'danger'}}" value="{{post.published ? 'Đang hoạt động' : 'Ngưng hoạt động'}}"></p-tag></td>
-                                    <td><ul class="tw-list-none tw-p-0 tw-space-x-[0.1rem] tw-space-y-[0.1rem]">
-                                        <p-tag *ngFor="let tag of post.tags" [rounded]="true" severity="primary" value="{{tag.title}}"></p-tag>
-                                    </ul></td>
-                                    <td>{{post.totalLike}}</td>
-                                    <td>{{post.totalView}}</td>
-                                    <td>{{post.totalComment}}</td>
-                                    <td class="tw-cursor-pointer" routerLink="sua-bai-viet/{{post.slug}}">SỬA</td>
-                                    <td>XEM</td>
-                                </tr>
-                            </ng-template>
-                        </p-table>
-                    <p-paginator (onPageChange)="onChangePageIndex($event)" [first]=0 [rows]=10 [totalRecords]=totalPage*10></p-paginator>
-                </ng-template>
-            </div>
-        </ng-template>
- </div>
+    <ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
+        <main-loading></main-loading>
+    </ng-template>
+    <ng-template #loaded>
+        <div class="tw-space-y-[1rem]">
+            <h2 *ngIf="listPost.length < 1; else hasPost" class="tw-text-center tw-text-xl">KHÔNG CÓ BÀI VIẾT NÀO</h2>
+            <ng-template #hasPost>
+                <div class="tw-flex tw-flex-col">
+                <div class="tw-overflow-x-auto">
+                    <div class="tw-min-w-full tw-inline-block tw-align-middle">
+                <div class="tw-overflow-hidden tw-shadow-md sm:tw-rounded-lg">
+                    <table
+                        class="tw-min-w-full tw-text-sm tw-text-left tw-text-gray-500 dark:tw-text-gray-400">
+                        <thead
+                            class="tw-text-xs tw-text-gray-700 tw-uppercase tw-bg-gray-50 dark:tw-bg-gray-700 dark:tw-text-gray-400">
+                            <tr>
+                                <th scope="col" class="tw-text-center tw-px-6 tw-py-3">ID</th>
+                                <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Bài Viết</th>
+                                <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Trạng Thái</th>
+                                <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Tag</th>
+                                <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Lượt Thích</th>
+                                <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Lượt Xem</th>
+                                <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Lượt Bình Luận</th>
+                                <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let post of listPost"
+                                class="tw-bg-white tw-border-b dark:tw-bg-gray-800 dark:tw-border-gray-700 hover:tw-bg-gray-50 dark:tw-hover:bg-gray-600">
+                                <th scope="row"
+                                    class=" tw-whitespace-nowrap tw-px-6 tw-py-4 tw-font-medium tw-text-gray-900 dark:tw-text-white">
+                                    {{post.id}}
+                                </th>
+                                <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">
+                                    {{post.title}}
+                                </td>
+                                <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">
+                                    <p-tag [rounded]="true" severity="{{post.published ? 'success' : 'danger'}}"
+                                        value="{{post.published ? 'Đang hoạt động' : 'Ngưng hoạt động'}}"></p-tag>
+                                </td>
+                                <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">
+                                    <ul class="tw-list-none tw-p-0 tw-space-x-[0.5rem] tw-space-y-[0.1rem]">
+                                        <p-tag *ngFor="let tag of post.tags" [rounded]="true" severity="primary"
+                                            value="{{tag.title}}"></p-tag>
+                                    </ul>
+                                </td>
+                                <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">{{post.totalLike}}</td>
+                                <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">{{post.totalView}}</td>
+                                <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">{{post.totalComment}}</td>
+                                <td class="tw-cursor-pointer tw-whitespace-nowrap tw-px-6 tw-py-4 tw-flex tw-space-x-[0.5rem]">
+                                    <p-button routerLink="sua-bai-viet/{{post.slug}}" icon="pi pi-pencil" label="Cập Nhật"></p-button>
+                                    <p-confirmPopup>
+                                    </p-confirmPopup>
+                                    <p-button styleClass="p-button-danger" (click)="onDeletePost(post.id,$event)" [loading]="isLoading"  icon="pi pi-times" label="Xóa"></p-button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                    </div>
+                </div>
+                </div>
+            </ng-template>
+        </div>
+    </ng-template>
+    <p-paginator (onPageChange)="onChangePageIndex($event)" [first]=0 [rows]=10
+                 [totalRecords]=totalPage*10></p-paginator>
+</div>

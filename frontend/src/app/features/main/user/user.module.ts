@@ -28,6 +28,9 @@ import {InputTextareaModule} from "primeng/inputtextarea";
 import {KeyFilterModule} from "primeng/keyfilter";
 import {SharedModule} from "../../../shared/components/shared.module";
 import { NotificationsComponent } from './notifications/notifications.component';
+import {MenuModule} from "primeng/menu";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ConfirmPopupModule} from "primeng/confirmpopup";
 
 @NgModule({
     declarations:[
@@ -62,7 +65,10 @@ import { NotificationsComponent } from './notifications/notifications.component'
         EditorModule,
         InputTextareaModule,
         KeyFilterModule,
-        SharedModule
+        SharedModule,
+        MenuModule,
+        ConfirmDialogModule,
+        ConfirmPopupModule
     ]
 })
 

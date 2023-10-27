@@ -1,21 +1,35 @@
-main-post-detail{
-    min-height:100vh;
+main-post-detail {
+    min-height: 100vh;
 }
 
-#main > p > img{
-    width:100%
+#main>p>img {
+    width: 100%
 }
 
-#main > img{
-    width:100%
+#main>img {
+    width: 100%
 }
 
-#main > h1{
-    font-size:30px
+#main>h1 {
+    font-size: 30px
 }
 
-#main > h2{
-    font-size:25px
+#main>h2 {
+    font-size: 25px
+}
+
+#main>.ql-align-right {
+    text-align: right;
+}
+
+#main>.ql-align-center {
+    text-align: center;
+}
+
+#main>.ql-syntax {
+    background-color: #23241f;
+    color: #f8f8f2;
+    overflow: visible;
 }
 
 /*ul {*/

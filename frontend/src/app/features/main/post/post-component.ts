@@ -1,59 +1,57 @@
-import {Component, OnDestroy, OnInit, ViewEncapsulation} from "@angular/core";
-import {combineLatest, debounceTime, distinctUntilChanged, Observable, Subject, switchMap, takeUntil, tap} from "rxjs";
-import {SortBy} from "../../../core/types/api-response.type";
-import {Series} from "../../../core/types/series.type";
-import {SeriesService} from "../../../core/services/series.service";
-import {MessageService} from "primeng/api";
-import {LoadingService} from "../../../core/services/loading.service";
-import {PaginationService} from "../../../core/services/pagination.service";
-import {PostList} from "../../../core/types/post.type";
-import {PostService} from "../../../core/services/post.service";
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
+import { combineLatest, debounceTime, distinctUntilChanged, Observable, Subject, switchMap, takeUntil, tap } from "rxjs";
+import { SortBy } from "../../../core/types/api-response.type";
+import { MessageService } from "primeng/api";
+import { LoadingService } from "../../../core/services/loading.service";
+import { PaginationService } from "../../../core/services/pagination.service";
+import { PostList } from "../../../core/types/post.type";
+import { PostService } from "../../../core/services/post.service";
 
 @Component({
-    selector:'main-post',
-    templateUrl:'./post.component.html',
+    selector: 'main-post',
+    templateUrl: './post.component.html',
     encapsulation: ViewEncapsulation.None
 })
 
-export class PostComponent implements OnInit,OnDestroy{
-    search$:Observable<[number,string,SortBy]>
+export class PostComponent implements OnInit, OnDestroy {
+    search$: Observable<[number, string, SortBy]>
 
-    totalPage:number
-    listPost:PostList[]
+    totalPage: number
+    listPost: PostList[]
 
     destroy$ = new Subject<void>()
 
     constructor(
-        private postService:PostService,
-        private messageService:MessageService,
-        public loadingService:LoadingService,
-        private paginationService:PaginationService
-    ){
+        private postService: PostService,
+        private messageService: MessageService,
+        public loadingService: LoadingService,
+        private paginationService: PaginationService
+    ) {
 
     }
 
-    ngOnInit(){
+    ngOnInit() {
         this.search$ = combineLatest([
             this.paginationService.pageIndex$,
             this.paginationService.keyword$,
             this.paginationService.sortBy$
-        ])
+        ]).pipe(takeUntil(this.destroy$))
 
         this.search$.pipe(
             takeUntil(this.destroy$),
             tap(() => this.loadingService.startLoading()),
             debounceTime(700),
             distinctUntilChanged(),
-            switchMap(([pageIndex,keyword,sortBy]) => {
-                return this.postService.getAllPost(keyword,pageIndex,sortBy)
+            switchMap(([pageIndex, keyword, sortBy]) => {
+                return this.postService.getAllPost(keyword, pageIndex, sortBy)
             })
         ).subscribe({
-            next:(response) =>{
+            next: (response) => {
                 this.totalPage = response.data.totalPage
                 this.listPost = response.data.data
                 this.loadingService.stopLoading()
             },
-            error:(error) => {
+            error: (error) => {
                 this.messageService.add({
                     severity: "error",
                     detail: error,
@@ -64,15 +62,16 @@ export class PostComponent implements OnInit,OnDestroy{
         })
     }
 
-    onChangeSearch(event:any){
+    onChangeSearch(event: any) {
         this.paginationService.updateKeyword(event.target.value)
     }
 
-    onChangePageIndex(event: any){
+    onChangePageIndex(event: any) {
         this.paginationService.updatePageIndex(event.page)
     }
 
     ngOnDestroy() {
+        this.paginationService.onDestroy()
         this.destroy$.next()
         this.destroy$.complete()
     }

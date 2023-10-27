@@ -43,8 +43,7 @@ public class FollowServiceImpl implements FollowService {
             UserRepository userRepository,
             NotificationService notificationService,
             UserNotificationService userNotificationService,
-            WebSocketService webSocketService
-    ){
+            WebSocketService webSocketService) {
         this.followRepository = followRepository;
         this.userRepository = userRepository;
         this.notificationService = notificationService;
@@ -56,12 +55,12 @@ public class FollowServiceImpl implements FollowService {
     @Transactional
     public SuccessResponse<Boolean> follow(int followingId, User userPrincipal) throws JsonProcessingException {
         var userFound = userRepository.findById(followingId).orElse(null);
-        if(userFound == null){
+        if (userFound == null) {
             throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
         }
 
-        var isFollowed = followRepository.findByFollowersAndFollowing(userPrincipal,userFound).orElse(null);
-        if(isFollowed != null){
+        var isFollowed = followRepository.findByFollowersAndFollowing(userPrincipal, userFound).orElse(null);
+        if (isFollowed != null) {
             throw new FollowedException(FollowConstants.FOLLOWED);
         }
 
@@ -72,14 +71,13 @@ public class FollowServiceImpl implements FollowService {
         follow.setUpdatedAt(new Date());
 
         var save = followRepository.save(follow);
-        if(save == null){
+        if (save == null) {
             throw new FollowException(FollowConstants.FOLLOW_FAILED);
         }
 
-
         // sau khi khởi tạo follow thành công thì tạo ra 1 thông báo
         CreateNotificationDTO notification = new CreateNotificationDTO();
-        notification.setLink("/tac-gia/"+ userPrincipal.getUsername());
+        notification.setLink("/tac-gia/" + userPrincipal.getUsername());
         notification.setMessage("Người dùng @" + userPrincipal.getUsername() + " vừa theo dõi bạn");
 
         var newNotification = notificationService.createNotification(notification);
@@ -87,7 +85,7 @@ public class FollowServiceImpl implements FollowService {
         // sau đó nối thông báo với user
         List<User> users = new ArrayList<>();
         users.add(userFound);
-        userNotificationService.createUserNotification(users,newNotification);
+        userNotificationService.createUserNotification(users, newNotification);
 
         // Tạo ra 1 notification view model và gửi tới client
         NotificationVm notificationVm = new NotificationVm();
@@ -95,38 +93,39 @@ public class FollowServiceImpl implements FollowService {
         notificationVm.setLink(newNotification.getLink());
         notificationVm.setMessage(newNotification.getMessage());
         notificationVm.setRead(false);
+        notificationVm.setCreatedAt(newNotification.getCreatedAt().toString());
 
-        webSocketService.sendNotificationToClient(userFound.getUsername(),notificationVm);
+        webSocketService.sendNotificationToClient(userFound.getUsername(), notificationVm);
 
-        return new SuccessResponse<>(FollowConstants.FOLLOW_SUCCESS,true);
+        return new SuccessResponse<>(FollowConstants.FOLLOW_SUCCESS, true);
     }
 
     @Override
     public SuccessResponse<Boolean> unFollow(int followingId, User userPrincipal) {
         var userFound = userRepository.findById(followingId).orElse(null);
-        if(userFound == null){
+        if (userFound == null) {
             throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
         }
 
-        var isFollowed = followRepository.findByFollowersAndFollowing(userPrincipal,userFound).orElse(null);
-        if(isFollowed == null){
+        var isFollowed = followRepository.findByFollowersAndFollowing(userPrincipal, userFound).orElse(null);
+        if (isFollowed == null) {
             throw new NotYetFollowed(FollowConstants.NOT_YET_FOLLOWED);
         }
 
         followRepository.delete(isFollowed);
-        return new SuccessResponse<>(FollowConstants.UNFOLLOW_SUCCESS,true);
+        return new SuccessResponse<>(FollowConstants.UNFOLLOW_SUCCESS, true);
     }
 
     @Override
     public SuccessResponse<Boolean> checkFollowed(String userName, User userPrincipal) {
         var userFound = userRepository.findByUserName(userName).orElse(null);
-        if(userFound == null){
+        if (userFound == null) {
             throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
         }
 
-        var isFollow = followRepository.existsByFollowersAndFollowing(userPrincipal,userFound);
+        var isFollow = followRepository.existsByFollowersAndFollowing(userPrincipal, userFound);
 
-        return new SuccessResponse<>("Thành Công",isFollow);
+        return new SuccessResponse<>("Thành Công", isFollow);
 
     }
 }

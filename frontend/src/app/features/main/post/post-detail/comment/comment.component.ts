@@ -65,7 +65,7 @@ export class CommentComponent implements OnInit, OnDestroy {
         this.search$ = combineLatest([
             this.paginationService.pageIndex$,
             this.paginationService.sortBy$
-        ])
+        ]).pipe(takeUntil(this.destroy$))
         this.search$.pipe(
             takeUntil(this.destroy$),
             retry(2),
@@ -74,6 +74,7 @@ export class CommentComponent implements OnInit, OnDestroy {
             })
         ).subscribe({
             next: (response) => {
+                console.log(response)
                 this.listComment = response.data.data.map((item: Comment) => {
                     return {
                         ...item,
@@ -88,6 +89,8 @@ export class CommentComponent implements OnInit, OnDestroy {
                     }
                 })
                 this.totalPage = response.data.totalPage
+                console.log(this.listComment)
+                console.log(response.data.data)
             },
             error: (error) => {
                 this.messageService.add({
@@ -270,6 +273,7 @@ export class CommentComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.paginationService.onDestroy()
         this.destroy$.next()
         this.destroy$.complete()
     }

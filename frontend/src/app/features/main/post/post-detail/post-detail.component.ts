@@ -1,17 +1,12 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { PostService } from "../../../../core/services/post.service";
-import { Post } from "../../../../core/types/post.type";
+import { Post, TOC } from "../../../../core/types/post.type";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MessageService } from "primeng/api";
 import { forkJoin, Subject, takeUntil } from "rxjs";
 import { LoadingService } from "../../../../core/services/loading.service";
 import { AuthService } from "../../../../core/services/auth.service";
-
-interface TOC {
-  title: string,
-  tag: string,
-  id: string
-}
+import { generateTOC } from 'src/app/shared/commons/generate-toc';
 
 @Component({
   selector: 'main-post-detail',
@@ -69,7 +64,7 @@ export class PostDetailComponent implements OnInit, OnDestroy, AfterViewInit {
       next: (response) => {
         this.post = response.postResponse.data
         this.isLiked = response.checkLikedResponse.data
-        this.toc = this.generateTOC(response.postResponse.data.content)
+        this.toc = generateTOC(response.postResponse.data.content)
         this.loadingService.stopLoading()
       },
       error: (error) => {
@@ -100,23 +95,6 @@ export class PostDetailComponent implements OnInit, OnDestroy, AfterViewInit {
     return serializer.serializeToString(doc);
   }
 
-  generateTOC(content: string): TOC[] {
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(content, "text/html")
-
-    const headings = doc.body.querySelectorAll("h1,h2,h3")
-    let result: TOC[] = []
-
-    headings.forEach((item) => {
-      result.push({
-        tag: item.tagName,
-        id: item.getAttribute("id") || "",
-        title: item.textContent as string
-      })
-    })
-
-    return result
-  }
   ngAfterViewInit() {
     this.timeOut = setTimeout(() => {
       this.postService.plusView(this.slug)

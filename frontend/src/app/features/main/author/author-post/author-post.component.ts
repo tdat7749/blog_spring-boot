@@ -1,11 +1,11 @@
-import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
-import {combineLatest, debounceTime, distinctUntilChanged, Observable, Subject, switchMap, takeUntil, tap} from "rxjs";
-import {SortBy} from "../../../../core/types/api-response.type";
-import {PostList} from "../../../../core/types/post.type";
-import {ActivatedRoute, Router} from "@angular/router";
-import {PostService} from "../../../../core/services/post.service";
-import {MessageService} from "primeng/api";
-import {PaginationService} from "../../../../core/services/pagination.service";
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { combineLatest, debounceTime, distinctUntilChanged, Observable, Subject, switchMap, takeUntil, tap } from "rxjs";
+import { SortBy } from "../../../../core/types/api-response.type";
+import { PostList } from "../../../../core/types/post.type";
+import { ActivatedRoute, Router } from "@angular/router";
+import { PostService } from "../../../../core/services/post.service";
+import { MessageService } from "primeng/api";
+import { PaginationService } from "../../../../core/services/pagination.service";
 
 @Component({
   selector: 'main-author-post',
@@ -13,27 +13,26 @@ import {PaginationService} from "../../../../core/services/pagination.service";
   styleUrls: ['./author-post.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class AuthorPostComponent implements OnInit,OnDestroy{
-  isLoading:boolean = false
+export class AuthorPostComponent implements OnInit, OnDestroy {
+  isLoading: boolean = false
 
-  userName:string
+  userName: string
 
-  totalPage:number
-  search$:Observable<[number,string,SortBy]>
+  totalPage: number
+  search$: Observable<[number, string, SortBy]>
 
-  listPost:PostList[] = []
+  listPost: PostList[] = []
 
-  isGetLoading:boolean = false
+  isGetLoading: boolean = false
 
   destroy$ = new Subject<void>()
 
   constructor(
-      private _router:ActivatedRoute,
-      private postService:PostService,
-      private messageService:MessageService,
-      private paginationService:PaginationService,
+    private _router: ActivatedRoute,
+    private postService: PostService,
+    private messageService: MessageService,
+    private paginationService: PaginationService,
   ) {
-
   }
 
   ngOnInit() {
@@ -45,42 +44,43 @@ export class AuthorPostComponent implements OnInit,OnDestroy{
       this.paginationService.pageIndex$,
       this.paginationService.keyword$,
       this.paginationService.sortBy$
-    ])
+    ]).pipe(takeUntil(this.destroy$))
 
     this.search$.pipe(
-        takeUntil(this.destroy$),
-        tap(() => this.isGetLoading = true),
-        debounceTime(700),
-        distinctUntilChanged(),
-        switchMap(([pageIndex,keyword,sortBy]) => {
-          return this.postService.getAllPostOfAuthorByUserName(keyword,this.userName,pageIndex,sortBy)
-        })
+      tap(() => this.isGetLoading = true),
+      debounceTime(700),
+      distinctUntilChanged(),
+      switchMap(([pageIndex, keyword, sortBy]) => {
+        console.log(pageIndex, keyword, sortBy)
+        return this.postService.getAllPostOfAuthorByUserName(keyword, this.userName, pageIndex, sortBy)
+      })
     ).subscribe({
-      next:(response) => {
+      next: (response) => {
         this.listPost = response.data.data
         this.totalPage = response.data.totalPage
         this.isGetLoading = false
       },
-      error:(error) => {
+      error: (error) => {
         this.messageService.add({
-          severity:"error",
-          detail:error,
-          summary:"Lỗi"
+          severity: "error",
+          detail: error,
+          summary: "Lỗi"
         })
         this.isGetLoading = false
       }
     })
   }
 
-  onChangeSearch(event:any){
+  onChangeSearch(event: any) {
     this.paginationService.updateKeyword(event.target.value)
   }
 
-  onChangePageIndex(event: any){
+  onChangePageIndex(event: any) {
     this.paginationService.updatePageIndex(event.page)
   }
 
   ngOnDestroy() {
+    this.paginationService.onDestroy()
     this.destroy$.next()
     this.destroy$.complete()
   }

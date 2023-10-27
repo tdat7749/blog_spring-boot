@@ -5,8 +5,10 @@
 <ng-template #loaded>
     <div class="tw-min-height-[100vh] tw-space-y-[2rem]">
         <div class="tw-flex tw-space-x-[1rem] tw-items-center tw-justify-center">
-            <p class="tw-text-gray-500"><i class="tw-text-gray-900 pi pi-calendar"></i> {{series.createdAt | date:'short'}}</p>
-            <p class="tw-text-gray-500"><i class="tw-text-gray-900 pi pi-calendar"></i> {{series.updatedAt | date:'short'}}</p>
+            <p class="tw-text-gray-500"><i class="tw-text-gray-900 pi pi-calendar"></i> {{series.createdAt |
+                date:'short'}}</p>
+            <p class="tw-text-gray-500"><i class="tw-text-gray-900 pi pi-calendar"></i> {{series.updatedAt |
+                date:'short'}}</p>
         </div>
         <h1 class="tw-text-center tw-text-4xl tw-text-gray-900">{{series.title}}</h1>
 
@@ -17,9 +19,9 @@
                 <div *ngIf="series.posts.length < 1">
                     <h2 class="tw-text-2xl tw-text-center">Series này chưa có bài viết nào</h2>
                 </div>
-                <div *ngIf="series.posts.length > 1">
+                <div *ngIf="series.posts.length > 0">
                     <h2 class="tw-text-xl tw-mb-[1.5rem]">Nội dung</h2>
-                    <main-list-post-card  [listPost]="series.posts"></main-list-post-card>
+                    <main-list-post-card [listPost]="series.posts"></main-list-post-card>
                 </div>
             </div>
         </div>

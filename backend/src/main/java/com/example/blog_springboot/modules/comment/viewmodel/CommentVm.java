@@ -1,6 +1,5 @@
 package com.example.blog_springboot.modules.comment.viewmodel;
 
-import com.example.blog_springboot.modules.user.viewmodel.UserDetailVm;
 import com.example.blog_springboot.modules.user.viewmodel.UserVm;
 
 import java.util.ArrayList;
@@ -10,11 +9,10 @@ public class CommentVm {
     private int id;
     private int parentId;
     private String content;
-    private int postId;
     private UserVm user;
+    private String createdAt;
 
     private List<CommentVm> childComment = new ArrayList<>();
-
 
     public int getId() {
         return id;
@@ -40,14 +38,6 @@ public class CommentVm {
         this.content = content;
     }
 
-    public int getPostId() {
-        return postId;
-    }
-
-    public void setPostId(int postId) {
-        this.postId = postId;
-    }
-
     public UserVm getUser() {
         return user;
     }
@@ -62,5 +52,13 @@ public class CommentVm {
 
     public void setChildComment(List<CommentVm> childComment) {
         this.childComment = childComment;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
     }
 }

@@ -29,7 +29,8 @@ public class Utilities {
 
     private static CommentService commentService;
     private static LikePostService likePostService;
-    public Utilities(CommentService commentService,LikePostService likePostService){
+
+    public Utilities(CommentService commentService, LikePostService likePostService) {
         Utilities.commentService = commentService;
         Utilities.likePostService = likePostService;
     }
@@ -41,7 +42,7 @@ public class Utilities {
         return String.format("%06d", number);
     }
 
-    public static UserDetailVm getUserDetailVm(User user){
+    public static UserDetailVm getUserDetailVm(User user) {
         UserDetailVm userVm = new UserDetailVm();
         userVm.setAvatar(user.getAvatar());
         userVm.setFirstName(user.getFirstName());
@@ -56,7 +57,7 @@ public class Utilities {
         return userVm;
     }
 
-    public static UserVm getUserVm(User user){
+    public static UserVm getUserVm(User user) {
         UserVm userVm = new UserVm();
         userVm.setAvatar(user.getAvatar());
         userVm.setFirstName(user.getFirstName());
@@ -67,7 +68,7 @@ public class Utilities {
         return userVm;
     }
 
-    public static TagVm getTagVm(Tag tag){
+    public static TagVm getTagVm(Tag tag) {
         TagVm tagVm = new TagVm();
         tagVm.setId(tag.getId());
         tagVm.setTitle(tag.getTitle());
@@ -78,7 +79,7 @@ public class Utilities {
         return tagVm;
     }
 
-    public static SeriesVm getSeriesVm(Series series){
+    public static SeriesVm getSeriesVm(Series series) {
         var seriesVm = new SeriesVm();
         seriesVm.setId(series.getId());
         seriesVm.setTitle(series.getTitle());
@@ -90,7 +91,7 @@ public class Utilities {
         return seriesVm;
     }
 
-    public static SeriesListPostVm getSeriesListPostVm(Series series){
+    public static SeriesListPostVm getSeriesListPostVm(Series series) {
         var seriesListPostVm = new SeriesListPostVm();
         seriesListPostVm.setId(series.getId());
         seriesListPostVm.setTitle(series.getTitle());
@@ -105,7 +106,7 @@ public class Utilities {
         return seriesListPostVm;
     }
 
-    public static PostVm transferPostVm(Post post){
+    public static PostVm transferPostVm(Post post) {
         var postVm = new PostVm();
 
         postVm.setId(post.getId());
@@ -119,14 +120,14 @@ public class Utilities {
         postVm.setIsPublished(post.isPublished());
         postVm.setTotalComment(commentService.countCommentPost(post));
         postVm.setTotalLike(likePostService.countLikePost(post));
-        if(post.getSeries() != null){
+        if (post.getSeries() != null) {
             postVm.setSeries(getSeriesVm(post.getSeries()));
         }
 
         return postVm;
     }
 
-    public static PostListVm transferPostListVm(Post post){
+    public static PostListVm transferPostListVm(Post post) {
         var postListVm = new PostListVm();
 
         postListVm.setId(post.getId());
@@ -140,14 +141,14 @@ public class Utilities {
         postListVm.setPublished(post.isPublished());
         postListVm.setTotalComment(commentService.countCommentPost(post));
         postListVm.setTotalLike(likePostService.countLikePost(post));
-        if(post.getSeries() != null){
+        if (post.getSeries() != null) {
             postListVm.setSeries(getSeriesVm(post.getSeries()));
         }
 
         return postListVm;
     }
 
-    public static PostVm getPostVm(Post post){
+    public static PostVm getPostVm(Post post) {
         var postVm = transferPostVm(post);
         postVm.setContent(post.getContent());
 
@@ -164,8 +165,7 @@ public class Utilities {
         return postVm;
     }
 
-
-    public static PostListVm getPostListVm(Post post){
+    public static PostListVm getPostListVm(Post post) {
         var postListVm = transferPostListVm(post);
 
         // set userVm
@@ -180,7 +180,7 @@ public class Utilities {
         return postListVm;
     }
 
-    public static NotificationVm getNotificationVm(UserNotification un){
+    public static NotificationVm getNotificationVm(UserNotification un) {
         NotificationVm vm = new NotificationVm();
         vm.setRead(un.isRead());
         vm.setMessage(un.getNotification().getMessage());
@@ -191,22 +191,21 @@ public class Utilities {
         return vm;
     }
 
-    public static RpNotificationVm getRpNotificationVm(int unRead,List<NotificationVm> list){
+    public static RpNotificationVm getRpNotificationVm(int unRead, List<NotificationVm> list) {
         RpNotificationVm vm = new RpNotificationVm();
         vm.setUnSeenNotification(unRead);
         vm.setNotifications(list);
         return vm;
     }
 
-    public static CommentVm getCommentVM(Comment cm){
+    public static CommentVm getCommentVM(Comment cm) {
         var commentVm = new CommentVm();
         commentVm.setId(cm.getId());
         commentVm.setContent(cm.getContent());
-        if (cm.getParentId() != null){
+        commentVm.setCreatedAt(cm.getCreatedAt().toString());
+        if (cm.getParentId() != null) {
             commentVm.setParentId(cm.getParentId());
         }
-        commentVm.setPostId(cm.getPost().getId());
-
         var userVm = Utilities.getUserVm(cm.getUser());
 
         commentVm.setUser(userVm);

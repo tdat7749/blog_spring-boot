@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {SeriesService} from "../../../../core/services/series.service";
-import {MessageService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 import {noWhiteSpaceValidator} from "../../../../shared/validators/no-white-space.validator";
 import {CreateSeries, Series, SeriesListPost, UpdateSeries} from "../../../../core/types/series.type";
 import slugify from "slugify";
@@ -41,8 +41,9 @@ export class EditSeriesComponent implements OnInit,OnDestroy{
       private fb:FormBuilder,
       private seriesService:SeriesService,
       private postService:PostService,
-      private message:MessageService,
-      public loadingService:LoadingService
+      private messageService:MessageService,
+      public loadingService:LoadingService,
+      private confirmService:ConfirmationService
   ) {
   }
 
@@ -93,7 +94,7 @@ export class EditSeriesComponent implements OnInit,OnDestroy{
         this.loadingService.stopLoading()
       },
       error:(error) =>{
-        this.message.add({
+        this.messageService.add({
           severity:"error",
           detail:error,
           summary:"Lỗi"
@@ -115,7 +116,7 @@ export class EditSeriesComponent implements OnInit,OnDestroy{
     this.isLoading = true
     this.seriesService.updateSeries(data,this.series.id).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response) =>{
-        this.message.add({
+        this.messageService.add({
           severity:"success",
           detail:response.message,
           summary:"Thành Công"
@@ -124,7 +125,7 @@ export class EditSeriesComponent implements OnInit,OnDestroy{
         this.router.navigate(["/nguoi-dung/quan-ly-series"])
       },
       error:(error) =>{
-        this.message.add({
+        this.messageService.add({
           severity:"error",
           detail:error,
           summary:"Lỗi"
@@ -134,25 +135,36 @@ export class EditSeriesComponent implements OnInit,OnDestroy{
     })
   }
 
-  onRemovePost(seriesId:number,postId:number){
-    this.isLoading = true
-    this.postService.removePostToSeries(postId,seriesId).pipe(takeUntil(this.destroy$)).subscribe({
-      next:(response) => {
-        this.isLoading = false
-        this.message.add({
-          severity:"success",
-          detail:response.message,
-          summary:"Thành Công"
+  onRemovePost(seriesId:number,postId:number,event:Event){
+    this.confirmService.confirm({
+      target:event.target as EventTarget,
+      message:"Bạn có chắc chắn muốn gỡ bài viết này ?",
+      header:"Gỡ Bài Viết",
+      icon:"pi pi-exclamation-triangle",
+      accept:() => {
+        this.isLoading = true
+        this.postService.removePostToSeries(postId,seriesId).pipe(takeUntil(this.destroy$)).subscribe({
+          next:(response) => {
+            this.isLoading = false
+            this.messageService.add({
+              severity:"success",
+              detail:response.message,
+              summary:"Thành Công"
+            })
+            this.listPost = this.listPost.filter((item:PostList) => item.id !== postId)
+          },
+          error:(error) =>{
+            this.messageService.add({
+              severity:"error",
+              detail:error,
+              summary:"Lỗi"
+            })
+            this.isLoading = false
+          }
         })
-        this.listPost = this.listPost.filter((item:PostList) => item.id !== postId)
       },
-      error:(error) =>{
-        this.message.add({
-          severity:"error",
-          detail:error,
-          summary:"Lỗi"
-        })
-        this.isLoading = false
+      reject:() => {
+        this.messageService.add({ severity: 'info', summary: 'Thông Báo', detail: 'Bạn đã hủy việc xóa bài viết' });
       }
     })
   }
@@ -162,7 +174,7 @@ export class EditSeriesComponent implements OnInit,OnDestroy{
     this.isLoading = true
     this.postService.addPostToSeries(postSelected.id,seriesId).pipe(takeUntil(this.destroy$)).subscribe({
       next:(response) =>{
-        this.message.add({
+        this.messageService.add({
           severity:"success",
           detail:response.message,
           summary:"Thành Công"
@@ -174,7 +186,7 @@ export class EditSeriesComponent implements OnInit,OnDestroy{
         this.addPostToSeriesVisible = false
       },
       error:(error) =>{
-        this.message.add({
+        this.messageService.add({
           severity:"error",
           detail:error,
           summary:"Lỗi"
@@ -193,7 +205,7 @@ export class EditSeriesComponent implements OnInit,OnDestroy{
         this.addPostToSeriesVisible = true
       },
       error:(error) =>{
-        this.message.add({
+        this.messageService.add({
           severity:"error",
           detail:error,
           summary:"Lỗi"
