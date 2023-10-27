@@ -16,6 +16,9 @@ import {OverlayPanelModule} from "primeng/overlaypanel";
 import {HomeComponent} from "../../../features/main/home/home.component";
 import {PostModule} from "../../../features/main/post/post.module";
 import {SharedModule} from "../../../shared/components/shared.module";
+import {TagModule} from "primeng/tag";
+import {BadgeModule} from "primeng/badge";
+import {DialogModule} from "primeng/dialog";
 
 @NgModule({
   declarations:[
@@ -39,6 +42,9 @@ import {SharedModule} from "../../../shared/components/shared.module";
         OverlayPanelModule,
         RouterOutlet,
         SharedModule,
+        TagModule,
+        BadgeModule,
+        DialogModule,
     ],
 
 })

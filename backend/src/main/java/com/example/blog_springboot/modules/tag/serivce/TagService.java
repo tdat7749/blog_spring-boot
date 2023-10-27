@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 public interface TagService {
-    SuccessResponse<TagVm> getTagById(int id);
+    SuccessResponse<TagVm> getTagBySlug(String slug);
 
     SuccessResponse<List<TagVm>> getAllTag();
 

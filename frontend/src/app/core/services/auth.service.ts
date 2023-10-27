@@ -9,6 +9,7 @@ import {Token} from "../types/token.type";
 import {CookieService} from "ngx-cookie-service";
 import {MessageService} from "primeng/api";
 import {handleError} from "../../shared/commons/handle-error-http";
+import {UserService} from "./user.service";
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,7 @@ export class AuthService {
   userState: User | null = null;
 
   userState$: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null)
-  constructor(private http: HttpClient,private cookieService: CookieService,private messageService:MessageService) {
+  constructor(private http: HttpClient,private userService:UserService,private cookieService: CookieService,private messageService:MessageService) {
 
   }
 
@@ -65,10 +66,9 @@ export class AuthService {
     )
   }
 
-  logout():void {
-    this.cookieService.delete("refreshToken")
-    this.cookieService.delete("accessToken")
-    this.setCurrentUser(null)
-    this.userState$.next(null)
+  logout():Observable<ApiResponse<boolean>>{
+      return this.http.post<ApiResponse<boolean>>(`${environment.apiUrl}/auth/logout`,{}).pipe(
+        catchError(handleError)
+      )
   }
 }

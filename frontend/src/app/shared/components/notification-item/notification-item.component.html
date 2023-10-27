@@ -1,0 +1,4 @@
+<div (click)="this.readNotification(item)" routerLink="{{item.link}}" class="tw-p-2">
+    <p>{{item.message}}</p>
+    <p>Thời gian: <span class="tw-font-semibold">{{item.createdAt | date:"short"}}</span></p>
+</div>

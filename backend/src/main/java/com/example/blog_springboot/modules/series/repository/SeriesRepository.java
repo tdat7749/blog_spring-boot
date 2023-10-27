@@ -20,7 +20,7 @@ public interface SeriesRepository extends JpaRepository<Series,Integer> {
 
     Optional<Series> findBySlug(String slug);
 
-    @Query("SELECT DISTINCT s FROM Series s LEFT JOIN s.posts p  WHERE s.slug = :slug AND p.isPublished = true")
+    @Query("SELECT s FROM Series s WHERE s.slug = :slug")
 
     Optional<Series> getSeriesDetail(@Param("slug") String slug);
 

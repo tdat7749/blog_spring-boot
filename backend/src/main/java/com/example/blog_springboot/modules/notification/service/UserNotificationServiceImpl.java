@@ -11,6 +11,7 @@ import com.example.blog_springboot.modules.notification.model.Notification;
 import com.example.blog_springboot.modules.notification.model.UserNotification;
 import com.example.blog_springboot.modules.notification.repository.UserNotificationRepository;
 import com.example.blog_springboot.modules.notification.viewmodel.NotificationVm;
+import com.example.blog_springboot.modules.notification.viewmodel.RpNotificationVm;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.utils.Utilities;
 import org.springframework.data.domain.PageRequest;
@@ -50,25 +51,30 @@ public class UserNotificationServiceImpl implements UserNotificationService{
     }
 
     @Override
-    public SuccessResponse<List<NotificationVm>> getTop10NotificationCurrentUser(User user) {
+    public SuccessResponse<RpNotificationVm> getTop10NotificationCurrentUser(User user) {
         var listNotification = userNotificationRepository.getTop10NotificationCurrentUser(user, PageRequest.of(0,10));
 
         List<NotificationVm> listNoti = listNotification.stream().map(Utilities::getNotificationVm).toList();
 
-        return new SuccessResponse<>("Thành công",listNoti);
+        int unReadNotification = userNotificationRepository.countUnReadNotification(user);
+        var response = Utilities.getRpNotificationVm(unReadNotification,listNoti);
+
+        return new SuccessResponse<>("Thành công",response);
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<NotificationVm>>> getNotificationCurrentUser(int pageIndex,User user) {
+    public SuccessResponse<PagingResponse<RpNotificationVm>> getNotificationCurrentUser(int pageIndex,User user) {
         Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE);
 
         var pagingResult = userNotificationRepository.getNotificationCurrentUser(user,paging);
 
         List<NotificationVm> listNoti = pagingResult.stream().map(Utilities::getNotificationVm).toList();
 
+        int unReadNotification = userNotificationRepository.countUnReadNotification(user);
+        var response = Utilities.getRpNotificationVm(unReadNotification,listNoti);
 
 
-        return new SuccessResponse<>("Thành công",new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listNoti));
+        return new SuccessResponse<>("Thành công",new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),response));
     }
 
     @Override

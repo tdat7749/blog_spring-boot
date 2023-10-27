@@ -10,6 +10,8 @@ public class UserDetailVm {
     private Boolean isNotLocked;
     private String Role;
 
+    private String summary;
+
     public int getId() {
         return id;
     }
@@ -72,5 +74,13 @@ public class UserDetailVm {
 
     public void setRole(String role) {
         Role = role;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 }

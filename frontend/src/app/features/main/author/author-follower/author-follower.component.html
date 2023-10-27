@@ -1,0 +1,20 @@
+<ng-template [ngIf]="isGetLoading" [ngIfElse]="loaded">
+    <main-loading></main-loading>
+</ng-template>
+
+<ng-template #loaded>
+    <div class="tw-space-y-[2rem]">
+        <ul class="tw-flex tw-flex-wrap tw-space-x-[3rem]" *ngIf="listUser.length > 0">
+            <li routerLink="/tac-gia/{{user.userName}}" class="tw-flex tw-cursor-pointer tw-flex-col tw-justify-center tw-items-center tw-space-y-[1rem]" *ngFor="let user of listUser">
+                <p-avatar shape="circle" size="xlarge" image="{{user.avatar ? user.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}"></p-avatar>
+                <p class="tw-text-gray-900 hover:tw-text-gray-500">@{{user.userName}}</p>
+            </li>
+        </ul>
+        <div *ngIf="listUser.length < 1">
+            <h2 class="tw-text-2xl tw-text-center">Người này không theo dõi ai</h2>
+        </div>
+        <div class="tw-mt-[2rem]">
+            <p-paginator (onPageChange)="onChangePageIndex($event)" [first]=0 [rows]=10 [totalRecords]=totalPage*10></p-paginator>
+        </div>
+    </div>
+</ng-template>

@@ -1,16 +1,19 @@
 import {Injectable} from "@angular/core";
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {catchError, Observable, throwError} from "rxjs";
-import {ApiResponse, PagingResponse} from "../types/api-response.type";
+import {HttpClient} from "@angular/common/http";
+import {BehaviorSubject, catchError, Observable, Subject} from "rxjs";
+import {ApiResponse, PagingResponse, SortBy} from "../types/api-response.type";
 import {environment} from "../../../environments/environment";
 import {ChangeInformation, ChangePassword, ForgotPassword, User} from "../types/user.type";
 import {handleError} from "../../shared/commons/handle-error-http";
+import {Notification, RpNotification} from "../types/noti.type";
 
 @Injectable({
     providedIn:"root"
 })
 
 export class UserService{
+
+    notificationState$: BehaviorSubject<RpNotification | null> = new BehaviorSubject<RpNotification | null>(null)
     constructor(private http:HttpClient) {
     
     }
@@ -51,14 +54,37 @@ export class UserService{
         )
     }
 
-    getListFollowers(id:number):Observable<ApiResponse<PagingResponse<User>>>{
-        return this.http.get<ApiResponse<PagingResponse<User>>>(`${environment.apiUrl}/users/${id}/follower`).pipe(
+    getListFollowing(userName:string,pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<User[]>>>{
+        return this.http.get<ApiResponse<PagingResponse<User[]>>>(`${environment.apiUrl}/users/${userName}/follower?pageIndex=${pageIndex}&sortBy=${sortBy}`).pipe(
+            catchError(handleError)
+        )
+    }
+    getListFollowers(userName:string,pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<User[]>>>{
+        return this.http.get<ApiResponse<PagingResponse<User[]>>>(`${environment.apiUrl}/users/${userName}/following?pageIndex=${pageIndex}&sortBy=${sortBy}`).pipe(
             catchError(handleError)
         )
     }
 
-    getListFollowing(id:number):Observable<ApiResponse<PagingResponse<User>>>{
-        return this.http.get<ApiResponse<PagingResponse<User>>>(`${environment.apiUrl}/users/${id}/following`).pipe(
+    getTop10Notification():Observable<ApiResponse<RpNotification>>{
+        return this.http.get<ApiResponse<RpNotification>>(`${environment.apiUrl}/users/top10-noti`).pipe(
+            catchError(handleError)
+        )
+    }
+
+    getAllNotification(pageIndex:number):Observable<ApiResponse<PagingResponse<RpNotification>>>{
+        return this.http.get<ApiResponse<PagingResponse<RpNotification>>>(`${environment.apiUrl}/users/notifications?pageIndex=${pageIndex}`).pipe(
+            catchError(handleError)
+        )
+    }
+
+    readNotification(id:number):Observable<ApiResponse<boolean>>{
+        return this.http.patch<ApiResponse<boolean>>(`${environment.apiUrl}/users/${id}/notifications`,{}).pipe(
+            catchError(handleError)
+        )
+    }
+
+    readAllNotification():Observable<ApiResponse<boolean>>{
+        return this.http.patch<ApiResponse<boolean>>(`${environment.apiUrl}/users/notifications`,{}).pipe(
             catchError(handleError)
         )
     }

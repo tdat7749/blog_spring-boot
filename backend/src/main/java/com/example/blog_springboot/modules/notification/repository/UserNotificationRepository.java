@@ -21,7 +21,8 @@ public interface UserNotificationRepository extends JpaRepository<UserNotificati
     @Query("select un from UserNotification as un left join un.notification as n where un.user = :user order by n.createdAt desc")
     Page<UserNotification> getNotificationCurrentUser(User user, Pageable pageable);
 
-    boolean existsByUserAndId(User user,int id);
+    @Query("select count(un.id) from UserNotification as un where un.user = :user and un.isRead = false")
+    int countUnReadNotification(User user);
 
     Optional<UserNotification> findByUserAndId(User user,int id);
 

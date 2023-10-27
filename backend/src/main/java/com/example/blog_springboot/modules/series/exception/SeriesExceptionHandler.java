@@ -38,4 +38,10 @@ public class SeriesExceptionHandler {
     public ErrorResponse notAuthorSeriesExceptionHandler(NotAuthorSeriesException ex){
         return new ErrorResponse(HttpStatus.FORBIDDEN,403,ex.getMessage());
     }
+
+    @ExceptionHandler(SeriesNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse seriesNotFoundExceptionHandler(SeriesNotFoundException ex){
+        return new ErrorResponse(HttpStatus.NOT_FOUND,404,ex.getMessage());
+    }
 }

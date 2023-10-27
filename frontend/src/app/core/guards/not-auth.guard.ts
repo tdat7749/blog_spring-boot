@@ -1,16 +1,16 @@
-import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree} from "@angular/router";
+import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot} from "@angular/router";
 import {inject} from "@angular/core";
-import {CookieService} from "ngx-cookie-service";
 import {AuthService} from "../services/auth.service";
-import {map} from "rxjs";
+import {LocalStorageService} from "../services/local-storage.service";
 
 
 export const notAuthGuard:CanActivateFn = (route:ActivatedRouteSnapshot, state:RouterStateSnapshot) => {
     const router = inject(Router)
-    const cookieService = inject(CookieService)
+    const localStorageService = inject(LocalStorageService)
     const authService = inject(AuthService)
 
-    const accessToken = cookieService.get("accessToken")
+    const accessToken = localStorageService.get("accessToken")
+
     if(accessToken){
         router.navigate(["/"])
         return false

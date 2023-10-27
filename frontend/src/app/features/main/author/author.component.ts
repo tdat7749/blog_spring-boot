@@ -1,99 +1,96 @@
-import {Component, Input, OnInit, ViewEncapsulation} from "@angular/core";
-import {User} from "../../../core/types/user.type";
-import {UserService} from "../../../core/services/user.service";
-import {combineLatest, debounceTime, distinctUntilChanged, forkJoin, Observable, switchMap, tap} from "rxjs";
-import {PostService} from "../../../core/services/post.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {MessageService} from "primeng/api";
-import {PaginationService} from "../../../core/services/pagination.service";
-import {SortBy} from "../../../core/types/api-response.type";
-import {PostList} from "../../../core/types/post.type";
+import { Component, Input, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
+import { User } from "../../../core/types/user.type";
+import { UserService } from "../../../core/services/user.service";
+import {
+    combineLatest,
+    debounceTime,
+    distinctUntilChanged,
+    forkJoin,
+    Observable,
+    Subject,
+    switchMap,
+    takeUntil,
+    tap
+} from "rxjs";
+import { PostService } from "../../../core/services/post.service";
+import { ActivatedRoute, Router } from "@angular/router";
+import { MenuItem, MessageService } from "primeng/api";
+import { PaginationService } from "../../../core/services/pagination.service";
+import { SortBy } from "../../../core/types/api-response.type";
+import { PostList } from "../../../core/types/post.type";
+import { LoadingService } from "../../../core/services/loading.service";
 
 @Component({
-    selector:"main-author",
-    templateUrl:"./author.component.html",
+    selector: "main-author",
+    templateUrl: "./author.component.html",
     encapsulation: ViewEncapsulation.None,
-    styleUrls:["./author.component.css"]
+    styleUrls: ["./author.component.css"]
 })
 
-export class AuthorComponent implements OnInit{
-    isLoading:boolean = false
+export class AuthorComponent implements OnInit, OnDestroy {
+    isLoading: boolean = false
 
-    author:User
-    userName:string
+    author: User
+    userName: string
 
-    totalPage:number
-    search$:Observable<[number,string,SortBy]>
+    items: MenuItem[] | undefined;
 
-    listPost:PostList[] = []
+    activeItem: MenuItem | undefined;
+
+    destroy$ = new Subject<void>()
 
     constructor(
-        private _router:ActivatedRoute,
-        private userService:UserService,
-        private postService:PostService,
-        private messageService:MessageService,
-        private paginationService:PaginationService,
-        private router:Router
+        private _router: ActivatedRoute,
+        private userService: UserService,
+        private messageService: MessageService,
+        private router: Router,
+        public loadingService: LoadingService
     ) {
-
+        this._router.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+            this.userName = params.get("userName") as string
+            this.ngOnInit()
+        })
     }
 
     ngOnInit() {
-        this._router.paramMap.subscribe(params => {
-            this.userName = params.get("userName") as string
-        })
-
-        this.userService.getAuthor(this.userName).subscribe({
-            next:(response) =>{
-                this.author = response.data
-                this.isLoading = false
-            },
-            error:(error) => {
-                this.messageService.add({
-                    severity:"error",
-                    detail:error,
-                    summary:"Lỗi"
-                })
-                this.router.navigate(['/'])
-                return;
-            }
-        })
-
-        this.search$ = combineLatest([
-            this.paginationService.pageIndex$,
-            this.paginationService.keyword$,
-            this.paginationService.sortBy$
-        ])
-
-        this.search$.pipe(
-            tap(() => this.isLoading = true),
-            debounceTime(700),
-            distinctUntilChanged(),
-            switchMap(([pageIndex,keyword,sortBy]) => {
-                return this.postService.getAllPostOfAuthorByUserName(keyword,this.userName,pageIndex,sortBy)
+        this.loadingService.startLoading()
+        this.userService.getAuthor(this.userName)
+            .pipe(
+                takeUntil(this.destroy$)
+            )
+            .subscribe({
+                next: (response) => {
+                    this.author = response.data
+                    this.loadingService.stopLoading()
+                },
+                error: (error) => {
+                    this.messageService.add({
+                        severity: "error",
+                        detail: error,
+                        summary: "Lỗi"
+                    })
+                    this.loadingService.stopLoading()
+                    this.router.navigate(['/'])
+                    return;
+                }
             })
-        ).subscribe({
-            next:(response) => {
-                this.listPost = response.data.data
-                this.totalPage = response.data.totalPage
-                console.log(response.data.data)
-            },
-            error:(error) => {
-                this.messageService.add({
-                    severity:"error",
-                    detail:error,
-                    summary:"Lỗi"
-                })
-            }
-        })
+
+        this.items = [
+            { label: 'Bài Viết', icon: 'pi pi-fw pi-book', routerLink: `/tac-gia/${this.userName}` },
+            { label: 'Đang Theo Dõi', icon: 'pi pi-fw pi-user-plus', routerLink: "dang-theo-doi" },
+            { label: 'Người Theo Dõi', icon: 'pi pi-fw pi-users', routerLink: "nguoi-theo-doi" }
+        ];
+
+        this.activeItem = this.items[0];
     }
 
-    onChangeSearch(event:any){
-        this.paginationService.updateKeyword(event.target.value)
+    onActiveItemChange(event: MenuItem) {
+        this.activeItem = undefined
+        this.activeItem = event;
     }
 
-    onChangePageIndex(event: any){
-        this.paginationService.updatePageIndex(event.page)
+    ngOnDestroy() {
+        this.destroy$.next()
+        this.destroy$.complete()
     }
-
 }

@@ -1,0 +1,8 @@
+.p-tabmenu-nav{
+    font-size: 1.3rem;
+    margin-bottom: 3rem;
+}
+
+.p-tabmenu-nav > * + *{
+    margin-left:1rem
+}

@@ -16,10 +16,13 @@ public interface UserRepository extends JpaRepository<User,Integer> {
     Optional<User> findByEmail(String email);
     Optional<User> findByEmailAndCode(String email,String code);
 
-    @Query("Select u.following from User as u where u.id = :userId")
-    Page<User> getAllUserFollowing(@Param("userId") int userId, Pageable pageable);
 
-    @Query("Select u.followers from User as u where u.id = :userId")
-    Page<User> getAllUserFollower(@Param("userId") int userId, Pageable pageable);
+    @Query("Select u from User as u where u.userName = :userName and u.isVerify = true")
+    Optional<User> findAuthorByUserName(String userName);
+    @Query("Select u.following from User as u where u.userName = :userName")
+    Page<User> getAllUserFollowing(@Param("userName") String userName, Pageable pageable);
+
+    @Query("Select u.followers from User as u where u.userName = :userName")
+    Page<User> getAllUserFollower(@Param("userName") String userName, Pageable pageable);
 
 }

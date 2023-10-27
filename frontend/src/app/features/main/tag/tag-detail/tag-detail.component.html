@@ -1,0 +1,35 @@
+<ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
+    <main-loading></main-loading>
+</ng-template>
+
+<ng-template #loaded>
+    <div class="tw-space-y-[2.5rem]">
+        <div class="tw-flex tw-items-center tw-space-x-[2rem]">
+            <p-avatar label="{{tag.title[0]}}" styleClass="mr-2" size="xlarge"></p-avatar>
+            <h2 class="tw-text-xl tw-truncate tw-... tw-text-semibold tw-w-full tw-text-gray-900">
+                <span> {{tag.title}}</span>
+            </h2>
+        </div>
+        <div>
+            <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input type="text" pInputText  (input)="onChangeSearch($event)"/>
+            </span>
+        </div>
+
+        <ng-template [ngIf]="isGetLoading" [ngIfElse]="get">
+            <main-loading></main-loading>
+        </ng-template>
+        <ng-template #get>
+            <div class="tw-space-y-[1rem]">
+                <div class="tw-mb-[2rem]">
+                    <div *ngIf="listPost.length < 1">
+                        <h2 class="tw-text-2xl tw-text-center tw-text-gray-900">Không có bài viết nào nào</h2>
+                    </div>
+                    <main-list-post-card *ngIf="listPost.length > 0" [listPost]="listPost"></main-list-post-card>
+                </div>
+                <p-paginator (onPageChange)="onChangePageIndex($event)" [first]=0 [rows]=10 [totalRecords]=totalPage*10></p-paginator>
+            </div>
+        </ng-template>
+    </div>
+</ng-template>

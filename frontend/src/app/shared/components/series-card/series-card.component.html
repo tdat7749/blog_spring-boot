@@ -1,0 +1,9 @@
+<div routerLink="/series/{{series.slug}}" class="tw-w-full tw-px-10 tw-py-6 tw-bg-white tw-rounded-lg tw-shadow-md">
+    <div class="tw-flex tw-justify-between tw-items-center">
+        <span class="tw-font-light tw-text-gray-500">{{ series.createdAt | date:'short' }}</span>
+    </div>
+    <div class="tw-mt-2">
+        <a routerLink="/series/{{series.slug}}" class="tw-text-2xl tw-text-gray-900" >{{ series.title }}</a>
+        <p class="tw-mt-2 tw-text-gray-500" [innerHTML]="series.content"></p>
+    </div>
+</div>

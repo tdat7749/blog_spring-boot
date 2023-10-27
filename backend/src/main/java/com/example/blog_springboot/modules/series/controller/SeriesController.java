@@ -10,6 +10,8 @@ import com.example.blog_springboot.modules.series.service.SeriesService;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesListPostVm;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
 import com.example.blog_springboot.modules.user.model.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,69 +25,71 @@ import java.util.List;
 public class SeriesController {
     private final SeriesService seriesService;
 
-    public SeriesController(SeriesService seriesService){
+    public SeriesController(SeriesService seriesService) {
         this.seriesService = seriesService;
     }
 
     @GetMapping("/slug/{slug}/user")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<SeriesListPostVm>> getSeriesDetail(@PathVariable String slug,@AuthenticationPrincipal User user){
-        var result = seriesService.getSeriesDetail(slug,user);
+    public ResponseEntity<SuccessResponse<SeriesListPostVm>> getSeriesDetail(@PathVariable("slug") String slug,
+            @AuthenticationPrincipal User user) {
+        var result = seriesService.getSeriesDetail(slug, user);
 
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/slug/{slug}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<SeriesListPostVm>> getSeriesDetail(@PathVariable String slug){
+    public ResponseEntity<SuccessResponse<SeriesListPostVm>> getSeriesDetail(@PathVariable("slug") String slug) {
         var result = seriesService.getSeriesDetail(slug);
 
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/")
     @ResponseBody
     public ResponseEntity<SuccessResponse<PagingResponse<List<SeriesVm>>>> getAllSeries(
-            @RequestParam(name = "keyword",required = false,defaultValue = "") String keyword,
-            @RequestParam(name = "pageIndex",required = true,defaultValue = "0") Integer pageIndex,
-            @RequestParam(name = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
-    ){
-        var result = seriesService.getAllSeries(keyword,sortBy,pageIndex);
+            @RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
+            @RequestParam(name = "pageIndex", required = true, defaultValue = "0") Integer pageIndex,
+            @RequestParam(name = "sortBy", required = false, defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy) {
+        var result = seriesService.getAllSeries(keyword, sortBy, pageIndex);
 
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/user")
     @ResponseBody
     public ResponseEntity<SuccessResponse<List<SeriesVm>>> getListSeriesByUserPrincipal(
-            @AuthenticationPrincipal User userPrincipal
-    ){
+            @AuthenticationPrincipal User userPrincipal) {
         var result = seriesService.getListSeriesByUserPrincipal(userPrincipal);
 
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping("")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<SeriesVm>> createSeries(@RequestBody @Valid CreateSeriesDTO dto,@AuthenticationPrincipal User userPrincipal){
-        var result = seriesService.createSeries(dto,userPrincipal);
+    public ResponseEntity<SuccessResponse<SeriesVm>> createSeries(@RequestBody @Valid CreateSeriesDTO dto,
+            @AuthenticationPrincipal User userPrincipal) throws JsonProcessingException {
+        var result = seriesService.createSeries(dto, userPrincipal);
 
-        return new ResponseEntity<>(result,HttpStatus.CREATED);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @PutMapping("/{seriesId}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<SeriesVm>> updateSeries(@RequestBody @Valid UpdateSeriesDTO dto,@PathVariable("seriesId") int id,@AuthenticationPrincipal User userPrincipal){
-        var result = seriesService.updateSeries(dto,id,userPrincipal);
+    public ResponseEntity<SuccessResponse<SeriesVm>> updateSeries(@RequestBody @Valid UpdateSeriesDTO dto,
+            @PathVariable("seriesId") int id, @AuthenticationPrincipal User userPrincipal) {
+        var result = seriesService.updateSeries(dto, id, userPrincipal);
 
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> deleteSeries(@PathVariable int id, @AuthenticationPrincipal User userPrincipal){
-        var result = seriesService.deleteSeries(id,userPrincipal);
+    public ResponseEntity<SuccessResponse<Boolean>> deleteSeries(@PathVariable("id") int id,
+            @AuthenticationPrincipal User userPrincipal) {
+        var result = seriesService.deleteSeries(id, userPrincipal);
 
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

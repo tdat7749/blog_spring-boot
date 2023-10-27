@@ -23,9 +23,6 @@ public class Tag {
     @Column(length = 100,nullable = false)
     private String title;
 
-    @Column(length = 1000,nullable = false)
-    private String thumbnail;
-
     @Column(length = 120,nullable = false,unique = true)
     private String slug;
 
@@ -48,10 +45,9 @@ public class Tag {
 
     }
 
-    public Tag(int id, String title, String thumbnail, boolean status, Date createdAt, Date updatedAt,String slug) {
+    public Tag(int id, String title,boolean status, Date createdAt, Date updatedAt,String slug) {
         this.id = id;
         this.title = title;
-        this.thumbnail = thumbnail;
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -72,10 +68,6 @@ public class Tag {
 
     public String getTitle() {
         return title;
-    }
-
-    public String getThumbnail() {
-        return thumbnail;
     }
 
     public boolean isStatus() {
@@ -103,9 +95,6 @@ public class Tag {
         this.title = title;
     }
 
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
-    }
 
     public void setStatus(boolean status) {
         this.status = status;

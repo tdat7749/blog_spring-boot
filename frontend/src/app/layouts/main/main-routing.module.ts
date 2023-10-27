@@ -4,6 +4,7 @@ import {MainLayoutComponent} from "./main-layout/layout/main-layout.component";
 import {MainLayoutModule} from "./main-layout/main-layout.module";
 import {HomeComponent} from "../../features/main/home/home.component";
 import {notAuthGuard} from "../../core/guards/not-auth.guard";
+import {authGuard} from "../../core/guards/auth.guard";
 
 const routes: Routes = [
   {
@@ -15,12 +16,20 @@ const routes: Routes = [
         loadChildren: () => import("../../features/main/post/post.module").then(m => m.PostModule)
       },
       {
+        path:"series",
+        loadChildren: () => import("../../features/main/series/series.module").then(m => m.SeriesModule)
+      },
+      {
+        path:"tags",
+        loadChildren: () => import("../../features/main/tag/tag.module").then(m => m.TagModule)
+      },
+      {
         path:"tac-gia",
         loadChildren: () => import("../../features/main/author/author.module").then(m => m.AuthorModule)
       },
       {
         path:"nguoi-dung",
-        // canActivate:[authGuard],
+        canActivate:[authGuard],
         loadChildren: () => import("../../features/main/user/user.module").then(m => m.UserModule)
       },
       {
