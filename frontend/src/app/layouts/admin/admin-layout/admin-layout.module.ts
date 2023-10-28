@@ -4,6 +4,9 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { AdminLayoutComponent } from './layout/admin-layout.component';
 import {ReactiveFormsModule} from "@angular/forms";
+import { AdminSidebarComponent } from './admin-sidebar/admin-sidebar.component';
+import {PanelMenuModule} from "primeng/panelmenu";
+import {ToastModule} from "primeng/toast";
 
 
 
@@ -11,11 +14,14 @@ import {ReactiveFormsModule} from "@angular/forms";
   declarations: [
     HeaderComponent,
     FooterComponent,
-    AdminLayoutComponent
+    AdminLayoutComponent,
+    AdminSidebarComponent
   ],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule
-  ]
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        PanelMenuModule,
+        ToastModule
+    ]
 })
 export class AdminLayoutModule { }

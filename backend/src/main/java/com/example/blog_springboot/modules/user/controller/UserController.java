@@ -4,7 +4,6 @@ import com.example.blog_springboot.commons.Constants;
 import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.notification.service.UserNotificationService;
-import com.example.blog_springboot.modules.notification.viewmodel.NotificationVm;
 import com.example.blog_springboot.modules.notification.viewmodel.RpNotificationVm;
 import com.example.blog_springboot.modules.series.service.SeriesService;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
@@ -69,6 +68,18 @@ public class UserController {
             @RequestParam(value = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
             ){
         var result = userService.getListFollowing(sortBy,pageIndex,userName);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<PagingResponse<List<UserDetailVm>>>> getAllUser(
+            @RequestParam(value = "keyword",required = false,defaultValue = "") String keyword,
+            @RequestParam(value = "pageIndex",defaultValue = "0") int pageIndex,
+            @RequestParam(value = "sortBy",required = false,defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy
+            ){
+        var result = userService.getAllUser(sortBy,pageIndex,keyword);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

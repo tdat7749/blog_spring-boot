@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {catchError, Observable} from "rxjs";
 import {ApiResponse, PagingResponse, SortBy} from "../types/api-response.type";
-import {CreatePost, Post, PostList, UpdatePost} from "../types/post.type";
+import {CreatePost, Post, PostList, UpdatePost, UpdatePostStatus} from "../types/post.type";
 import {environment} from "../../../environments/environment";
 import {handleError} from "../../shared/commons/handle-error-http";
 import {User} from "../types/user.type";
@@ -30,6 +30,12 @@ export class PostService{
 
     getAllPostByTag(keyword:string,slug:string,pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<PostList[]>>>{
         return this.http.get<ApiResponse<PagingResponse<PostList[]>>>(`${environment.apiUrl}/posts/${slug}/tags?pageIndex=${pageIndex}&sortBy=${sortBy}&keyword=${keyword}`).pipe(
+            catchError(handleError)
+        )
+    }
+
+    getAllPostPublished(keyword:string,pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<PostList[]>>>{
+        return this.http.get<ApiResponse<PagingResponse<PostList[]>>>(`${environment.apiUrl}/posts/published?pageIndex=${pageIndex}&sortBy=${sortBy}&keyword=${keyword}`).pipe(
             catchError(handleError)
         )
     }
@@ -132,6 +138,12 @@ export class PostService{
 
     plusView(slug:string):Observable<ApiResponse<PostList[]>>{
         return this.http.patch<ApiResponse<PostList[]>>(`${environment.apiUrl}/posts/${slug}/view`,{}).pipe(
+            catchError(handleError)
+        )
+    }
+
+    updateStatus(id:number,data:UpdatePostStatus):Observable<ApiResponse<boolean>>{
+        return this.http.patch<ApiResponse<boolean>>(`${environment.apiUrl}/posts/${id}`,data).pipe(
             catchError(handleError)
         )
     }

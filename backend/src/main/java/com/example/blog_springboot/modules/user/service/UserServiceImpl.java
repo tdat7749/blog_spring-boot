@@ -202,4 +202,18 @@ public class UserServiceImpl implements UserService{
         return new SuccessResponse<>("Thành Công",userDetailVm);
     }
 
+    @Override
+    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getAllUser(String sortBy, int pageIndex,
+            String keyword) {
+         Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, sortBy));
+
+        Page<User> pagingResult = userRepository.getAllUser(keyword, paging);
+
+        List<UserDetailVm> listUserVm = pagingResult.stream().map(Utilities::getUserDetailVm).toList();
+
+        return new SuccessResponse<>("Thành công",
+                new PagingResponse<>(pagingResult.getTotalPages(), (int) pagingResult.getTotalElements(),listUserVm));
+        
+    }
+
 }

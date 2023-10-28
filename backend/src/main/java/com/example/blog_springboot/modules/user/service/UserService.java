@@ -33,5 +33,6 @@ public interface UserService {
 
     public SuccessResponse<UserDetailVm> getAuthor(String userName);
 
+    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getAllUser(String sortBy, int pageIndex, String keyword);
 
 }

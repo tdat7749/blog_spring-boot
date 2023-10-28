@@ -17,7 +17,7 @@ export class PostComponent implements OnInit, OnDestroy {
     search$: Observable<[number, string, SortBy]>
 
     totalPage: number
-    listPost: PostList[]
+    listPost: PostList[] = []
 
     destroy$ = new Subject<void>()
 
@@ -43,12 +43,13 @@ export class PostComponent implements OnInit, OnDestroy {
             debounceTime(700),
             distinctUntilChanged(),
             switchMap(([pageIndex, keyword, sortBy]) => {
-                return this.postService.getAllPost(keyword, pageIndex, sortBy)
+                return this.postService.getAllPostPublished(keyword, pageIndex, sortBy)
             })
         ).subscribe({
             next: (response) => {
                 this.totalPage = response.data.totalPage
                 this.listPost = response.data.data
+                console.log(response)
                 this.loadingService.stopLoading()
             },
             error: (error) => {

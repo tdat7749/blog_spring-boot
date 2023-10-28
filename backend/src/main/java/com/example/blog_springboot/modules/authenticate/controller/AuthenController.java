@@ -17,13 +17,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/api/auth")
 public class AuthenController {
     final private AuthService authService;
-    public AuthenController(AuthService authService){
+
+    public AuthenController(AuthService authService) {
         this.authService = authService;
     }
 
     @PostMapping(value = "/login")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<AuthenVm>> login(@RequestBody @Valid LoginDTO dto){
+    public ResponseEntity<SuccessResponse<AuthenVm>> login(@RequestBody @Valid LoginDTO dto) {
         var result = authService.login(dto);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -31,15 +32,15 @@ public class AuthenController {
 
     @PostMapping(value = "/register")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> register(@RequestBody @Valid RegisterDTO dto){
+    public ResponseEntity<SuccessResponse<Boolean>> register(@RequestBody @Valid RegisterDTO dto) {
         var result = authService.register(dto);
 
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping(value = "/refresh")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<String>> refreshToken(@RequestHeader("Rftoken") String refreshToken){
+    public ResponseEntity<SuccessResponse<String>> refreshToken(@RequestHeader("Rftoken") String refreshToken) {
         var result = authService.refreshToken(refreshToken);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
@@ -47,25 +48,41 @@ public class AuthenController {
 
     @PostMapping(value = "/logout")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> logout(){
+    public ResponseEntity<SuccessResponse<Boolean>> logout() {
         SecurityContextHolder.clearContext();
 
-        return new ResponseEntity<>(new SuccessResponse<Boolean>("Thành công",true),HttpStatus.OK);
+        return new ResponseEntity<>(new SuccessResponse<Boolean>("Thành công", true), HttpStatus.OK);
     }
 
     @PostMapping(value = "/verify")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> verifyAccount(@RequestBody @Valid VerifyDTO dto){
+    public ResponseEntity<SuccessResponse<Boolean>> verifyAccount(@RequestBody @Valid VerifyDTO dto) {
         var result = authService.verifyAccount(dto);
 
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping(value = "/resend")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> resendEmail(@RequestBody @Valid ResendMailDTO dto){
+    public ResponseEntity<SuccessResponse<Boolean>> resendEmail(@RequestBody @Valid ResendMailDTO dto) {
         var result = authService.resendEmail(dto);
 
-        return new ResponseEntity<>(result,HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/{id}/lock")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> lockAccount(@PathVariable("id") int id) {
+        var result = authService.lockAccount(id);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/{id}/unlock")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<Boolean>> unLockAccount(@PathVariable("id") int id) {
+        var result = authService.unLockAccount(id);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
