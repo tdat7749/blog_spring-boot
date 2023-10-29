@@ -30,4 +30,6 @@ public class UserConstants {
     public static final String SEND_MAIL_FORGOT_PASSWORD_FAILED = "Gửi mã xác minh thất bại";
 
     public static final String SEND_MAIL_FORGOT_PASSWORD_SUCCESS = "Đã gửi mã lấy lại tài khoản thành công, vui lòng kiểm tra email của bạn";
+
+    public static final String CANNOT_CHANGE_PERMISSION_BY_YOURSELF = "Không thể tự thay đổi quyền của chính mình";
 }

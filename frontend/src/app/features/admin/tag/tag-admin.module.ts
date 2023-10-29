@@ -1,32 +1,34 @@
 import {NgModule} from "@angular/core";
+import {TagComponent} from "./tag.component";
 import {CommonModule} from "@angular/common";
-import {PostAdminRoutingModule} from "./post-admin-routing.module";
-import {PostComponent} from "./post.component";
-import {TagModule} from "primeng/tag";
+import {TagAdminRoutingModule} from "./tag-admin-routing.module";
 import {ButtonModule} from "primeng/button";
 import {ConfirmPopupModule} from "primeng/confirmpopup";
+import {InputTextModule} from "primeng/inputtext";
 import {PaginatorModule} from "primeng/paginator";
-import {DialogModule} from "primeng/dialog";
 import {SharedModule} from "../../../shared/components/shared.module";
 import {TabMenuModule} from "primeng/tabmenu";
-import {InputTextModule} from "primeng/inputtext";
+import {TagModule} from "primeng/tag";
+import {DialogModule} from "primeng/dialog";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
     declarations:[
-        PostComponent
+        TagComponent
     ],
     imports: [
         CommonModule,
-        PostAdminRoutingModule,
-        TagModule,
+        TagAdminRoutingModule,
         ButtonModule,
         ConfirmPopupModule,
+        InputTextModule,
         PaginatorModule,
-        DialogModule,
         SharedModule,
         TabMenuModule,
-        InputTextModule
+        TagModule,
+        DialogModule,
+        ReactiveFormsModule
     ]
 })
 
-export class PostAdminModule{}
+export class TagAdminModule {}

@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {catchError, Observable} from "rxjs";
-import {ApiResponse} from "../types/api-response.type";
+import {ApiResponse, PagingResponse, SortBy} from "../types/api-response.type";
 import {CreateTag, Tag, UpdateTag} from "../types/tag.type";
 import {environment} from "../../../environments/environment";
 import {handleError} from "../../shared/commons/handle-error-http";
@@ -13,7 +13,13 @@ export class TagService{
     constructor(private http:HttpClient) {
     }
     getAllTag():Observable<ApiResponse<Tag[]>>{
-        return this.http.get<ApiResponse<Tag[]>>(`${environment.apiUrl}/tags/`).pipe(
+        return this.http.get<ApiResponse<Tag[]>>(`${environment.apiUrl}/tags/all`).pipe(
+            catchError(handleError)
+        )
+    }
+
+    getListTag(pageIndex:number,keyword:string,sortBy:SortBy):Observable<ApiResponse<PagingResponse<Tag[]>>>{
+        return this.http.get<ApiResponse<PagingResponse<Tag[]>>>(`${environment.apiUrl}/tags/?pageIndex=${pageIndex}&keyword=${keyword}&sortBy=${sortBy}`).pipe(
             catchError(handleError)
         )
     }

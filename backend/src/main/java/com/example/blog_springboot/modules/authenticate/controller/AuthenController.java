@@ -7,9 +7,12 @@ import com.example.blog_springboot.modules.authenticate.dto.ResendMailDTO;
 import com.example.blog_springboot.modules.authenticate.dto.VerifyDTO;
 import com.example.blog_springboot.modules.authenticate.service.AuthService;
 import com.example.blog_springboot.modules.authenticate.viewmodel.AuthenVm;
+import com.example.blog_springboot.modules.user.model.User;
+
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -72,8 +75,9 @@ public class AuthenController {
 
     @PatchMapping(value = "/{id}/lock")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<Boolean>> lockAccount(@PathVariable("id") int id) {
-        var result = authService.lockAccount(id);
+    public ResponseEntity<SuccessResponse<Boolean>> lockAccount(@PathVariable("id") int id,
+            @AuthenticationPrincipal User user) {
+        var result = authService.lockAccount(id, user);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

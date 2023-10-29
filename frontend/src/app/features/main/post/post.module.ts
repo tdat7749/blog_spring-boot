@@ -15,6 +15,7 @@ import {PaginatorModule} from "primeng/paginator";
 import {PostComponent} from "./post-component";
 import {SharedModule} from "../../../shared/components/shared.module";
 import {DividerModule} from "primeng/divider";
+import {DialogModule} from "primeng/dialog";
 
 @NgModule({
     declarations: [
@@ -33,7 +34,8 @@ import {DividerModule} from "primeng/divider";
         PaginatorModule,
         PostRoutingModule,
         SharedModule,
-        DividerModule
+        DividerModule,
+        DialogModule
     ]
 })
 

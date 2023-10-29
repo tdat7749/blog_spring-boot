@@ -28,16 +28,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
-
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     private final MailService mailService;
 
-    public UserServiceImpl(UserRepository userRepository,PasswordEncoder passwordEncoder,MailService mailService){
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, MailService mailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
@@ -45,32 +44,32 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public SuccessResponse<Boolean> changePassword(ChangePasswordDTO dto, User userPrincipal) {
-        if(!passwordEncoder.matches(dto.getOldPassword(),userPrincipal.getPassword())){
+        if (!passwordEncoder.matches(dto.getOldPassword(), userPrincipal.getPassword())) {
             throw new PasswordIncorrectException(UserConstants.PASSWORD_INCORRECT);
         }
-        if(!dto.getNewPassword().equals(dto.getConfirmPassword())){
+        if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
             throw new PasswordNotMatchException(UserConstants.PASSWORD_NOT_MATCH);
         }
 
         userPrincipal.setPassword(passwordEncoder.encode(dto.getNewPassword()));
 
         var save = userRepository.save(userPrincipal);
-        if(save == null){
+        if (save == null) {
             throw new ChangePasswordException(UserConstants.CHANGE_PASSWORD_FAILED);
         }
 
-        return new SuccessResponse<>(UserConstants.CHANGE_PASSWORD_SUCCESS,true);
+        return new SuccessResponse<>(UserConstants.CHANGE_PASSWORD_SUCCESS, true);
     }
 
     @Override
     public SuccessResponse<String> changeAvatar(String avatar, User userPrincipal) {
         userPrincipal.setAvatar(avatar);
         var save = userRepository.save(userPrincipal);
-        if(save == null){
+        if (save == null) {
             throw new ChangePasswordException(UserConstants.CHANGE_AVATAR_FAILED);
         }
 
-        return new SuccessResponse<>(UserConstants.CHANGE_AVATAR_SUCCESS,save.getAvatar());
+        return new SuccessResponse<>(UserConstants.CHANGE_AVATAR_SUCCESS, save.getAvatar());
     }
 
     @Override
@@ -83,49 +82,53 @@ public class UserServiceImpl implements UserService{
 
         var save = userRepository.save(userPrincipal);
 
-        if(save == null){
+        if (save == null) {
             throw new ChangePasswordException(UserConstants.CHANGE_INFORMATION_FAILED);
         }
 
         var userVm = Utilities.getUserDetailVm(save);
 
-        return new SuccessResponse<>(UserConstants.CHANGE_INFORMATION_SUCCESS,userVm);
+        return new SuccessResponse<>(UserConstants.CHANGE_INFORMATION_SUCCESS, userVm);
 
     }
 
     @Override
     public SuccessResponse<UserDetailVm> getMe(User user) {
-        return new SuccessResponse<>("Thành công",Utilities.getUserDetailVm(user));
+        return new SuccessResponse<>("Thành công", Utilities.getUserDetailVm(user));
     }
 
     @Override
-    public SuccessResponse<Boolean> changePermission(ChangePermissionDTO dto) {
-        if(!Arrays.stream(Role.values()).toList().contains(dto.getRole())){
+    public SuccessResponse<Boolean> changePermission(ChangePermissionDTO dto, User userPrincipal) {
+        if (!Arrays.stream(Role.values()).toList().contains(dto.getRole())) {
             throw new InvalidRoleException(UserConstants.INVALID_ROLE);
         }
         var foundUser = userRepository.findById(dto.getUserId()).orElse(null);
-        if(foundUser == null){
+        if (foundUser == null) {
             throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
+        }
+
+        if (foundUser.getUsername().equals(userPrincipal.getUsername())) {
+            throw new ChangePermissionException(UserConstants.CANNOT_CHANGE_PERMISSION_BY_YOURSELF);
         }
 
         foundUser.setRole(dto.getRole());
 
         var saveUser = userRepository.save(foundUser);
-        if(saveUser == null){
+        if (saveUser == null) {
             throw new ChangePermissionException(UserConstants.CHANGE_PERMISSION_FAILED);
         }
 
-        return new SuccessResponse<>(UserConstants.CHANGE_PERMISSION_SUCCESS,true);
+        return new SuccessResponse<>(UserConstants.CHANGE_PERMISSION_SUCCESS, true);
     }
 
     @Override
     public SuccessResponse<Boolean> forgotPassword(ForgotPasswordDTO dto) {
-        if(!dto.getNewPassword().equals(dto.getConfirmPassword())){
+        if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
             throw new PasswordNotMatchException(UserConstants.PASSWORD_NOT_MATCH);
         }
 
-        var foundUser = userRepository.findByEmailAndCode(dto.getEmail(),dto.getCode()).orElse(null);
-        if(foundUser == null){
+        var foundUser = userRepository.findByEmailAndCode(dto.getEmail(), dto.getCode()).orElse(null);
+        if (foundUser == null) {
             throw new InvalidCodeException(UserConstants.INVALID_CODE);
         }
 
@@ -134,11 +137,11 @@ public class UserServiceImpl implements UserService{
 
         var saveUser = userRepository.save(foundUser);
 
-        if(saveUser == null){
+        if (saveUser == null) {
             throw new ForgotPasswordException(UserConstants.FORGOT_PASSWORD_FAILED);
         }
 
-        return new SuccessResponse<>(UserConstants.FORGOT_PASSWORD_SUCCESS,true);
+        return new SuccessResponse<>(UserConstants.FORGOT_PASSWORD_SUCCESS, true);
 
     }
 
@@ -146,7 +149,7 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public SuccessResponse<Boolean> sendCodeForgotPassword(String email) {
         var foundUser = userRepository.findByEmail(email).orElse(null);
-        if(foundUser == null){
+        if (foundUser == null) {
             throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
         }
 
@@ -155,65 +158,72 @@ public class UserServiceImpl implements UserService{
         foundUser.setCode(code);
 
         var saveUser = userRepository.save(foundUser);
-        if(saveUser == null){
+        if (saveUser == null) {
             throw new SendMailForgotPasswordException(UserConstants.SEND_MAIL_FORGOT_PASSWORD_FAILED);
         }
 
-        mailService.sendMail(email,Constants.SUBJECT_EMAIL_FORGOT_PASSWORD,"Nhấp vào đây để thay đổi mật khẩu của bạn, vui lòng không cung cấp nó cho bất kì ai : " + Constants.PUBLIC_HOST + "/lay-lai-mat-khau" + "?email=" +saveUser.getEmail() + "&code=" + saveUser.getCode());
+        mailService.sendMail(email, Constants.SUBJECT_EMAIL_FORGOT_PASSWORD,
+                "Nhấp vào đây để thay đổi mật khẩu của bạn, vui lòng không cung cấp nó cho bất kì ai : "
+                        + Constants.PUBLIC_HOST + "/lay-lai-mat-khau" + "?email=" + saveUser.getEmail() + "&code="
+                        + saveUser.getCode());
 
-        return new SuccessResponse<>(UserConstants.SEND_MAIL_FORGOT_PASSWORD_SUCCESS,true);
+        return new SuccessResponse<>(UserConstants.SEND_MAIL_FORGOT_PASSWORD_SUCCESS, true);
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowing(String sortBy, int pageIndex, String userName){
+    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowing(String sortBy, int pageIndex,
+            String userName) {
         Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(sortBy));
 
-        Page<User> pagingResult = userRepository.getAllUserFollowing(userName,paging);
+        Page<User> pagingResult = userRepository.getAllUserFollowing(userName, paging);
 
         List<UserDetailVm> listUserVm = pagingResult.getContent().stream().map(Utilities::getUserDetailVm).toList();
 
-        var pagingResponse = new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listUserVm);
+        var pagingResponse = new PagingResponse<>(pagingResult.getTotalPages(), (int) pagingResult.getTotalElements(),
+                listUserVm);
 
-        return new SuccessResponse<>("Thành công",pagingResponse);
+        return new SuccessResponse<>("Thành công", pagingResponse);
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowers(String sortBy, int pageIndex, String userName){
+    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowers(String sortBy, int pageIndex,
+            String userName) {
         Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(sortBy));
 
-        Page<User> pagingResult = userRepository.getAllUserFollower(userName,paging);
+        Page<User> pagingResult = userRepository.getAllUserFollower(userName, paging);
 
         List<UserDetailVm> listUserVm = pagingResult.getContent().stream().map(Utilities::getUserDetailVm).toList();
 
-        var pagingResponse = new PagingResponse<>(pagingResult.getTotalPages(),(int)pagingResult.getTotalElements(),listUserVm);
+        var pagingResponse = new PagingResponse<>(pagingResult.getTotalPages(), (int) pagingResult.getTotalElements(),
+                listUserVm);
 
-        return new SuccessResponse<>("Thành công",pagingResponse);
+        return new SuccessResponse<>("Thành công", pagingResponse);
     }
 
     @Override
     public SuccessResponse<UserDetailVm> getAuthor(String userName) {
         var foundUser = userRepository.findAuthorByUserName(userName).orElse(null);
-        if(foundUser == null){
+        if (foundUser == null) {
             throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
         }
 
         var userDetailVm = Utilities.getUserDetailVm(foundUser);
 
-        return new SuccessResponse<>("Thành Công",userDetailVm);
+        return new SuccessResponse<>("Thành Công", userDetailVm);
     }
 
     @Override
     public SuccessResponse<PagingResponse<List<UserDetailVm>>> getAllUser(String sortBy, int pageIndex,
             String keyword) {
-         Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, sortBy));
+        Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, sortBy));
 
         Page<User> pagingResult = userRepository.getAllUser(keyword, paging);
 
         List<UserDetailVm> listUserVm = pagingResult.stream().map(Utilities::getUserDetailVm).toList();
 
         return new SuccessResponse<>("Thành công",
-                new PagingResponse<>(pagingResult.getTotalPages(), (int) pagingResult.getTotalElements(),listUserVm));
-        
+                new PagingResponse<>(pagingResult.getTotalPages(), (int) pagingResult.getTotalElements(), listUserVm));
+
     }
 
 }

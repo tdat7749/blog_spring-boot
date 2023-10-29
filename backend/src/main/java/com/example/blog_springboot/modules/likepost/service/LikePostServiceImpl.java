@@ -77,28 +77,30 @@ public class LikePostServiceImpl implements LikePostService {
             throw new LikePostException(LikePostConstants.LIKE_POST_FAILED);
         }
 
-        CreateNotificationDTO notification = new CreateNotificationDTO();
-        notification.setLink("/bai-viet/" + foundPost.getSlug());
-        notification.setMessage("Người dùng @" + userPrincipal.getUsername() + " vừa thích bài viết "
-                + foundPost.getTitle() + " của bạn");
+        if (!foundPost.getUser().getUsername().equals(userPrincipal.getUsername())) {
+            CreateNotificationDTO notification = new CreateNotificationDTO();
+            notification.setLink("/bai-viet/" + foundPost.getSlug());
+            notification.setMessage("Người dùng @" + userPrincipal.getUsername() + " vừa thích bài viết "
+                    + foundPost.getTitle() + " của bạn");
 
-        var newNotification = notificationService.createNotification(notification);
+            var newNotification = notificationService.createNotification(notification);
 
-        var foundUserByPost = foundPost.getUser();
-        // sau đó nối thông báo với user
-        List<User> users = new ArrayList<>();
-        users.add(foundUserByPost);
-        userNotificationService.createUserNotification(users, newNotification);
+            var foundUserByPost = foundPost.getUser();
+            // sau đó nối thông báo với user
+            List<User> users = new ArrayList<>();
+            users.add(foundUserByPost);
+            userNotificationService.createUserNotification(users, newNotification);
 
-        // Tạo ra 1 notification view model và gửi tới client
-        NotificationVm notificationVm = new NotificationVm();
-        notificationVm.setId(newNotification.getId());
-        notificationVm.setLink(newNotification.getLink());
-        notificationVm.setMessage(newNotification.getMessage());
-        notificationVm.setRead(false);
-        notificationVm.setCreatedAt(newNotification.getCreatedAt().toString());
+            // Tạo ra 1 notification view model và gửi tới client
+            NotificationVm notificationVm = new NotificationVm();
+            notificationVm.setId(newNotification.getId());
+            notificationVm.setLink(newNotification.getLink());
+            notificationVm.setMessage(newNotification.getMessage());
+            notificationVm.setRead(false);
+            notificationVm.setCreatedAt(newNotification.getCreatedAt().toString());
 
-        webSocketService.sendNotificationToClient(foundUserByPost.getUsername(), notificationVm);
+            webSocketService.sendNotificationToClient(foundUserByPost.getUsername(), notificationVm);
+        }
 
         return new SuccessResponse<>(LikePostConstants.LIKE_POST_SUCCESS, true);
     }
@@ -137,8 +139,8 @@ public class LikePostServiceImpl implements LikePostService {
     }
 
     @Override
-    public SuccessResponse<List<UserDetailVm>> getListUserLikedPost(int postId) {
-        var foundPost = postRepository.findById(postId).orElse(null);
+    public SuccessResponse<List<UserDetailVm>> getListUserLikedPost(String slug) {
+        var foundPost = postRepository.findBySlug(slug).orElse(null);
         if (foundPost == null) {
             throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
         }

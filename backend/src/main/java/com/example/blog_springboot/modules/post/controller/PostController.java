@@ -234,11 +234,11 @@ public class PostController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/{postId}/likes")
+    @GetMapping("/{slug}/likes")
     @ResponseBody
     public ResponseEntity<SuccessResponse<List<UserDetailVm>>> getListUserLikedPost(
-            @PathVariable("postId") int postId) {
-        var result = likePostService.getListUserLikedPost(postId);
+            @PathVariable("slug") String slug) {
+        var result = likePostService.getListUserLikedPost(slug);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

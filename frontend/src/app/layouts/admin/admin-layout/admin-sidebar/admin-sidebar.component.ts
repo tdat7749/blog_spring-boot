@@ -35,13 +35,13 @@ export class AdminSidebarComponent {
         ]
       },
       {
-        label: 'Series',
-        icon: 'pi pi-fw pi-bolt',
+        label: 'Tag',
+        icon: 'pi pi-fw pi-hashtag',
         items: [
           {
             label: 'Quản Lý',
             icon: 'pi pi-fw pi-wrench',
-            routerLink: "/admin/series"
+            routerLink: "/admin/tag"
           }
         ]
       },

@@ -94,8 +94,8 @@ export class PostService{
         )
     }
 
-    getAllUserLikePost(postId:number):Observable<ApiResponse<User>>{
-        return this.http.get<ApiResponse<User>>(`${environment.apiUrl}/posts/${postId}/likes`).pipe(
+    getAllUserLikePost(slug:string):Observable<ApiResponse<User[]>>{
+        return this.http.get<ApiResponse<User[]>>(`${environment.apiUrl}/posts/${slug}/likes`).pipe(
             catchError(handleError)
         )
     }

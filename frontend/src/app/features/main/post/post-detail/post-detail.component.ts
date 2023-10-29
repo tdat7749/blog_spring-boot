@@ -7,6 +7,7 @@ import { forkJoin, Subject, takeUntil } from "rxjs";
 import { LoadingService } from "../../../../core/services/loading.service";
 import { AuthService } from "../../../../core/services/auth.service";
 import { generateTOC } from 'src/app/shared/commons/generate-toc';
+import {User} from "../../../../core/types/user.type";
 
 @Component({
   selector: 'main-post-detail',
@@ -28,6 +29,9 @@ export class PostDetailComponent implements OnInit, OnDestroy, AfterViewInit {
   destroy$ = new Subject<void>()
 
   timeOut: any
+
+  userLikePostVisible:boolean = false
+  listUserLikePost:User[] = []
 
   constructor(
     private postService: PostService,
@@ -54,17 +58,20 @@ export class PostDetailComponent implements OnInit, OnDestroy, AfterViewInit {
     this.loadingService.startLoading()
     forkJoin([
       this.postService.getPostDetailBySlug(this.slug),
-      this.postService.checkUserLikePost(this.slug)
-    ], (postResponse, checkLikedResponse) => {
+      this.postService.checkUserLikePost(this.slug),
+      this.postService.getAllUserLikePost(this.slug)
+    ], (postResponse, checkLikedResponse,listUserLikePost) => {
       return {
         postResponse: postResponse,
-        checkLikedResponse: checkLikedResponse
+        checkLikedResponse: checkLikedResponse,
+        userLikePostResponse:listUserLikePost
       }
     }).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response) => {
         this.post = response.postResponse.data
         this.isLiked = response.checkLikedResponse.data
         this.toc = generateTOC(response.postResponse.data.content)
+        this.listUserLikePost = response.userLikePostResponse.data
         this.loadingService.stopLoading()
       },
       error: (error) => {
