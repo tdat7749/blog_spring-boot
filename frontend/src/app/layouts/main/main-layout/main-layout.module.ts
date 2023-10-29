@@ -14,7 +14,6 @@ import { SidebarModule } from 'primeng/sidebar';
 import {AvatarModule} from "primeng/avatar";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {HomeComponent} from "../../../features/main/home/home.component";
-import {PostModule} from "../../../features/main/post/post.module";
 import {SharedModule} from "../../../shared/components/shared.module";
 import {TagModule} from "primeng/tag";
 import {BadgeModule} from "primeng/badge";

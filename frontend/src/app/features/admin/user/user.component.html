@@ -1,0 +1,83 @@
+<div class="tw-p-[1.5rem] tw-space-y-[2rem]">
+    <h1 class="tw-text-3xl tw-text-center tw-my-[2rem]">Quản Lý Người Dùng</h1>
+    <div class="tw-flex-col tw-space-y-[2rem] md:tw-flex lg:tw-justify-between">
+        <p-tabMenu [model]="items" [activeItem]="activeItem" (activeItemChange)="onActiveItemChange($event)"></p-tabMenu>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input type="text" pInputText (input)="onChangeSearch($event)" />
+        </span>
+    </div>
+    <ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
+        <main-loading></main-loading>
+    </ng-template>
+    <ng-template #loaded>
+        <div class="tw-space-y-[1rem]">
+            <h2 *ngIf="listUser.length < 1; else hasPost" class="tw-text-center tw-text-xl">KHÔNG CÓ NGƯỜI DÙNG NÀO</h2>
+            <ng-template #hasPost>
+                <div class="tw-flex tw-flex-col">
+                    <div class="tw-overflow-x-auto">
+                        <div class="tw-min-w-full tw-inline-block tw-align-middle">
+                            <div class="tw-overflow-hidden tw-shadow-md sm:tw-rounded-lg">
+                                <table
+                                        class="tw-min-w-full tw-text-sm tw-text-left tw-text-gray-500 dark:tw-text-gray-400">
+                                    <thead
+                                            class="tw-text-xs tw-text-gray-700 tw-uppercase tw-bg-gray-50 dark:tw-bg-gray-700 dark:tw-text-gray-400">
+                                    <tr>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">ID</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Họ</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Tên</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Tài Khoản</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Trạng Thái</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Quyền</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Email</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Thao Tác</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let user of listUser"
+                                        class="tw-bg-white tw-border-b dark:tw-bg-gray-800 dark:tw-border-gray-700 hover:tw-bg-gray-50 dark:tw-hover:bg-gray-600">
+                                        <th scope="row"
+                                            class=" tw-whitespace-nowrap tw-px-6 tw-py-4 tw-font-medium tw-text-gray-900 dark:tw-text-white">
+                                            {{user.id}}
+                                        </th>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">
+                                            {{user.firstName}}
+                                        </td>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">
+                                            {{user.lastName}}
+                                        </td>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">
+                                            {{user.userName}}
+                                        </td>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">
+                                            <p-tag [rounded]="true" severity="{{user.notLocked ? 'success' : 'danger'}}"
+                                                   value="{{user.notLocked ? 'Đang Mở Khóa' : 'Đang Bị Khóa'}}"></p-tag>
+                                        </td>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">
+                                            {{user.role}}
+                                        </td>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">
+                                            {{user.email}}
+                                        </td>
+                                        <td class="tw-cursor-pointer tw-whitespace-nowrap tw-px-6 tw-py-4 tw-flex tw-space-x-[0.5rem]">
+                                            <p-button icon="pi pi-pencil" *ngIf="!user.notLocked" (click)="unLockAccount(user)" [loading]="isLoading" styleClass="p-button-success" label="Mở Khóa"></p-button>
+                                            <p-button icon="pi pi-times" *ngIf="user.notLocked" (click)="lockAccount(user)" [loading]="isLoading" styleClass="p-button-danger" label="Khóa"></p-button>
+                                            <div *ngIf="user.notLocked">
+                                                <p-confirmPopup></p-confirmPopup>
+                                                <p-button icon="pi pi-pencil"  *ngIf="user.role === 'ADMIN'" (click)="changePermission('USER',user,$event)" [loading]="isLoading" styleClass="p-button-primary" label="Đổi Quyền"></p-button>
+                                                <p-button icon="pi pi-pencil" *ngIf="user.role === 'USER'" (click)="changePermission('ADMIN',user,$event)" styleClass="p-button-primary" label="Đổi Quyền"></p-button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </ng-template>
+    <p-paginator (onPageChange)="onChangePageIndex($event)" [first]=0 [rows]=10
+                 [totalRecords]=totalPage*10></p-paginator>
+</div>

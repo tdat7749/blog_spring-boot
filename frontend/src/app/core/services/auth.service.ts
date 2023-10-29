@@ -71,4 +71,17 @@ export class AuthService {
         catchError(handleError)
       )
   }
+
+  lockAccount(id:number):Observable<ApiResponse<boolean>>{
+    return this.http.patch<ApiResponse<boolean>>(`${environment.apiUrl}/auth/${id}/lock`,{}).pipe(
+        catchError(handleError)
+    )
+  }
+
+
+  unLockAccount(id:number):Observable<ApiResponse<boolean>>{
+    return this.http.patch<ApiResponse<boolean>>(`${environment.apiUrl}/auth/${id}/unlock`,{}).pipe(
+        catchError(handleError)
+    )
+  }
 }

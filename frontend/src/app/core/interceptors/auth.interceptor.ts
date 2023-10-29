@@ -1,14 +1,7 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import {
-  BehaviorSubject,
   catchError, concatMap,
-  filter,
-  finalize,
-  mergeMap,
   Observable,
-  switchMap,
-  take,
-  tap,
   throwError
 } from "rxjs";
 import { Injectable } from "@angular/core";
@@ -31,7 +24,7 @@ export class AuthInterceptor implements HttpInterceptor {
     `${environment.apiUrl}/auth/resend`,
     `${environment.apiUrl}/posts/latest`,
     `${environment.apiUrl}/posts/most-view`,
-    `${environment.apiUrl}/tags/`
+    `${environment.apiUrl}/tags/all`
 
   ]
 

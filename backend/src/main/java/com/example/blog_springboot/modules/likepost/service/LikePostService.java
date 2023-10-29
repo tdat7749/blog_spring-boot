@@ -18,7 +18,7 @@ public interface LikePostService {
 
     public SuccessResponse<Boolean> checkUserLikedPost(String postSlug, User userPrincipal);
 
-    public SuccessResponse<List<UserDetailVm>> getListUserLikedPost(int postId);
+    public SuccessResponse<List<UserDetailVm>> getListUserLikedPost(String slug);
 
     public long countLikePost(Post post);
 }

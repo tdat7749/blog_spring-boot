@@ -1,0 +1,102 @@
+<div class="tw-p-[1.5rem] tw-space-y-[2rem]">
+    <h1 class="tw-text-3xl tw-text-center tw-my-[2rem]">Quản Lý Bài Viết</h1>
+    <div class="tw-flex-col tw-space-y-[2rem] md:tw-flex lg:tw-justify-between">
+        <p-tabMenu [model]="items" [activeItem]="activeItem" (activeItemChange)="onActiveItemChange($event)"></p-tabMenu>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input type="text" pInputText (input)="onChangeSearch($event)" />
+        </span>
+    </div>
+    <ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
+        <main-loading></main-loading>
+    </ng-template>
+    <ng-template #loaded>
+        <div class="tw-space-y-[1rem]">
+            <h2 *ngIf="listPost.length < 1; else hasPost" class="tw-text-center tw-text-xl">KHÔNG CÓ BÀI VIẾT NÀO</h2>
+            <ng-template #hasPost>
+                <div class="tw-flex tw-flex-col">
+                    <div class="tw-overflow-x-auto">
+                        <div class="tw-min-w-full tw-inline-block tw-align-middle">
+                            <div class="tw-overflow-hidden tw-shadow-md sm:tw-rounded-lg">
+                                <table
+                                        class="tw-min-w-full tw-text-sm tw-text-left tw-text-gray-500 dark:tw-text-gray-400">
+                                    <thead
+                                            class="tw-text-xs tw-text-gray-700 tw-uppercase tw-bg-gray-50 dark:tw-bg-gray-700 dark:tw-text-gray-400">
+                                    <tr>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">ID</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Bài Viết</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Trạng Thái</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Tag</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Ngày Tạo</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Lượt Thích</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Lượt Xem</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Lượt Bình Luận</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Thao Tác</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let post of listPost"
+                                        class="tw-bg-white tw-border-b dark:tw-bg-gray-800 dark:tw-border-gray-700 hover:tw-bg-gray-50 dark:tw-hover:bg-gray-600">
+                                        <th scope="row"
+                                            class=" tw-whitespace-nowrap tw-px-6 tw-py-4 tw-font-medium tw-text-gray-900 dark:tw-text-white">
+                                            {{post.id}}
+                                        </th>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">
+                                            {{post.title}}
+                                        </td>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">
+                                            <p-tag [rounded]="true" severity="{{post.published ? 'success' : 'danger'}}"
+                                                   value="{{post.published ? 'Đang hoạt động' : 'Ngưng hoạt động'}}"></p-tag>
+                                        </td>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">
+                                            <ul class="tw-list-none tw-p-0 tw-space-x-[0.5rem] tw-space-y-[0.1rem]">
+                                                <p-tag *ngFor="let tag of post.tags" [rounded]="true" severity="primary"
+                                                       value="{{tag.title}}"></p-tag>
+                                            </ul>
+                                        </td>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">{{post.createdAt | date:'short'}}</td>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">{{post.totalLike}}</td>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">{{post.totalView}}</td>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">{{post.totalComment}}</td>
+                                        <td class="tw-cursor-pointer tw-whitespace-nowrap tw-px-6 tw-py-4 tw-flex tw-space-x-[0.5rem]">
+                                            <p-button icon="pi pi-pencil" (click)="onPreviewDetail(post.slug)" [loading]="isLoading" label="Xem Chi Tiết"></p-button>
+                                            <p-button icon="pi pi-pencil" (click)="onChangeStatus(post)" [loading]="isLoading" styleClass="{{post.published ? 'p-button-danger ' : 'p-button-success'}}" label="{{post.published ? 'Ngừng Công Khai' : 'Công khai'}}"></p-button>
+                                            <p-confirmPopup>
+                                            </p-confirmPopup>
+                                            <p-button styleClass="p-button-danger" (click)="onDeletePost(post.id,$event)" [loading]="isLoading"  icon="pi pi-times" label="Xóa"></p-button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </ng-template>
+    <p-paginator (onPageChange)="onChangePageIndex($event)" [first]=0 [rows]=10
+                 [totalRecords]=totalPage*10></p-paginator>
+</div>
+
+<p-dialog header="Preview" [(visible)]="detailDialogVisible" [style]="{maxWidth: '50vw',height:'80vh'}">
+    <ng-template *ngIf="isLoading;else hasPost">
+        <main-loading></main-loading>
+    </ng-template>
+    <ng-template  #hasPost>
+        <div class="tw-space-y-[2rem] tw-full">
+            <div class="tw-space-y-[1rem]">
+                <h1 class="tw-text-3xl tw-font-semibold">Thumbnail: </h1>
+                <img src="{{post?.thumbnail}}" />
+            </div>
+            <div class="tw-space-y-[1rem]">
+                <h1 class="tw-text-3xl tw-font-semibold">Tóm Lược: </h1>
+                <p [innerHTML]="post?.summary"></p>
+            </div>
+            <div class="tw-space-y-[1rem]">
+                <h1 class="tw-text-3xl tw-font-semibold">Nội Dung: </h1>
+                <p [innerHTML]="post?.content"></p>
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>

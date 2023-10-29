@@ -11,13 +11,19 @@ public class FollowExceptionHandler {
 
     @ExceptionHandler(FollowedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse followedException(FollowedException ex){
-        return new ErrorResponse(HttpStatus.BAD_REQUEST,400, ex.getMessage());
+    public ErrorResponse followedException(FollowedException ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, 400, ex.getMessage());
     }
 
     @ExceptionHandler(NotYetFollowed.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse followedException(NotYetFollowed ex){
-        return new ErrorResponse(HttpStatus.BAD_REQUEST,400, ex.getMessage());
+    public ErrorResponse followedException(NotYetFollowed ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, 400, ex.getMessage());
+    }
+
+    @ExceptionHandler(FollowByYourSelf.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse followByYourSelfException(FollowByYourSelf ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, 400, ex.getMessage());
     }
 }

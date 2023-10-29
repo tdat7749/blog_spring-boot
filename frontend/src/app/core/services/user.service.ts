@@ -3,7 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {BehaviorSubject, catchError, Observable, Subject} from "rxjs";
 import {ApiResponse, PagingResponse, SortBy} from "../types/api-response.type";
 import {environment} from "../../../environments/environment";
-import {ChangeInformation, ChangePassword, ForgotPassword, User} from "../types/user.type";
+import {ChangeInformation, ChangePassword, ChangePermission, ForgotPassword, User} from "../types/user.type";
 import {handleError} from "../../shared/commons/handle-error-http";
 import {Notification, RpNotification} from "../types/noti.type";
 
@@ -85,6 +85,18 @@ export class UserService{
 
     readAllNotification():Observable<ApiResponse<boolean>>{
         return this.http.patch<ApiResponse<boolean>>(`${environment.apiUrl}/users/notifications`,{}).pipe(
+            catchError(handleError)
+        )
+    }
+
+    getAllUser(keyword:string,pageIndex:number,sortBy:SortBy):Observable<ApiResponse<PagingResponse<User[]>>>{
+        return this.http.get<ApiResponse<PagingResponse<User[]>>>(`${environment.apiUrl}/users/all?pageIndex=${pageIndex}&keyword=${keyword}&sortBy=${sortBy}`,{}).pipe(
+            catchError(handleError)
+        )
+    }
+
+    changePermission(data:ChangePermission):Observable<ApiResponse<boolean>>{
+        return this.http.patch<ApiResponse<boolean>>(`${environment.apiUrl}/users/permission`,data).pipe(
             catchError(handleError)
         )
     }

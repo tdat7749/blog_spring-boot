@@ -6,17 +6,33 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {AuthInterceptor} from "./core/interceptors/auth.interceptor";
 import {ConfirmationService, MessageService} from "primeng/api";
+import {SharedModule} from "./shared/components/shared.module";
+import {ButtonModule} from "primeng/button";
+import {ConfirmPopupModule} from "primeng/confirmpopup";
+import {PaginatorModule} from "primeng/paginator";
+import {TagModule} from "primeng/tag";
+import {InputTextModule} from "primeng/inputtext";
+import {TabMenuModule} from "primeng/tabmenu";
+import {DialogModule} from "primeng/dialog";
 
 @NgModule({
   declarations: [
     AppComponent,
   ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        HttpClientModule,
-        AppRoutingModule,
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    AppRoutingModule,
+    SharedModule,
+    ButtonModule,
+    ConfirmPopupModule,
+    PaginatorModule,
+    TagModule,
+    InputTextModule,
+    TabMenuModule,
+    DialogModule,
+  ],
   providers: [
     MessageService,
     ConfirmationService,

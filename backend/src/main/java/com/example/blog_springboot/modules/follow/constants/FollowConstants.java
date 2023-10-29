@@ -10,4 +10,6 @@ public class FollowConstants {
     public static final String FOLLOW_SUCCESS = "Theo dõi người này thành công";
 
     public static final String UNFOLLOW_SUCCESS = "Hủy theo dõi thành công";
+
+    public static final String CANNOT_FOLLOW_BY_YOURSELF = "Không thể tự theo dõi chính mình";
 }
