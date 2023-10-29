@@ -4,11 +4,11 @@
 <ng-template #loaded>
     <div class="tw-min-height-[100vh] tw-space-y-[2rem]">
         <div class="tw-flex tw-space-x-[1rem] tw-items-center tw-justify-center">
-            <p-avatar size="xlarge" shape="circle" image="{{post.author.avatar ? post.author.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}"></p-avatar>
-            <p class="tw-text-gray-500">{{post.author.firstName}} {{post.author.lastName}}</p>
+            <p-avatar routerLink="/tac-gia/{{post.author.userName}}" class="tw-cursor-pointer" size="xlarge" shape="circle" image="{{post.author.avatar ? post.author.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}"></p-avatar>
+            <p routerLink="/tac-gia/{{post.author.userName}}" class="tw-text-gray-500 tw-cursor-pointer">{{post.author.firstName}} {{post.author.lastName}}</p>
             <p class="tw-text-gray-500"><i class="tw-text-gray-900 pi pi-calendar"></i> {{post.createdAt | date:'short'}}</p>
             <p class="tw-text-gray-500"><i class="tw-text-gray-900 pi pi-comments"></i> {{post.totalComment}}</p>
-            <p class="tw-text-gray-500"><i class="tw-text-gray-900 pi pi-heart"></i> {{post.totalLike}}</p>
+            <p (click)="this.userLikePostVisible = true" class="tw-text-gray-500 tw-cursor-pointer"><i class="tw-text-gray-900 pi pi-heart"></i> {{post.totalLike}}</p>
             <p class="tw-text-gray-500"><i class="tw-text-gray-900 pi pi-eye"></i> {{post.totalView}}</p>
         </div>
         <h1 class="tw-text-center tw-text-4xl tw-text-gray-900">{{post.title}}</h1>
@@ -36,3 +36,15 @@
         </div>
     </div>
 </ng-template>
+
+<p-dialog header="DANH SÁCH NGƯỜI DÙNG THÍCH BÀI VIẾT" [(visible)]="userLikePostVisible" [style]="{width: '50vw',height:'80vh'}">
+        <ul class="tw-flex tw-flex-wrap tw-space-x-[3rem]" *ngIf="listUserLikePost.length > 0">
+            <li routerLink="/tac-gia/{{user.userName}}" class="tw-flex tw-cursor-pointer tw-flex-col tw-justify-center tw-items-center tw-space-y-[1rem]" *ngFor="let user of listUserLikePost">
+                <p-avatar shape="circle" size="xlarge" image="{{user.avatar ? user.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}"></p-avatar>
+                <p class="tw-text-gray-900 hover:tw-text-gray-500">@{{user.userName}}</p>
+            </li>
+        </ul>
+        <div *ngIf="listUserLikePost.length < 1">
+            <h2 class="tw-text-2xl tw-text-center">Chưa có ai thích bài viết này</h2>
+        </div>
+</p-dialog>

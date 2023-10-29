@@ -37,3 +37,10 @@ export interface ChangeInformation {
   lastName:string
   summary: string
 }
+
+export type Role = "ADMIN" | "USER"
+
+export interface ChangePermission {
+  userId:number,
+  role:Role
+}

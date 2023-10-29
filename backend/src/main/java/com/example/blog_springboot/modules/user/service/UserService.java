@@ -14,24 +14,28 @@ import java.util.List;
 
 @Service
 public interface UserService {
-    public SuccessResponse<Boolean> changePassword(ChangePasswordDTO dto,User userPrincipal);
-    public SuccessResponse<String> changeAvatar(String avatar,User userPrincipal);
+    public SuccessResponse<Boolean> changePassword(ChangePasswordDTO dto, User userPrincipal);
+
+    public SuccessResponse<String> changeAvatar(String avatar, User userPrincipal);
 
     public SuccessResponse<UserDetailVm> changeInformation(ChangeInformationDTO dto, User userPrincipal);
 
     public SuccessResponse<UserDetailVm> getMe(User user);
 
-    public SuccessResponse<Boolean> changePermission(ChangePermissionDTO dto);
+    public SuccessResponse<Boolean> changePermission(ChangePermissionDTO dto, User userPrincipal);
 
     public SuccessResponse<Boolean> forgotPassword(ForgotPasswordDTO dto);
 
     public SuccessResponse<Boolean> sendCodeForgotPassword(String email);
 
-    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowing(String sortBy, int pageIndex, String userName);
+    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowing(String sortBy, int pageIndex,
+            String userName);
 
-    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowers(String sortBy, int pageIndex, String userName);
+    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getListFollowers(String sortBy, int pageIndex,
+            String userName);
 
     public SuccessResponse<UserDetailVm> getAuthor(String userName);
 
+    public SuccessResponse<PagingResponse<List<UserDetailVm>>> getAllUser(String sortBy, int pageIndex, String keyword);
 
 }

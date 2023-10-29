@@ -1,5 +1,6 @@
 package com.example.blog_springboot.modules.tag.serivce;
 
+import com.example.blog_springboot.commons.PagingResponse;
 import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.tag.dto.CreateTagDTO;
 import com.example.blog_springboot.modules.tag.dto.UpdateTagDTO;
@@ -17,7 +18,10 @@ public interface TagService {
 
     SuccessResponse<Tag> createTag(CreateTagDTO dto);
 
-    SuccessResponse<TagVm> updateTag(UpdateTagDTO dto,int tagId);
+    SuccessResponse<TagVm> updateTag(UpdateTagDTO dto, int tagId);
 
     SuccessResponse<Boolean> deleteTag(int tagId);
+
+    SuccessResponse<PagingResponse<List<TagVm>>> getListTag(int pageIndex, String keyword, String sortBy);
+
 }

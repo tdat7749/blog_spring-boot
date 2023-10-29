@@ -25,4 +25,7 @@ public interface UserRepository extends JpaRepository<User,Integer> {
     @Query("Select u.followers from User as u where u.userName = :userName")
     Page<User> getAllUserFollower(@Param("userName") String userName, Pageable pageable);
 
+    @Query("Select u from User as u where u.userName LIKE %:keyword%")
+    Page<User> getAllUser(String keyword,Pageable pageable);
+
 }

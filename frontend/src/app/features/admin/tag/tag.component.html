@@ -1,0 +1,99 @@
+<div class="tw-p-[1.5rem] tw-space-y-[2rem]">
+    <h1 class="tw-text-3xl tw-text-center tw-my-[2rem]">Quản Lý Tag</h1>
+    <div class="tw-flex-col tw-space-y-[2rem] md:tw-flex lg:tw-justify-between">
+        <p-tabMenu [model]="items" [activeItem]="activeItem" (activeItemChange)="onActiveItemChange($event)"></p-tabMenu>
+        <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input type="text" pInputText (input)="onChangeSearch($event)" />
+        </span>
+        <p-button label="Tạo Tag Mới" (click)="onVisibleCreateTagForm()"></p-button>
+    </div>
+    <ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
+        <main-loading></main-loading>
+    </ng-template>
+    <ng-template #loaded>
+        <div class="tw-space-y-[1rem]">
+            <h2 *ngIf="listTag.length < 1; else hasPost" class="tw-text-center tw-text-xl">KHÔNG CÓ TAG NÀO</h2>
+            <ng-template #hasPost>
+                <div class="tw-flex tw-flex-col">
+                    <div class="tw-overflow-x-auto">
+                        <div class="tw-min-w-full tw-inline-block tw-align-middle">
+                            <div class="tw-overflow-hidden tw-shadow-md sm:tw-rounded-lg">
+                                <table
+                                        class="tw-min-w-full tw-text-sm tw-text-left tw-text-gray-500 dark:tw-text-gray-400">
+                                    <thead
+                                            class="tw-text-xs tw-text-gray-700 tw-uppercase tw-bg-gray-50 dark:tw-bg-gray-700 dark:tw-text-gray-400">
+                                    <tr>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">ID</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Tag</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Slug</th>
+                                        <th scope="col" class="tw-text-center tw-px-6 tw-py-3">Thao Tác</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let tag of listTag"
+                                        class="tw-bg-white tw-border-b dark:tw-bg-gray-800 dark:tw-border-gray-700 hover:tw-bg-gray-50 dark:tw-hover:bg-gray-600">
+                                        <th scope="row"
+                                            class=" tw-whitespace-nowrap tw-px-6 tw-py-4 tw-font-medium tw-text-gray-900 dark:tw-text-white">
+                                            {{tag.id}}
+                                        </th>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">
+                                            {{tag.title}}
+                                        </td>
+                                        <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">
+                                            {{tag.slug}}
+                                        </td>
+                                        <td class="tw-cursor-pointer tw-whitespace-nowrap tw-px-6 tw-py-4 tw-flex tw-space-x-[0.5rem]">
+                                            <p-button icon="pi pi-pencil" [loading]="isLoading" (click)="onVisibleUpdateTagForm(tag)" styleClass="p-button-success" label="Sửa"></p-button>
+                                            <p-confirmPopup></p-confirmPopup>
+                                            <p-button icon="pi pi-times" [loading]="isLoading" (click)="deleteTag(tag,$event)" styleClass="p-button-danger" label="Xóa"></p-button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </ng-template>
+    <p-paginator (onPageChange)="onChangePageIndex($event)" [first]=0 [rows]=10
+                 [totalRecords]=totalPage*10></p-paginator>
+</div>
+
+
+<p-dialog header="TẠO TAG" [(visible)]="createTagFormVisible" [style]="{width: '50vw'}">
+    <form [formGroup]="createTagForm" class="tw-space-y-[2rem]" >
+        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+            <label>Tiêu Đề</label>
+            <input class="hover:tw-border-gray-900" pInputText formControlName="title"/>
+            <ng-container *ngIf="createTagForm.controls?.['title']?.touched && createTagForm.controls?.['title']?.dirty">
+                <small *ngIf="createTagForm.controls?.['title']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Tiêu đề không được để trống</small>
+                <small *ngIf="createTagForm.controls?.['title']?.errors?.['maxLength']" class="tw-ml-2 tw-text-red-600">Tôi đa 100 ký tự</small>
+                <small *ngIf="createTagForm.controls?.['title']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được chứa mỗi ký tự space</small>
+            </ng-container>
+        </div>
+        <div class="tw-text-right">
+            <p-button label="Tạo Mới" type="submit" (click)="onCreateTag()" [disabled]=this.createTagForm.invalid [loading]="isLoading"></p-button>
+        </div>
+    </form>
+</p-dialog>
+
+
+<p-dialog header="CẬP NHẬT TAG" [(visible)]="updateTagFormVisible" [style]="{width: '50vw'}">
+    <form [formGroup]="updateTagForm" class="tw-space-y-[2rem]" >
+        <div class="tw-flex tw-flex-col tw-space-y-[0.5rem]">
+            <label>Tiêu Đề</label>
+            <input class="hover:tw-border-gray-900" pInputText formControlName="title"/>
+            <ng-container *ngIf="updateTagForm.controls?.['title']?.touched && updateTagForm.controls?.['title']?.dirty">
+                <small *ngIf="updateTagForm.controls?.['title']?.errors?.['required']" class="tw-ml-2 tw-text-red-600">Tiêu đề không được để trống</small>
+                <small *ngIf="updateTagForm.controls?.['title']?.errors?.['maxLength']" class="tw-ml-2 tw-text-red-600">Tôi đa 100 ký tự</small>
+                <small *ngIf="updateTagForm.controls?.['title']?.errors?.['whitespace']" class="tw-ml-2 tw-text-red-600">Không được chứa mỗi ký tự space</small>
+            </ng-container>
+        </div>
+        <div class="tw-text-right">
+            <p-button label="Cập Nhật" type="submit" (click)="onUpdateTag()" [disabled]=this.updateTagForm.invalid [loading]="isLoading"></p-button>
+        </div>
+    </form>
+</p-dialog>

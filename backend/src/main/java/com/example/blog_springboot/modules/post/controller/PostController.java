@@ -105,13 +105,24 @@ public class PostController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/")
+    @GetMapping("/published")
     @ResponseBody
-    public ResponseEntity<SuccessResponse<PagingResponse<List<PostListVm>>>> getAllPost(
+    public ResponseEntity<SuccessResponse<PagingResponse<List<PostListVm>>>> getAllPostPublished(
             @RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
             @RequestParam(name = "pageIndex", required = true, defaultValue = "0") Integer pageIndex,
             @RequestParam(name = "sortBy", required = false, defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy) {
-        var result = postService.getAllPost(keyword, sortBy, pageIndex);
+        var result = postService.getAllPostPublished(keyword, sortBy, pageIndex);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<PagingResponse<List<PostListVm>>>> getAllPosts(
+            @RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
+            @RequestParam(name = "pageIndex", required = true, defaultValue = "0") Integer pageIndex,
+            @RequestParam(name = "sortBy", required = false, defaultValue = Constants.SORT_BY_CREATED_AT) String sortBy) {
+        var result = postService.getAllPosts(keyword, sortBy, pageIndex);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -223,11 +234,11 @@ public class PostController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/{postId}/likes")
+    @GetMapping("/{slug}/likes")
     @ResponseBody
     public ResponseEntity<SuccessResponse<List<UserDetailVm>>> getListUserLikedPost(
-            @PathVariable("postId") int postId) {
-        var result = likePostService.getListUserLikedPost(postId);
+            @PathVariable("slug") String slug) {
+        var result = likePostService.getListUserLikedPost(slug);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

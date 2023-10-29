@@ -5,6 +5,7 @@ import com.example.blog_springboot.commons.SuccessResponse;
 import com.example.blog_springboot.modules.authenticate.constant.AuthConstants;
 import com.example.blog_springboot.modules.authenticate.exception.UserNotFoundException;
 import com.example.blog_springboot.modules.follow.constants.FollowConstants;
+import com.example.blog_springboot.modules.follow.exception.FollowByYourSelf;
 import com.example.blog_springboot.modules.follow.exception.FollowException;
 import com.example.blog_springboot.modules.follow.exception.FollowedException;
 import com.example.blog_springboot.modules.follow.exception.NotYetFollowed;
@@ -57,6 +58,10 @@ public class FollowServiceImpl implements FollowService {
         var userFound = userRepository.findById(followingId).orElse(null);
         if (userFound == null) {
             throw new UserNotFoundException(AuthConstants.USER_NOT_FOUND);
+        }
+
+        if (userFound.getUsername().equals(userPrincipal.getUsername())) {
+            throw new FollowByYourSelf(FollowConstants.CANNOT_FOLLOW_BY_YOURSELF);
         }
 
         var isFollowed = followRepository.findByFollowersAndFollowing(userPrincipal, userFound).orElse(null);

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
+import {BehaviorSubject, Subject, takeUntil} from "rxjs";
 import { SortBy } from "../types/api-response.type";
 
 @Injectable({
@@ -10,6 +10,7 @@ export class PaginationService {
     keyword$ = new BehaviorSubject<string>("")
     sortBy$ = new BehaviorSubject<SortBy>("createdAt")
 
+    destroy$ = new Subject<void>();
 
     updatePageIndex(newIndex: number) {
         this.pageIndex$.next(newIndex)

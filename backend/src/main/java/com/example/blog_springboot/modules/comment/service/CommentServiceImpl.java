@@ -83,7 +83,7 @@ public class CommentServiceImpl implements CommentService {
             newComment.setParentId(dto.getParentId());
 
             var foundUserByComment = foundComment.getUser();
-            if (foundUserByComment != user) {
+            if (!foundUserByComment.getUsername().equals(user.getUsername())) {
                 // sau khi khởi tạo follow thành công thì tạo ra 1 thông báo
                 CreateNotificationDTO notification = new CreateNotificationDTO();
                 notification.setLink("/bai-viet/" + foundPost.getSlug());

@@ -29,4 +29,6 @@ public class AuthConstants {
     public static final String SET_CODE_FAILED = "Khởi tạo code xác thực thất bại";
 
     public static final String RESEND_EMAIL = "Gửi thành công, vui lòng kiểm tra email của bạn";
+
+    public static final String CAN_NOT_LOCKED_YOUR_ACCOUNT = "Không thể khóa tài khoản của chính bạn";
 }

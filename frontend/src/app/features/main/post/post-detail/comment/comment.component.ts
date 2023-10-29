@@ -74,7 +74,6 @@ export class CommentComponent implements OnInit, OnDestroy {
             })
         ).subscribe({
             next: (response) => {
-                console.log(response)
                 this.listComment = response.data.data.map((item: Comment) => {
                     return {
                         ...item,
@@ -89,8 +88,6 @@ export class CommentComponent implements OnInit, OnDestroy {
                     }
                 })
                 this.totalPage = response.data.totalPage
-                console.log(this.listComment)
-                console.log(response.data.data)
             },
             error: (error) => {
                 this.messageService.add({

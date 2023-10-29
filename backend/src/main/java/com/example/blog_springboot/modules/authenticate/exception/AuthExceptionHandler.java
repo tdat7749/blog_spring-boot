@@ -15,55 +15,55 @@ public class AuthExceptionHandler {
 
     @ExceptionHandler(EmailUsedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse emailUsedExceptionHandler(EmailUsedException ex){
-        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
+    public ErrorResponse emailUsedExceptionHandler(EmailUsedException ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, 400, ex.getMessage());
     }
 
     @ExceptionHandler(UserNameUsedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse userNameUsedExceptionHandler(UserNameUsedException ex){
-        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
+    public ErrorResponse userNameUsedExceptionHandler(UserNameUsedException ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, 400, ex.getMessage());
     }
 
     @ExceptionHandler(RegisterException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse registerExceptionHandler(RegisterException ex){
-        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
+    public ErrorResponse registerExceptionHandler(RegisterException ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, 400, ex.getMessage());
     }
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse loginExceptionHandler(AuthenticationException ex){
-        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
+    public ErrorResponse loginExceptionHandler(AuthenticationException ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, 400, ex.getMessage());
     }
 
-    @ExceptionHandler(LockedException.class)
+    @ExceptionHandler(AccountLockedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse lockedExceptionHandler(LockedException ex){
-        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,"Tài khoản đã bị khóa");
+    public ErrorResponse accountLockedExceptionHandler(AccountLockedException ex){
+        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
     }
 
     @ExceptionHandler(DisabledException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse disabledExceptionHandler(DisabledException ex){
-        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,"Tài khoản chưa được xác thực");
+    public ErrorResponse disabledExceptionHandler(DisabledException ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, 400, "Tài khoản chưa được xác thực");
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse userNotFoundExceptionHandler(UserNotFoundException ex){
-        return new ErrorResponse(HttpStatus.NOT_FOUND,404,ex.getMessage());
+    public ErrorResponse userNotFoundExceptionHandler(UserNotFoundException ex) {
+        return new ErrorResponse(HttpStatus.NOT_FOUND, 404, ex.getMessage());
     }
 
     @ExceptionHandler(VerifyEmailException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse verifyEmailExceptionHandler(VerifyEmailException ex){
-        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
+    public ErrorResponse verifyEmailExceptionHandler(VerifyEmailException ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, 400, ex.getMessage());
     }
 
     @ExceptionHandler(SetCodeUserException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse setCodeUserExceptionHandler(SetCodeUserException ex){
-        return new ErrorResponse(HttpStatus.BAD_REQUEST,400,ex.getMessage());
+    public ErrorResponse setCodeUserExceptionHandler(SetCodeUserException ex) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, 400, ex.getMessage());
     }
 }

@@ -1,18 +1,22 @@
-<div>
-    <div class="tw-text-center tw-space-y-[1rem]">
+<div class="tw-text-center tw-space-y-[1rem]">
+    <div class="tw-space-y-[1rem]">
         <p-avatar
             image="{{author.avatar ? author.avatar : 'https://w7.pngwing.com/pngs/867/694/png-transparent-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text-logo.png'}}"
             shape="circle" size="xlarge">
         </p-avatar>
         <div class="tw-space-y-[1rem]">
             <h1 class="tw-text-3xl tw-mb-[1rem] tw-text-gray-900">{{author.firstName}} {{author.lastName}}</h1>
+            <p *ngIf="!author.notLocked" class="tw-text-red-600">Tài khoản này đã bị khóa</p>
             @<span class="tw-text-xl {{author.role === 'ADMIN' ? 'tw-text-red-600' : ''}}">{{author.userName}}</span>
-            <div>
+            <div *ngIf="author.notLocked">
                 <p-button label="Theo Dõi" *ngIf="!isFollow" [loading]="isLoading" (click)="onFollow(Number(author.id))"
                     icon="pi pi-plus"></p-button>
                 <p-button label="Hủy Theo Dõi" styleClass="p-button-danger" [loading]="isLoading"
                     (click)="onUnFollow(Number(author.id))" *ngIf="isFollow" icon="pi pi-minus"></p-button>
             </div>
         </div>
+    </div>
+    <div>
+        <q class="tw-text-lg tw-font-light"><em>{{author.summary ? author.summary : 'Tác giả không viết gì.'}}</em></q>
     </div>
 </div>

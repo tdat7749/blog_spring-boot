@@ -76,7 +76,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPost(String keyword, String sortBy, int pageIndex) {
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostPublished(String keyword, String sortBy,
+            int pageIndex) {
         Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, sortBy));
 
         Page<Post> pagingResult = postRepository.findAllByPublished(true, keyword, paging);
@@ -514,6 +515,18 @@ public class PostServiceImpl implements PostService {
             listTag.add(foundTag);
         });
         return listTag;
+    }
+
+    @Override
+    public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPosts(String keyword, String sortBy, int pageIndex) {
+        Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, sortBy));
+
+        Page<Post> pagingResult = postRepository.getAllPosts(keyword, paging);
+
+        List<PostListVm> listPostVm = pagingResult.stream().map(Utilities::getPostListVm).toList();
+
+        return new SuccessResponse<>("Thành công",
+                new PagingResponse<>(pagingResult.getTotalPages(), (int) pagingResult.getTotalElements(), listPostVm));
     }
 
 }
