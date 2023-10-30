@@ -1,6 +1,6 @@
 <div class="tw-space-y-[2.5rem]">
     <h1 class="tw-text-4xl tw-text-gray-900 tw-text-center">TẤT CẢ TAG</h1>
-    <div class="tw-space-y-[1rem]">
+    <div class="tw-space-y-[1rem] tw-min-h-[50vh]">
         <ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
             <main-loading></main-loading>
         </ng-template>
@@ -9,8 +9,8 @@
                 <div *ngIf="listTag.length < 1">
                     <h2 class="tw-text-2xl tw-text-center tw-text-gray-900">Không có series nào</h2>
                 </div>
-                <main-list-tag-card *ngIf="listTag.length > 0" [listTag]="listTag"></main-list-tag-card>
             </div>
         </ng-template>
+        <main-list-tag-card *ngIf="listTag.length > 0" [listTag]="listTag"></main-list-tag-card>
     </div>
 </div>

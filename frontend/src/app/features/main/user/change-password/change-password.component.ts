@@ -6,6 +6,8 @@ import {ChangePassword} from "../../../../core/types/user.type";
 import {UserService} from "../../../../core/services/user.service";
 import {MessageService} from "primeng/api";
 import {Subject, takeUntil} from "rxjs";
+import {ActivatedRoute} from "@angular/router";
+import {SelectPathService} from "../../../../core/services/select-path.service";
 
 @Component({
   selector: 'main-change-password',
@@ -20,11 +22,20 @@ export class ChangePasswordComponent implements OnInit,OnDestroy{
 
   destroy$ = new Subject<void>()
 
-  constructor(private userService:UserService,private messageService:MessageService,private fb:FormBuilder) {
+  constructor(
+      private userService:UserService,
+      private messageService:MessageService,
+      private fb:FormBuilder,
+      private _router:ActivatedRoute,
+      private selectPathService:SelectPathService
+  ) {
 
   }
 
   ngOnInit() {
+    this._router.url.pipe(takeUntil(this.destroy$)).subscribe(url => {
+      this.selectPathService.path$.next(url[0].path)
+    })
     this.changePasswordForm = this.fb.group({
       oldPassword:[
         '',

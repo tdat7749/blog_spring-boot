@@ -6,6 +6,8 @@ import { LoadingService } from "../../../core/services/loading.service";
 import { PaginationService } from "../../../core/services/pagination.service";
 import { PostList } from "../../../core/types/post.type";
 import { PostService } from "../../../core/services/post.service";
+import {SelectPathService} from "../../../core/services/select-path.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
     selector: 'main-post',
@@ -25,12 +27,17 @@ export class PostComponent implements OnInit, OnDestroy {
         private postService: PostService,
         private messageService: MessageService,
         public loadingService: LoadingService,
-        private paginationService: PaginationService
+        private paginationService: PaginationService,
+        private selectPathService: SelectPathService,
+        private _router:ActivatedRoute
     ) {
 
     }
 
     ngOnInit() {
+        this._router.parent?.url.pipe(takeUntil(this.destroy$)).subscribe(url => {
+            this.selectPathService.path$.next(url[0].path)
+        })
         this.search$ = combineLatest([
             this.paginationService.pageIndex$,
             this.paginationService.keyword$,
@@ -49,7 +56,6 @@ export class PostComponent implements OnInit, OnDestroy {
             next: (response) => {
                 this.totalPage = response.data.totalPage
                 this.listPost = response.data.data
-                console.log(response)
                 this.loadingService.stopLoading()
             },
             error: (error) => {
@@ -72,6 +78,7 @@ export class PostComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.selectPathService.path$.next("")
         this.paginationService.onDestroy()
         this.destroy$.next()
         this.destroy$.complete()

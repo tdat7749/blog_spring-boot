@@ -5,6 +5,8 @@ import { LoadingService } from "../../../../core/services/loading.service";
 import { UserService } from "../../../../core/services/user.service";
 import { MessageService } from "primeng/api";
 import { Notification } from "../../../../core/types/noti.type";
+import {ActivatedRoute} from "@angular/router";
+import {SelectPathService} from "../../../../core/services/select-path.service";
 
 @Component({
   selector: 'main-notifications',
@@ -29,12 +31,15 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     public loadingService: LoadingService,
     private userService: UserService,
     private messageService: MessageService,
-
+    private _router:ActivatedRoute,
+    private selectPathService:SelectPathService
   ) {
   }
 
   ngOnInit() {
-
+    this._router.url.pipe(takeUntil(this.destroy$)).subscribe(url => {
+      this.selectPathService.path$.next(url[0].path)
+    })
     this.paging$ = combineLatest([
       this.paginationService.pageIndex$
     ]).pipe(takeUntil(this.destroy$))

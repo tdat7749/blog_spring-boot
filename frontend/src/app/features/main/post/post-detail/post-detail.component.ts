@@ -39,7 +39,8 @@ export class PostDetailComponent implements OnInit, OnDestroy, AfterViewInit {
     private _router: ActivatedRoute,
     private messageService: MessageService,
     public loadingService: LoadingService,
-    private authService: AuthService
+    private authService: AuthService,
+    private elementRef:ElementRef
   ) {
 
   }

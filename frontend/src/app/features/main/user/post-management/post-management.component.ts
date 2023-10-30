@@ -20,6 +20,8 @@ import { FileUpload } from "primeng/fileupload";
 import { MAX_FILE, MIME_TYPES } from "../../../../shared/commons/shared";
 import { PaginationService } from "../../../../core/services/pagination.service";
 import { LoadingService } from "../../../../core/services/loading.service";
+import {ActivatedRoute} from "@angular/router";
+import {SelectPathService} from "../../../../core/services/select-path.service";
 
 @Component({
   selector: 'main-post-management',
@@ -48,12 +50,17 @@ export class PostManagementComponent implements OnInit, OnDestroy {
     private postService: PostService,
     private messageService: MessageService,
     public loadingService: LoadingService,
-    private confirmService:ConfirmationService
+    private confirmService:ConfirmationService,
+    private _router:ActivatedRoute,
+    private selectPathService:SelectPathService
   ) {
 
   }
 
   ngOnInit() {
+    this._router.url.pipe(takeUntil(this.destroy$)).subscribe(url => {
+      this.selectPathService.path$.next(url[0].path)
+    })
     this.search$ = combineLatest([
       this.paginationService.pageIndex$,
       this.paginationService.keyword$,

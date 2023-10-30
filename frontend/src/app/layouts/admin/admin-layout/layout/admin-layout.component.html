@@ -2,6 +2,9 @@
 
 <div class="tw-flex">
     <app-admin-sidebar></app-admin-sidebar>
-    <router-outlet></router-outlet>
+    <div id="main" class="tw-space-y-[1rem] tw-w-full">
+        <app-admin-header></app-admin-header>
+        <router-outlet></router-outlet>
+    </div>
 </div>
 <admin-footer></admin-footer>
