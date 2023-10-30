@@ -21,7 +21,7 @@ export class TagDetailComponent implements OnInit,OnDestroy{
 
   totalPage:number
   tag:Tag
-  listPost:PostList[]
+  listPost:PostList[] = []
   slug:string
 
   isGetLoading:boolean = false

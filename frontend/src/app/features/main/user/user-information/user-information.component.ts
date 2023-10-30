@@ -19,7 +19,8 @@ import {noWhiteSpaceValidator} from "../../../../shared/validators/no-white-spac
 import {SidebarComponent} from "../sidebar/sidebar.component";
 import {MAX_FILE, MIME_TYPES} from "../../../../shared/commons/shared";
 import {LoadingService} from "../../../../core/services/loading.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
+import {SelectPathService} from "../../../../core/services/select-path.service";
 
 @Component({
   selector: 'main-user-information',
@@ -54,11 +55,17 @@ export class UserInformationComponent implements OnInit,OnDestroy{
       private userService:UserService,
       private authService:AuthService,
       public loadingService:LoadingService,
-      private router:Router
+      private router:Router,
+      private _router:ActivatedRoute,
+      private selectPathService:SelectPathService
   ) {
 
   }
   ngOnInit() {
+    this._router.url.pipe(takeUntil(this.destroy$)).subscribe(url => {
+       this.selectPathService.path$.next(url[0].path)
+    })
+
     this.changeInformationForm = this.fb.group({
       firstName:[
         '',

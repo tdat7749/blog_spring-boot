@@ -9,6 +9,7 @@ import { Subject, takeUntil } from "rxjs";
 import { RpNotification } from "../../../../core/types/noti.type";
 import { LocalStorageService } from "../../../../core/services/local-storage.service";
 import { WebSocketService } from 'src/app/core/services/websocket.service';
+import {SelectPathService} from "../../../../core/services/select-path.service";
 
 @Component({
   selector: 'main-header',
@@ -19,6 +20,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userInfo: User | null = null
 
   listNav = listNav
+  currentPath:string | null = null
   rpNotification: RpNotification | null
   notificationVisible: boolean = false
 
@@ -30,12 +32,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private messageService: MessageService,
     private localStorageService: LocalStorageService,
-    private webSocketService: WebSocketService
+    private webSocketService: WebSocketService,
+    public selectPathService:SelectPathService
   ) {
 
   }
 
   ngOnInit() {
+    this.selectPathService.path$.pipe(takeUntil(this.destroy$)).subscribe(path => {
+      this.currentPath = `/${path}`
+    })
     this.authService.userState$.pipe(takeUntil(this.destroy$)).subscribe(response => {
       this.userInfo = response
     })

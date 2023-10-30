@@ -7,6 +7,13 @@ import {ReactiveFormsModule} from "@angular/forms";
 import { AdminSidebarComponent } from './admin-sidebar/admin-sidebar.component';
 import {PanelMenuModule} from "primeng/panelmenu";
 import {ToastModule} from "primeng/toast";
+import {AvatarModule} from "primeng/avatar";
+import {BadgeModule} from "primeng/badge";
+import {ButtonModule} from "primeng/button";
+import {DialogModule} from "primeng/dialog";
+import {DividerModule} from "primeng/divider";
+import {OverlayPanelModule} from "primeng/overlaypanel";
+import {SharedModule} from "../../../shared/components/shared.module";
 
 
 
@@ -21,7 +28,14 @@ import {ToastModule} from "primeng/toast";
         CommonModule,
         ReactiveFormsModule,
         PanelMenuModule,
-        ToastModule
+        ToastModule,
+        AvatarModule,
+        BadgeModule,
+        ButtonModule,
+        DialogModule,
+        DividerModule,
+        OverlayPanelModule,
+        SharedModule
     ]
 })
 export class AdminLayoutModule { }

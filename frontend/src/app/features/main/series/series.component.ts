@@ -16,6 +16,8 @@ import {
 } from "rxjs";
 import { SortBy } from "../../../core/types/api-response.type";
 import { Series, SeriesListPost } from "../../../core/types/series.type";
+import {SelectPathService} from "../../../core/services/select-path.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-series',
@@ -34,12 +36,17 @@ export class SeriesComponent implements OnInit, OnDestroy {
     private seriesService: SeriesService,
     private messageService: MessageService,
     public loadingService: LoadingService,
-    private paginationService: PaginationService
+    private paginationService: PaginationService,
+    private selectPathService: SelectPathService,
+    private _router:ActivatedRoute
   ) {
 
   }
 
   ngOnInit() {
+    this._router.parent?.url.pipe(takeUntil(this.destroy$)).subscribe(url => {
+      this.selectPathService.path$.next(url[0].path)
+    })
     this.search$ = combineLatest([
       this.paginationService.pageIndex$,
       this.paginationService.keyword$,
@@ -80,6 +87,7 @@ export class SeriesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.selectPathService.path$.next("")
     this.paginationService.onDestroy()
     this.destroy$.next()
     this.destroy$.complete()
