@@ -4,6 +4,8 @@ import {ConfirmationService, MessageService} from "primeng/api";
 import {Series} from "../../../../core/types/series.type";
 import {LoadingService} from "../../../../core/services/loading.service";
 import {Subject, takeUntil} from "rxjs";
+import {ActivatedRoute} from "@angular/router";
+import {SelectPathService} from "../../../../core/services/select-path.service";
 
 @Component({
   selector: 'main-series-management',
@@ -23,12 +25,17 @@ export class SeriesManagementComponent implements OnInit,OnDestroy{
       private seriesService:SeriesService,
       private messageService:MessageService,
       public loadingService:LoadingService,
-      public confirmService:ConfirmationService
+      public confirmService:ConfirmationService,
+      private _router:ActivatedRoute,
+      private selectPathService:SelectPathService
   ) {
 
   }
 
   ngOnInit() {
+    this._router.url.pipe(takeUntil(this.destroy$)).subscribe(url => {
+      this.selectPathService.path$.next(url[0].path)
+    })
     this.loadingService.startLoading()
     this.seriesService.getSeriesByCurrentUser().pipe(takeUntil(this.destroy$)).subscribe({
       next:(response) =>{
@@ -53,7 +60,7 @@ export class SeriesManagementComponent implements OnInit,OnDestroy{
   onDeleteSeries(id:number,event:Event){
     this.confirmService.confirm({
       target:event.target as EventTarget,
-      message:"Lưu ý: Nếu bạn xóa series này thì mọi bài viết trong đó sẽ bị xóa mất, nếu bạn không muốn điều đó thì vui lòng gỡ bài viết ra khỏi series trước khi xóa",
+      message:"Bạn có chắc muốn xóa series này ?",
       header:"Xóa Series",
       icon:"pi pi-exclamation-triangle",
       accept:() => {
@@ -66,6 +73,7 @@ export class SeriesManagementComponent implements OnInit,OnDestroy{
               summary:"Thành Công"
             })
             this.listSeries = this.listSeries.filter((item:Series) => item.id !== id)
+            this.isLoading = false
           },
           error:(error) => {
             this.messageService.add({
@@ -73,6 +81,7 @@ export class SeriesManagementComponent implements OnInit,OnDestroy{
               detail:error,
               summary:"Lỗi"
             })
+            this.isLoading = false
           }
         })
       },

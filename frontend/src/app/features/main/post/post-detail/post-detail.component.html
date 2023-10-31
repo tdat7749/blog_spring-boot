@@ -26,8 +26,11 @@
             <div [innerHTML]="post.content" id="main">
             </div>
             <div class="tw-mt-[3rem] tw-text-right">
-                <p-button *ngIf="isLiked" label="Bỏ Thích" icon="pi pi-times tw-text-red-500" [loading]="isLoading" (click)="onUnLikePost(post.id)"></p-button>
+                <p-button *ngIf="isLiked" label="Bỏ Thích" icon="pi pi-times" [loading]="isLoading" styleClass="p-button-danger" (click)="onUnLikePost(post.id)"></p-button>
                 <p-button *ngIf="!isLiked" label="Thích" icon="pi pi-heart-fill tw-text-red-500" [loading]="isLoading" (click)="onLikePost(post.id)"></p-button>
+            </div>
+            <div class="tw-mt-[2rem]" *ngIf="post.series">
+                <p class="tw-font-light">Bài viết này hiện đang nằm trong series <span routerLink="/series/{{post.series.slug}}" class="tw-cursor-pointer hover:tw-opacity-90 tw-font-semibold"><em>{{post.series.title}}</em></span>, vào đây để có thể đọc được những bài viết có liên quan.</p>
             </div>
             <p-divider class="tw-my-[2rem]"></p-divider>
         </div>

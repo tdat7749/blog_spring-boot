@@ -19,6 +19,10 @@ const routes: Routes = [
         loadChildren: () => import("../../features/admin/user/user-admin.module").then(m => m.UserAdminModule)
       },
       {
+        path:"series",
+        loadChildren: () => import("../../features/admin/series/series-admin.module").then(m => m.SeriesAdminModule)
+      },
+      {
         path:"tag",
         loadChildren: () => import("../../features/admin/tag/tag-admin.module").then(m => m.TagAdminModule)
       },

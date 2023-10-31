@@ -6,6 +6,8 @@ import {PostService} from "../../../core/services/post.service";
 import {TagService} from "../../../core/services/tag.service";
 import {LoadingService} from "../../../core/services/loading.service";
 import {Tag} from "../../../core/types/tag.type";
+import {SelectPathService} from "../../../core/services/select-path.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-home',
@@ -27,12 +29,17 @@ export class HomeComponent implements OnInit,OnDestroy{
       private messageService:MessageService,
       private postService:PostService,
       private tagService:TagService,
-      public loadingService:LoadingService
+      public loadingService:LoadingService,
+      private selectPathService: SelectPathService,
+      private _router:ActivatedRoute
   ) {
 
   }
 
   ngOnInit() {
+    this._router.parent?.url.pipe(takeUntil(this.destroy$)).subscribe(url => {
+      this.selectPathService.path$.next("")
+    })
     this.loadingService.startLoading()
     forkJoin([
         this.postService.getListPostLatest(),
@@ -63,6 +70,7 @@ export class HomeComponent implements OnInit,OnDestroy{
   }
 
   ngOnDestroy() {
+    this.selectPathService.path$.next("")
     this.destroy$.next()
     this.destroy$.complete()
   }

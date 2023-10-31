@@ -46,6 +46,17 @@ export class AdminSidebarComponent {
         ]
       },
       {
+        label: 'Series',
+        icon: 'pi pi-fw pi-list',
+        items: [
+          {
+            label: 'Quản Lý',
+            icon: 'pi pi-fw pi-wrench',
+            routerLink: "/admin/series"
+          }
+        ]
+      },
+      {
         label: 'Người Dùng',
         icon: 'pi pi-fw pi-users',
         items: [

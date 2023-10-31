@@ -1,6 +1,7 @@
 package com.example.blog_springboot.modules.post.repository;
 
 import com.example.blog_springboot.modules.post.model.Post;
+import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.user.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,4 +51,6 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     @Query("select p from Post as p where p.title LIKE %:keyword% order by p.createdAt desc")
     Page<Post> getAllPosts(String keyword, Pageable paging);
+
+    List<Post> findBySeries(Series series);
 }
