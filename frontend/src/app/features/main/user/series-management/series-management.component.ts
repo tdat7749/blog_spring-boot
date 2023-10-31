@@ -60,7 +60,7 @@ export class SeriesManagementComponent implements OnInit,OnDestroy{
   onDeleteSeries(id:number,event:Event){
     this.confirmService.confirm({
       target:event.target as EventTarget,
-      message:"Lưu ý: Nếu bạn xóa series này thì mọi bài viết trong đó sẽ bị xóa mất, nếu bạn không muốn điều đó thì vui lòng gỡ bài viết ra khỏi series trước khi xóa",
+      message:"Bạn có chắc muốn xóa series này ?",
       header:"Xóa Series",
       icon:"pi pi-exclamation-triangle",
       accept:() => {
@@ -73,6 +73,7 @@ export class SeriesManagementComponent implements OnInit,OnDestroy{
               summary:"Thành Công"
             })
             this.listSeries = this.listSeries.filter((item:Series) => item.id !== id)
+            this.isLoading = false
           },
           error:(error) => {
             this.messageService.add({
@@ -80,6 +81,7 @@ export class SeriesManagementComponent implements OnInit,OnDestroy{
               detail:error,
               summary:"Lỗi"
             })
+            this.isLoading = false
           }
         })
       },

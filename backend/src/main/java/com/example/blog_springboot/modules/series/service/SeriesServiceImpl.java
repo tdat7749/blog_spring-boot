@@ -7,6 +7,8 @@ import com.example.blog_springboot.modules.notification.dto.CreateNotificationDT
 import com.example.blog_springboot.modules.notification.service.NotificationService;
 import com.example.blog_springboot.modules.notification.service.UserNotificationService;
 import com.example.blog_springboot.modules.notification.viewmodel.NotificationVm;
+import com.example.blog_springboot.modules.post.model.Post;
+import com.example.blog_springboot.modules.post.repository.PostRepository;
 import com.example.blog_springboot.modules.series.constant.SeriesConstants;
 import com.example.blog_springboot.modules.series.dto.CreateSeriesDTO;
 import com.example.blog_springboot.modules.series.dto.UpdateSeriesDTO;
@@ -27,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.example.blog_springboot.commons.Constants;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -41,18 +44,21 @@ public class SeriesServiceImpl implements SeriesService {
 
     private final WebSocketService webSocketService;
     private final FollowRepository followRepository;
+    private final PostRepository postRepository;
 
     public SeriesServiceImpl(
             SeriesRepository seriesRepository,
             NotificationService notificationService,
             UserNotificationService userNotificationService,
             WebSocketService webSocketService,
-            FollowRepository followRepository) {
+            FollowRepository followRepository,
+            PostRepository postRepository) {
         this.seriesRepository = seriesRepository;
         this.notificationService = notificationService;
         this.userNotificationService = userNotificationService;
         this.webSocketService = webSocketService;
         this.followRepository = followRepository;
+        this.postRepository = postRepository;
     }
 
     @Override
@@ -115,6 +121,7 @@ public class SeriesServiceImpl implements SeriesService {
     }
 
     @Override
+    @Transactional
     public SuccessResponse<Boolean> deleteSeries(int id, User userPrincipal) {
         if (!(userPrincipal.getRole() == Role.ADMIN)) {
             var isAuthor = seriesRepository.existsByUserAndId(userPrincipal, id);
@@ -128,6 +135,12 @@ public class SeriesServiceImpl implements SeriesService {
             throw new SeriesNotFoundException(SeriesConstants.SERIES_NOT_FOUND);
         }
 
+        var listPost = postRepository.findBySeries(foundSeries).stream().map(item -> {
+            item.setSeries(null);
+            return item;
+        }).toList();
+
+        postRepository.saveAll(listPost);
         seriesRepository.delete(foundSeries);
         return new SuccessResponse<>(SeriesConstants.DELETE_SERIES_SUCCESS, true);
     }
