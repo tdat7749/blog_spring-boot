@@ -10,44 +10,43 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "series",indexes = {
-        @Index(name = "idx_slug",columnList = "slug")
+@Table(name = "series", indexes = {
+        @Index(name = "idx_slug", columnList = "slug")
 })
 public class Series {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(length = 100,nullable = false)
+    @Column(length = 100, nullable = false)
     private String title;
 
-    @Column(columnDefinition = "MEDIUMTEXT",nullable = false)
+    @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
     private String content;
 
-    @Column(length = 120,nullable = false,unique = true)
+    @Column(length = 120, nullable = false, unique = true)
     private String slug;
 
-    @Column(name = "created_at",nullable = false)
+    @Column(name = "created_at", nullable = false)
     private Date createdAt;
 
-    @Column(name = "updated_at",nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
-
 
     // Config ORM
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL,mappedBy = "series")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "series")
     @JsonManagedReference
     private List<Post> posts;
 
     @ManyToOne
-    @JoinColumn(name = "user_id",nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonBackReference
     private User user;
 
     //
 
-    public Series(){
+    public Series() {
 
     }
 
