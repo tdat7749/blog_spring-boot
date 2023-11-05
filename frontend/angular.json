@@ -21,7 +21,7 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              "src/favicon1.ico",
+              "src/halloween_owl.ico",
               "src/assets"
             ],
             "styles": [

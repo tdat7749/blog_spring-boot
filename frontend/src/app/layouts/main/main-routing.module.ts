@@ -5,6 +5,7 @@ import {MainLayoutModule} from "./main-layout/main-layout.module";
 import {HomeComponent} from "../../features/main/home/home.component";
 import {notAuthGuard} from "../../core/guards/not-auth.guard";
 import {authGuard} from "../../core/guards/auth.guard";
+import {NotFoundComponent} from "../../shared/components/not-found/not-found.component";
 
 const routes: Routes = [
   {

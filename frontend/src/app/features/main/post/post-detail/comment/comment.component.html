@@ -74,9 +74,8 @@
                                         date:"short"}}</span>
                                 </p>
                             </div>
-                            <p-button styleClass="p-button-danger" *ngIf="currentUser?.id === comment.user.id"
+                            <p-button styleClass="p-button-danger" *ngIf="currentUser?.id === comment.user.id || currentUser?.role === 'ADMIN'"
                                 label="Xóa" icon="pi pi-times" [loading]="isLoading"
-                                [disabled]="currentUser?.id !== comment.user.id"
                                 (click)="onDeleteComment(comment.id)"></p-button>
                         </div>
                     </ng-template>
@@ -126,9 +125,8 @@
                                                 class="tw-font-semibold">{{child.createdAt |
                                                 date:"short"}}</span></p>
                                     </div>
-                                    <p-button styleClass="p-button-danger" *ngIf="currentUser?.id === child.user.id"
+                                    <p-button styleClass="p-button-danger" *ngIf="currentUser?.id === child.user.id || currentUser?.role === 'ADMIN'"
                                         label="Xóa" icon="pi pi-times" [loading]="isLoading"
-                                        [disabled]="currentUser?.id !== child.user.id"
                                         (click)="onDeleteComment(child.id,comment.id)"></p-button>
                                 </div>
                             </ng-template>
