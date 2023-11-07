@@ -1,4 +1,4 @@
-<ng-template #loaded>
+<!--<ng-template #loaded>-->
     <div class="tw-p-[2rem] tw-space-y-[1rem] tw-h-auto tw-w-full">
         <h1 class="tw-text-2xl tw-text-gray-900 tw-text-center tw-mb-4">TẠO BÀI VIẾT</h1>
         <p-button label="Quay lại" routerLink="/nguoi-dung/quan-ly-bai-viet" icon="pi pi-arrow-left"></p-button>
@@ -101,11 +101,11 @@
             </div>
         </form>
     </div>
-</ng-template>
+<!--</ng-template>-->
 
-<ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
-    <main-loading></main-loading>
-</ng-template>
+<!--<ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">-->
+<!--    <main-loading></main-loading>-->
+<!--</ng-template>-->
 
 
 <p-dialog header="Preview" [(visible)]="previewDialogVisible" [style]="{width: '50vw',height:'80vh'}">

@@ -12,6 +12,8 @@ import { TagCardComponent } from './tag-card/tag-card.component';
 import { ListTagCardComponent } from './list-tag-card/list-tag-card.component';
 import {AvatarModule} from "primeng/avatar";
 import { NotificationItemComponent } from './notification-item/notification-item.component';
+import { NotFoundComponent } from './not-found/not-found.component';
+import {ButtonModule} from "primeng/button";
 
 @NgModule({
     declarations:[
@@ -22,14 +24,16 @@ import { NotificationItemComponent } from './notification-item/notification-item
         SeriesCardComponent,
         TagCardComponent,
         ListTagCardComponent,
-        NotificationItemComponent
+        NotificationItemComponent,
+        NotFoundComponent
     ],
     imports: [
         CommonModule,
         TagModule,
         RouterLink,
         ProgressSpinnerModule,
-        AvatarModule
+        AvatarModule,
+        ButtonModule
     ],
     exports: [
         ListPostCardComponent,
