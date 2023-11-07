@@ -133,6 +133,7 @@ export class CreatePostComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.editors.map(editor => {
       const quill = editor.getQuill();
+      quill.root.setAttribute("spellcheck",false)
       const toolbar = quill.getModule('toolbar');
 
       toolbar.addHandler('image', () => {
