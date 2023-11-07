@@ -1,0 +1,31 @@
+<div class="tw-bg-gray-100">
+    <div class="tw-flex tw-items-center tw-h-screen tw-flex-col tw-justify-center">
+        <div class="tw-text-center">
+            <object data="./assets/images/owl-notfound.svg" class="emoji-404">
+
+            </object>
+            <div class="tw-tracking-widest tw-mt-[2rem]">
+                <span class="tw-text-gray-500 tw-text-6xl tw-block"><span>4  0  4</span></span>
+                <span class="tw-text-gray-500 tw-text-xl">Chúng tôi không tìm thấy những gi bạn yêu cầu!</span>
+            </div>
+        </div>
+        <div class="tw-mt-6">
+            <p-button styleClass="p-button-secondary" routerLink="/" class="tw-font-mono tw-text-xl tw-p-3">Về Trang Chủ</p-button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .emoji-404{
+
+        position: relative;
+        animation: mymove 2.5s infinite;
+    }
+
+    @keyframes mymove {
+        33%   {top: 0px;}
+        66%  {top: 20px;}
+        100%  {top: 0px}
+
+    }
+</style>

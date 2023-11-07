@@ -21,6 +21,9 @@ import com.example.blog_springboot.modules.post.constant.PostConstants;
 import com.example.blog_springboot.modules.post.exception.PostNotFoundException;
 import com.example.blog_springboot.modules.post.model.Post;
 import com.example.blog_springboot.modules.post.repository.PostRepository;
+import com.example.blog_springboot.modules.series.constant.SeriesConstants;
+import com.example.blog_springboot.modules.series.exception.NotAuthorSeriesException;
+import com.example.blog_springboot.modules.user.enums.Role;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.websocket.service.WebSocketService;
 import com.example.blog_springboot.utils.Utilities;
@@ -115,28 +118,30 @@ public class CommentServiceImpl implements CommentService {
         }
 
         if (dto.getParentId() == null) {
-            CreateNotificationDTO notification = new CreateNotificationDTO();
-            notification.setLink("/bai-viet/" + foundPost.getSlug());
-            notification.setMessage("Người dùng @" + user.getUsername() + " vừa bình luận trong bài viết "
-                    + foundPost.getTitle() + " của bạn");
+            if(!foundPost.getUser().getUsername().equals(user.getUsername())){
+                CreateNotificationDTO notification = new CreateNotificationDTO();
+                notification.setLink("/bai-viet/" + foundPost.getSlug());
+                notification.setMessage("Người dùng @" + user.getUsername() + " vừa bình luận trong bài viết "
+                        + foundPost.getTitle() + " của bạn");
 
-            var newNotification = notificationService.createNotification(notification);
+                var newNotification = notificationService.createNotification(notification);
 
-            var foundUserByPost = foundPost.getUser();
-            // sau đó nối thông báo với user
-            List<User> users = new ArrayList<>();
-            users.add(foundUserByPost);
-            userNotificationService.createUserNotification(users, newNotification);
+                var foundUserByPost = foundPost.getUser();
+                // sau đó nối thông báo với user
+                List<User> users = new ArrayList<>();
+                users.add(foundUserByPost);
+                userNotificationService.createUserNotification(users, newNotification);
 
-            // Tạo ra 1 notification view model và gửi tới client
-            NotificationVm notificationVm = new NotificationVm();
-            notificationVm.setId(newNotification.getId());
-            notificationVm.setLink(newNotification.getLink());
-            notificationVm.setMessage(newNotification.getMessage());
-            notificationVm.setRead(false);
-            notificationVm.setCreatedAt(newNotification.getCreatedAt().toString());
+                // Tạo ra 1 notification view model và gửi tới client
+                NotificationVm notificationVm = new NotificationVm();
+                notificationVm.setId(newNotification.getId());
+                notificationVm.setLink(newNotification.getLink());
+                notificationVm.setMessage(newNotification.getMessage());
+                notificationVm.setRead(false);
+                notificationVm.setCreatedAt(newNotification.getCreatedAt().toString());
 
-            webSocketService.sendNotificationToClient(foundUserByPost.getUsername(), notificationVm);
+                webSocketService.sendNotificationToClient(foundUserByPost.getUsername(), notificationVm);
+            }
         }
 
         var commentVm = Utilities.getCommentVM(save);
@@ -171,9 +176,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public SuccessResponse<Boolean> deleteComment(int id, User user) {
-        var isAuthor = commentRepository.existsByUserAndId(user, id);
-        if (!isAuthor) {
-            throw new NotAuthorCommentException(CommentConstants.NOT_AUTHOR_COMMENT);
+        if (!(user.getRole() == Role.ADMIN)) {
+            var isAuthor = commentRepository.existsByUserAndId(user, id);
+            if (!isAuthor) {
+                throw new NotAuthorCommentException(CommentConstants.NOT_AUTHOR_COMMENT);
+            }
         }
 
         var foundComment = commentRepository.findById(id).orElse(null);
