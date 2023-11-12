@@ -74,9 +74,16 @@
             </div>
             <div class="tw-space-y-[1rem]">
                 <p class="tw-font-semibold tw-text-xl">Các bài viết của series</p>
-                <ul class="tw-space-y-[1.5rem]"  *ngFor="let post of series?.posts">
-                    <li routerLink="/bai-viet/{{post.slug}}" class="tw-font-light tw-cursor-pointer">{{post.title}}</li>
-                </ul>
+                    <ul class="tw-space-y-[1.5rem]"  *ngFor="let post of series?.posts">
+                        <li>
+                            <div class="tw-flex tw-items-center tw-justify-between">
+                                <h2 routerLink="/bai-viet/{{post.slug}}" class="tw-font-light tw-cursor-pointer">{{post.title}}</h2>
+                                <div>
+                                    <p-button styleClass="p-button-danger"  label="Gỡ" icon="pi pi-times" [loading]="isRemoveLoading" (click)="onRemovePost(post.id,series?.id)" ></p-button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
             </div>
         </div>
     </ng-template>
