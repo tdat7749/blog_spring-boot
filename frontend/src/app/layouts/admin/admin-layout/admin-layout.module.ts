@@ -14,6 +14,7 @@ import {DialogModule} from "primeng/dialog";
 import {DividerModule} from "primeng/divider";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {SharedModule} from "../../../shared/components/shared.module";
+import {DashboardComponent} from "../../../features/admin/dashboard/dashboard.component";
 
 
 
@@ -22,7 +23,8 @@ import {SharedModule} from "../../../shared/components/shared.module";
     HeaderComponent,
     FooterComponent,
     AdminLayoutComponent,
-    AdminSidebarComponent
+    AdminSidebarComponent,
+      DashboardComponent
   ],
     imports: [
         CommonModule,

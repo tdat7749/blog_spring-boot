@@ -6,6 +6,7 @@ import {LoadingService} from "../../../core/services/loading.service";
 import {PaginationService} from "../../../core/services/pagination.service";
 import {Series, SeriesListPost} from "../../../core/types/series.type";
 import {SeriesService} from "../../../core/services/series.service";
+import {PostService} from "../../../core/services/post.service";
 
 @Component({
   selector: 'app-admin-series',
@@ -16,6 +17,7 @@ import {SeriesService} from "../../../core/services/series.service";
 export class SeriesComponent {
   isLoading: boolean = false
   isGetLoading: boolean = false
+  isRemoveLoading:boolean = false
 
   listSeries: Series[] = []
   series:SeriesListPost | null = null
@@ -38,7 +40,8 @@ export class SeriesComponent {
       private messageService:MessageService,
       private confirmService:ConfirmationService,
       public loadingService:LoadingService,
-      private paginationService:PaginationService
+      private paginationService:PaginationService,
+      private postService:PostService
   ) {
   }
 
@@ -145,6 +148,44 @@ export class SeriesComponent {
         })
   }
 
+  onRemovePost(postId:number,seriesId:number | undefined){
+    this.isRemoveLoading = true
+    if(!seriesId){
+      this.messageService.add({
+          severity:"error",
+          detail:"Có lỗi xảy ra, vui lòng thử lại sau",
+          summary:"Lỗi"
+      })
+      this.isRemoveLoading = false
+      return;
+    }
+    this.postService.removePostToSeries(postId,seriesId).pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next:(response) => {
+            this.messageService.add({
+              severity:"success",
+              detail:response.message,
+              summary:"Thành Công"
+            })
+            if(this.series){
+              this.series = {
+                ...this.series,
+                posts: this.series?.posts.filter(item => item.id !== postId)
+              }
+            }
+            this.isRemoveLoading = false
+          },
+          error: (error) => {
+            this.messageService.add({
+              severity:"error",
+              detail:error,
+              summary:"Lỗi"
+            })
+            this.isRemoveLoading = false
+          }
+        })
+  }
+
   onActiveItemChange(event: MenuItem) {
     this.activeItem = event;
   }
@@ -154,4 +195,6 @@ export class SeriesComponent {
     this.destroy$.complete()
     this.paginationService.onDestroy()
   }
+
+  protected readonly Number = Number;
 }
