@@ -17,7 +17,7 @@ export class AdminSidebarComponent {
         icon: 'pi pi-fw pi-desktop',
         items:[
           {
-            label: 'Dashboard',
+            label: 'Trang Chủ',
             icon: 'pi pi-fw pi-desktop',
             routerLink:"/admin"
           }
