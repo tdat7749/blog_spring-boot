@@ -33,23 +33,23 @@ services:
       - './backend:/app:delegated'
     tty: true
 
-#  angularapp:
-#    build:
-#      context: ./frontend
-#      dockerfile: Dockerfile
-#    container_name: 'angularapp'
-#    depends_on:
-#      - 'springapp'
-#    networks:
-#      - data
-#    expose:
-#      - 4200
-#    ports:
-#      - '4200:4200'
-#    volumes:
-#      - './frontend/:/app:delegated'
-#      - '/app/node_modules'
-#    tty: true
+  angularapp:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: 'angularapp'
+    depends_on:
+      - 'springapp'
+    networks:
+      - data
+    expose:
+      - 4200
+    ports:
+      - '4200:4200'
+    volumes:
+      - './frontend/:/app:delegated'
+      - '/app/node_modules'
+    tty: true
 
 volumes:
   mysql: ~
