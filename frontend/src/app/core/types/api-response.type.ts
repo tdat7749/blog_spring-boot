@@ -11,4 +11,4 @@ export interface PagingResponse<T>{
 }
 
 
-export type SortBy =  'createdAt' | 'updatedAt'
+export type SortBy =  'createdAt' | 'newest' | 'latest' | 'totalView'

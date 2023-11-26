@@ -1,11 +1,14 @@
 <div class="tw-space-y-[2.5rem]">
     <h1 class="tw-text-4xl tw-text-gray-900 tw-text-center">TẤT CẢ BÀI VIẾT</h1>
     <div class="tw-space-y-[1rem]">
-        <div>
+        <div class="tw-flex tw-flex-col md:tw-flex-row tw-justify-between tw-items-center">
             <span class="p-input-icon-left">
                 <i class="pi pi-search"></i>
                 <input type="text" pInputText (input)="onChangeSearch($event)" />
             </span>
+            <div>
+                <p-dropdown [options]="sorts" [(ngModel)]="sortValue" optionLabel="title" (onChange)="onChangeSort($event)"  placeholder="Sắp Xếp"></p-dropdown>
+            </div>
         </div>
         <ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
             <main-loading></main-loading>

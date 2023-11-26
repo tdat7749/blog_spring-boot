@@ -9,11 +9,18 @@ import { PostService } from "../../../core/services/post.service";
 import {SelectPathService} from "../../../core/services/select-path.service";
 import {ActivatedRoute} from "@angular/router";
 
+
+interface SortSelect{
+    title: string,
+    value: string
+}
 @Component({
     selector: 'main-post',
     templateUrl: './post.component.html',
     encapsulation: ViewEncapsulation.None
 })
+
+
 
 export class PostComponent implements OnInit, OnDestroy {
     search$: Observable<[number, string, SortBy]>
@@ -22,6 +29,10 @@ export class PostComponent implements OnInit, OnDestroy {
     listPost: PostList[] = []
 
     destroy$ = new Subject<void>()
+
+    sorts: SortSelect[] | undefined;
+
+    sortValue: SortSelect | undefined;
 
     constructor(
         private postService: PostService,
@@ -67,6 +78,21 @@ export class PostComponent implements OnInit, OnDestroy {
                 this.loadingService.stopLoading()
             }
         })
+        this.sorts = [
+            {
+                title:"Mới Nhất",
+                value:"newest"
+            },
+            {
+                title:"Cũ Nhất",
+                value:"latest"
+            },
+            {
+                title:"Lượt Xem",
+                value:"totalView"
+            }
+        ]
+
     }
 
     onChangeSearch(event: any) {
@@ -75,6 +101,10 @@ export class PostComponent implements OnInit, OnDestroy {
 
     onChangePageIndex(event: any) {
         this.paginationService.updatePageIndex(event.page)
+    }
+
+    onChangeSort(event:any){
+        this.paginationService.updateSortBy(event.value.value)
     }
 
     ngOnDestroy() {

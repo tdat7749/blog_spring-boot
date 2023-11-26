@@ -78,7 +78,20 @@ public class PostServiceImpl implements PostService {
     @Override
     public SuccessResponse<PagingResponse<List<PostListVm>>> getAllPostPublished(String keyword, String sortBy,
             int pageIndex) {
-        Pageable paging = PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, sortBy));
+        Pageable paging = null;
+        if(sortBy.equals("createdAt")){
+            paging =  PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, sortBy));
+        }else if (sortBy.equals("newest")) {
+            paging =  PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, "createdAt"));
+        }
+        else if (sortBy.equals("latest")){
+            paging =  PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.ASC, "createdAt"));
+        }
+        else if (sortBy.equals("totalView")){
+            paging =  PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, sortBy));
+        }else{
+            paging =  PageRequest.of(pageIndex, Constants.PAGE_SIZE, Sort.by(Sort.Direction.DESC, sortBy));
+        }
 
         Page<Post> pagingResult = postRepository.findAllByPublished(true, keyword, paging);
 
