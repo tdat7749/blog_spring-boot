@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,6 +57,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
             if(userName != null && SecurityContextHolder.getContext().getAuthentication() == null){
                 UserDetails user = userDetailsService.loadUserByUsername(userName);
+                if(!user.isAccountNonLocked()){
+                    throw new LockedException("");
+                }
 
                 if(jwtService.isTokenValid(jwt,user)){
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -72,10 +76,14 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
             filterChain.doFilter(request,response);
-        }catch(ExpiredJwtException ex){
-            sendErrorFilter(response,HttpStatus.UNAUTHORIZED,"Phiên đăng nhập đã hết hạn");
         }catch(AccessDeniedException ex){
             sendErrorFilter(response,HttpStatus.FORBIDDEN,"Không có quyền");
+        }
+        catch(LockedException ex){
+            sendErrorFilter(response,HttpStatus.UNAUTHORIZED,"Account has been locked");
+        }
+        catch(ExpiredJwtException ex){
+            sendErrorFilter(response,HttpStatus.UNAUTHORIZED,"Phiên đăng nhập đã hết hạn");
         }
     }
 
