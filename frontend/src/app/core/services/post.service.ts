@@ -21,6 +21,12 @@ export class PostService{
         )
     }
 
+    getById(id:number):Observable<ApiResponse<Post>>{
+        return this.http.get<ApiResponse<Post>>(`${environment.apiUrl}/posts/id/${id}`).pipe(
+            catchError(handleError)
+        )
+    }
+
     getPostDetailBySlugAuth(slug:string):Observable<ApiResponse<Post>>{
         return this.http.get<ApiResponse<Post>>(`${environment.apiUrl}/posts/slug/${slug}/user`).pipe(
             catchError(handleError)

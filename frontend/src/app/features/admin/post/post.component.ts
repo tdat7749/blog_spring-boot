@@ -186,9 +186,9 @@ export class PostComponent implements OnInit,OnDestroy{
         })
   }
 
-  onPreviewDetail(slug:string){
+  onPreviewDetail(id:number){
     this.isGetLoading = true
-    this.postService.getPostDetailBySlug(slug).pipe(takeUntil(this.destroy$))
+    this.postService.getById(id).pipe(takeUntil(this.destroy$))
         .subscribe({
           next:(response) => {
             this.post = response.data

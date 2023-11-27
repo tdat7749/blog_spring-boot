@@ -85,6 +85,7 @@ public class SecurityConfiguration {
 
                         // post
                         .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/posts/id/{id}").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/posts/{slug}/view").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/posts/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/posts/**").hasAnyRole("USER", "ADMIN")
