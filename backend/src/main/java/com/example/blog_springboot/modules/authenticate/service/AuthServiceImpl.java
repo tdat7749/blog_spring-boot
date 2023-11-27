@@ -14,6 +14,7 @@ import com.example.blog_springboot.modules.mail.service.MailService;
 import com.example.blog_springboot.modules.user.enums.Role;
 import com.example.blog_springboot.modules.user.model.User;
 import com.example.blog_springboot.modules.user.repository.UserRepository;
+import com.example.blog_springboot.modules.websocket.service.WebSocketService;
 import com.example.blog_springboot.utils.Utilities;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,13 +34,16 @@ public class AuthServiceImpl implements AuthService {
 
     final private MailService mailService;
 
+    final private WebSocketService webSocketService;
+
     public AuthServiceImpl(AuthenticationManager authenticationManager, JwtService jwtService,
-            UserRepository userRepository, PasswordEncoder passwordEncoder, MailService mailService) {
+            UserRepository userRepository, PasswordEncoder passwordEncoder, MailService mailService,WebSocketService webSocketService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
+        this.webSocketService = webSocketService;
     }
 
     @Override
@@ -176,6 +180,7 @@ public class AuthServiceImpl implements AuthService {
         if (save == null) {
             throw new AccountLockedException(AuthConstants.LOCKED_ACCOUNT_FAILED);
         }
+        //webSocketService.sendNotificationToClient(foundUser.getUsername());
         return new SuccessResponse<>(AuthConstants.LOCKED_ACCOUNT_SUCCESS, true);
     }
 
@@ -192,6 +197,9 @@ public class AuthServiceImpl implements AuthService {
         if (save == null) {
             throw new AccountLockedException(AuthConstants.UN_LOCKED_ACCOUNT_FAILED);
         }
+
+        mailService.sendMail(save.getEmail(), Constants.SUBJECT_EMAIL_UNLOCK_ACCOUNT, "Tài khoản của bạn đã được mở khóa, hãy quay lại blog để trải nghiệm.");
+
         return new SuccessResponse<>(AuthConstants.UN_LOCKED_ACCOUNT_SUCCESS, true);
     }
 }

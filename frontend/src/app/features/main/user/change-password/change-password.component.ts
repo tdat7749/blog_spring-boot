@@ -86,6 +86,7 @@ export class ChangePasswordComponent implements OnInit,OnDestroy{
           detail:error,
           summary:"Lỗi"
         })
+        this.isLoading = false
       }
     })
   }

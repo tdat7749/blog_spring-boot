@@ -22,6 +22,10 @@ public class Constants {
 
     public static final String SUBJECT_EMAIL_FORGOT_PASSWORD = "MÃ XÁC MINH QUÊN MẬT KHẨU";
 
+    public static final String SUBJECT_EMAIL_UNLOCK_ACCOUNT = "MỞ KHÓA TÀI KHOẢN";
+
+    public static final String SUBJECT_EMAIL_LOCK_ACCOUNT = "KHÓA TÀI KHOẢN";
+
     public static final String PUBLIC_HOST = "http://localhost:4200";
 
     public static final String PRIVATE_CHANNEL_WEBSOCKET = "/user/queue/notification";

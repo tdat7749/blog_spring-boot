@@ -32,7 +32,9 @@ export class AuthService {
   }
 
   getMe():Observable<ApiResponse<User>> {
-    return this.http.get<ApiResponse<User>>(`${environment.apiUrl}/users/me`)
+    return this.http.get<ApiResponse<User>>(`${environment.apiUrl}/users/me`).pipe(
+        catchError(handleError)
+    )
   }
 
   getAccessToken():Observable<ApiResponse<string>> {
