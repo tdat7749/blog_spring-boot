@@ -16,6 +16,8 @@ import java.util.List;
 @Service
 public interface PostService {
 
+        public SuccessResponse<PostVm> getPostById(int id);
+
         public SuccessResponse<PostListVm> createPost(CreatePostDTO dto, User userPrincipal)
                         throws JsonProcessingException;
 

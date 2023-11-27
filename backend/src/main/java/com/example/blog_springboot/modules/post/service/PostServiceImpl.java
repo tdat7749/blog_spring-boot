@@ -102,6 +102,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public SuccessResponse<PostVm> getPostById(int id) {
+        var foundPost = postRepository.findById(id).orElse(null);
+        if (foundPost == null) {
+            throw new PostNotFoundException(PostConstants.POST_NOT_FOUND);
+        }
+
+        var postVm = Utilities.getPostVm(foundPost);
+
+        return new SuccessResponse<>("Thành công", postVm);
+    }
+
+    @Override
     @Transactional
     public SuccessResponse<PostListVm> createPost(CreatePostDTO dto, User userPrincipal)
             throws JsonProcessingException {

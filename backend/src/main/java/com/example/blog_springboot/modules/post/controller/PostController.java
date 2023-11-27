@@ -158,6 +158,14 @@ public class PostController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping("/id/{id}")
+    @ResponseBody
+    public ResponseEntity<SuccessResponse<PostVm>> getPostBySlug(@PathVariable("id") int id) {
+        var result = postService.getPostById(id);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @GetMapping("/not-belong-series/user")
     @ResponseBody
     public ResponseEntity<SuccessResponse<List<PostListVm>>> getAllPostNotBeLongSeries(

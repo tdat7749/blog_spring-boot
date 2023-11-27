@@ -60,7 +60,7 @@ export class AuthorInformationComponent implements OnInit,OnDestroy{
         this.messageService.add({
           severity:"success",
           detail:response.message,
-          summary:"Lỗi"
+          summary:"Thành Công"
         })
         this.isFollow = true
         this.isLoading = false

@@ -59,7 +59,7 @@
                                         <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">{{post.totalView}}</td>
                                         <td class="tw-whitespace-nowrap tw-px-6 tw-py-4">{{post.totalComment}}</td>
                                         <td class="tw-cursor-pointer tw-whitespace-nowrap tw-px-6 tw-py-4 tw-flex tw-space-x-[0.5rem]">
-                                            <p-button icon="pi pi-pencil" (click)="onPreviewDetail(post.slug)" [loading]="isLoading" label="Xem Chi Tiết"></p-button>
+                                            <p-button icon="pi pi-pencil" (click)="onPreviewDetail(post.id)" [loading]="isLoading" label="Xem Chi Tiết"></p-button>
                                             <p-button icon="pi pi-pencil" (click)="onChangeStatus(post)" [loading]="isLoading" styleClass="{{post.published ? 'p-button-danger ' : 'p-button-success'}}" label="{{post.published ? 'Ngừng Công Khai' : 'Công khai'}}"></p-button>
                                             <p-confirmPopup>
                                             </p-confirmPopup>
