@@ -3,4 +3,5 @@ app-admin-dashboard{
     min-height: 100vh;
     height:auto;
     overflow-x:auto;
+    margin-bottom:1rem;
 }

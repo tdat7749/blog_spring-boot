@@ -53,4 +53,11 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     Page<Post> getAllPosts(String keyword, Pageable paging);
 
     List<Post> findBySeries(Series series);
+
+
+    @Query("select count(p.id) from Post as p where p.isPublished = false")
+    int getTotalPostNoPublished();
+
+    @Query("select count(p.id) from Post as p where p.isPublished = true")
+    int getTotalPostPublished();
 }

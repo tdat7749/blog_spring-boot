@@ -1,5 +1,6 @@
 package com.example.blog_springboot.modules.tag.repository;
 
+import com.example.blog_springboot.modules.post.model.Post;
 import com.example.blog_springboot.modules.tag.model.Tag;
 
 import org.springframework.data.domain.Page;
@@ -17,4 +18,7 @@ public interface TagRepository extends JpaRepository<Tag, Integer> {
 
     @Query("select t from Tag as t where t.title LIKE %:keyword% order by t.createdAt desc")
     Page<Tag> getListTag(String keyword, Pageable paging);
+
+    @Query("select count(t.id) from Tag as t")
+    int getTotalTag();
 }
