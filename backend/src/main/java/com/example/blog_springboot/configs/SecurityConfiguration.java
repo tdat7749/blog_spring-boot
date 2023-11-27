@@ -97,6 +97,9 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.PATCH, "/api/comments/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/comments/**").hasAnyRole("USER", "ADMIN")
 
+                        // dashboard
+                        .requestMatchers(HttpMethod.GET, "/api/statistical/**").hasAnyRole("ADMIN")
+
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -79,7 +79,7 @@
                  [totalRecords]=totalPage*10></p-paginator>
 </div>
 
-<p-dialog header="Preview" [(visible)]="detailDialogVisible" [style]="{maxWidth: '50vw',height:'80vh'}">
+<p-dialog header="Preview" [(visible)]="detailDialogVisible" [style]="{minWidth: '50vw',maxWidth: '50vw',height:'80vh'}">
     <ng-template *ngIf="isLoading;else hasPost">
         <main-loading></main-loading>
     </ng-template>

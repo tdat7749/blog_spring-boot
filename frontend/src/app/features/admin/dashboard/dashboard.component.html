@@ -1,8 +1,71 @@
-<div class="tw-mt-[2rem] tw-space-y-[2rem]">
-    <div class="tw-text-center">
-        <h2 class="tw-text-4xl tw-font-light">NIGHT OWL ADMIN</h2>
+<ng-template [ngIf]="this.loadingService.isLoading$ | async" [ngIfElse]="loaded">
+    <main-loading></main-loading>
+</ng-template>
+<ng-template #loaded>
+    <div class="tw-mt-[2rem] tw-space-y-[2rem]">
+        <div class="tw-px-[1rem] tw-grid tw-gap-4 tw-grid-cols-1 md:tw-grid-cols-2">
+            <div class="tw-bg-[#0d0050] tw-p-6 tw-rounded-lg tw-min-h-[300px]">
+                <div class="tw-flex tw-flex-row tw-space-x-4 tw-items-center">
+                    <div class="tw-text-white">
+                        <i class="pi pi-users" style="font-size: 4rem"></i>
+                    </div>
+                    <div class="tw-text-white tw-ml-[3rem] ">
+                        <p class="tw-text-sm tw-font-medium tw-uppercase">Người Dùng</p>
+                        <p class="tw-font-bold tw-text-2xl tw-space-x-2">
+                            <span>{{statistical.totalAdmin + statistical.totalUser}}</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="tw-text-white">
+                    <p class="tw-text-base">Người Dùng: <span>{{statistical.totalUser}}</span></p>
+                    <p class="tw-text-base">Quản Trị Viên: <span>{{statistical.totalAdmin}}</span></p>
+                </div>
+            </div>
+            <div class="tw-bg-[#0d0050] tw-p-6 tw-rounded-lg tw-min-h-[300px]">
+                <div class="tw-flex tw-flex-row tw-space-x-4 tw-items-center">
+                    <div class="tw-text-white">
+                        <i class="pi pi-book" style="font-size: 4rem"></i>
+                    </div>
+                    <div class="tw-text-white">
+                        <p class="tw-text-sm tw-font-medium tw-uppercase">Bài Viết</p>
+                        <p class="tw-font-bold tw-text-2xl tw-space-x-2">
+                            <span>{{statistical.totalPostNoPublished + statistical.totalPostPublished}}</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="tw-text-white">
+                    <p class="tw-text-base">Đã Duyệt: <span class="tw-text-green-500">{{statistical.totalPostPublished}}</span></p>
+                    <p class="tw-text-base">Đang Đợi Duyệt: <span class="tw-text-red-500">{{statistical.totalPostNoPublished}}</span></p>
+                </div>
+            </div>
+            <div class="tw-bg-[#0d0050] tw-p-6 tw-rounded-lg ">
+                <div class="tw-flex tw-flex-row tw-space-x-4 tw-items-center">
+                    <div class="tw-text-white">
+                        <i class="pi pi-server" style="font-size: 4rem"></i>
+                    </div>
+                    <div class="tw-text-white">
+                        <p class="tw-text-sm tw-font-medium tw-uppercase">Series</p>
+                        <p class="tw-font-bold tw-text-2xl tw-space-x-2">
+                            <span>{{statistical.totalSeries}}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tw-bg-[#0d0050] tw-p-6 tw-rounded-lg">
+                <div class="tw-flex tw-flex-row tw-space-x-4 tw-items-center">
+                    <div class="tw-text-white">
+                        <i class="pi pi-bookmark" style="font-size: 4rem"></i>
+                    </div>
+                    <div class="tw-text-white">
+                        <p class="tw-text-sm tw-font-medium tw-uppercase">Tag</p>
+                        <p class="tw-font-bold tw-text-2xl tw-space-x-2">
+                            <span>{{statistical.totalTag}}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
-    <div class="tw-flex tw-items-center tw-justify-center">
-        <img alt="LOGO" src="assets/images/halloween_owl.png"/>
-    </div>
-</div>
+</ng-template>

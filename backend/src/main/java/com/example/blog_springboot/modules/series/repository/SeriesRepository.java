@@ -1,5 +1,6 @@
 package com.example.blog_springboot.modules.series.repository;
 
+import com.example.blog_springboot.modules.post.model.Post;
 import com.example.blog_springboot.modules.series.model.Series;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesListPostVm;
 import com.example.blog_springboot.modules.series.viewmodel.SeriesVm;
@@ -38,5 +39,9 @@ public interface SeriesRepository extends JpaRepository<Series,Integer> {
 
     @Query("SELECT s from Series as s where s.title LIKE %:keyword%")
     Page<Series> getAllSeries(String keyword,Pageable paging);
+
+
+    @Query("select count(s.id) from Series as s")
+    int getTotalSeries();
 
 }

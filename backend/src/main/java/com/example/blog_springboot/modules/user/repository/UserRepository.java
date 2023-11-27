@@ -28,4 +28,11 @@ public interface UserRepository extends JpaRepository<User,Integer> {
     @Query("Select u from User as u where u.userName LIKE %:keyword%")
     Page<User> getAllUser(String keyword,Pageable pageable);
 
+
+    @Query("select count(u.id) from User as u where u.role = 'ADMIN'")
+    int getTotalAdmin();
+
+    @Query("select count(u.id) from User as u where u.role = 'USER'")
+    int getTotalUser();
+
 }
